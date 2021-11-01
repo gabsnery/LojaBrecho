@@ -1,0 +1,14 @@
+.App {
+  text-align: center;
+}
+.ClientsRow{
+  display: grid;
+  height: auto;
+  grid-template-rows: 30px;
+  grid-template-columns: 15fr 1fr 1fr 1fr;
+}
+.ClientsInfo{
+  color: black;
+  text-align: left;
+  border: black solid 1px;
+}
