@@ -16,17 +16,20 @@ import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
 import Typography from '@mui/material/Typography'
 import React, { useState } from 'react'
-import { useData } from '../Context/DataContext'
-import firebase from '../firebase.config'
+import { useData, useState_ } from '../Context/DataContext'
 import Style from '../Style'
 import { ClientForm } from './Forms/ClientForm'
 import { ProductsForm } from './Forms/ProductsForm'
+import FirebaseServices from '../services/services'
+import moment from 'moment'
 
 const Clients = () => {
   const classes = Style()
 
   const { Clients, setClients } = useData()
   const { Products } = useData()
+  const { Entries } = useData()
+  const { setState_ } = useState_()
 
   const [CurrentClient, setCurrentClient] = useState({})
   const [modalIsOpen, setIsOpen] = React.useState(false)
@@ -44,18 +47,20 @@ const Clients = () => {
   }
 
   function removeClient () {
-    firebase
-      .firestore()
-      .collection('Clients')
-      .doc(CurrentClient.id)
-      .delete()
-      .then(f => {
-        setremoveIsOpen(false)
-        let newClients = [...Clients]
-        setClients(newClients.filter(y => y !== CurrentClient))
-        setremoveIsOpen(false)
-      })
+    let cli = FirebaseServices.remove('Clients', CurrentClient)
+    let prod = Products.filter(p => p['Client'].id === CurrentClient.id).map(
+      it => FirebaseServices.remove('Products', it)
+    )
+    let entry = Entries.filter(p => p['Client'].id === CurrentClient.id).map(
+      it_ => FirebaseServices.remove('Entries', it_)
+    )
+    Promise.all([cli, prod, entry]).then(() => {
+      //result is an array of all x values according to rows
+      setremoveIsOpen(false)
+      setState_(true)
+    })
   }
+
   return (
     <div>
       <Modal
@@ -64,14 +69,12 @@ const Clients = () => {
         aria-labelledby='modal-modal-title'
         aria-describedby='modal-modal-description'
       >
-        <Box>
+        <Box className={classes.RemoveModal}>
           Remover?
           <Button variant='outlined' onClick={() => removeClient()}></Button>
         </Box>
       </Modal>
-      <div
-        style={{ margin: '0 50px', backgroundColor: 'white', color: '#0A1929' }}
-      >
+      <div className={classes.List}>
         <ClientForm
           modalIsOpen={modalIsOpen}
           CurrentClient={CurrentClient}
@@ -92,12 +95,13 @@ const Clients = () => {
         >
           Remove
         </Button>
-        <Table aria-label='collapsible table'>
+        <Table aria-label='collapsible table' size='small'>
           <TableHead>
             <TableRow>
               <TableCell />
               <TableCell>Id</TableCell>
               <TableCell>Nome</TableCell>
+              <TableCell />
               <TableCell />
               <TableCell />
               <TableCell />
@@ -117,21 +121,6 @@ const Clients = () => {
             ))}
           </TableBody>
         </Table>
-        {/* <DataGrid
-                    style={{ color: '#0A1929' }}
-                    checkboxSelection
-                    rows={Clients} columns={columns}
-                    onSelectionModelChange={(params, event) => {
-                        openRemoveModal(params)
-                    }}
-                    onCellDoubleClick={(params, event) => {
-                        openEditModal(params.row)
-                        if (!event.ctrlKey) {
-                            event.defaultMuiPrevented = true;
-                        }
-                    }}
-
-                /> */}
       </div>
     </div>
   )
@@ -150,7 +139,8 @@ function Row (props) {
   const [removeModalIsOpen, setremoveModalIsOpen] = React.useState(false)
   const [modalIsOpen, setModalIsOpen] = React.useState(false)
   const [CurrentProduct, setCurrentProduct] = useState({})
-
+  const { Entries } = useData()
+  const { Sales } = useData()
   function openProdEditModal (Cli) {
     setCurrentProduct(Cli)
     setModalIsOpen(true)
@@ -175,7 +165,7 @@ function Row (props) {
 
       <ProductsForm
         modalIsOpen={modalIsOpen}
-        CurrentClient={row}
+        Client={row}
         CurrentProduct={CurrentProduct}
         setIsOpen={setModalIsOpen}
       />
@@ -196,6 +186,20 @@ function Row (props) {
           {row.id}
         </TableCell>
         <TableCell style={{ width: '75%' }}>{row.Nome}</TableCell>
+        <TableCell style={{ width: '75%' }}>
+          {Entries.filter(p => p['Client'] !== undefined)
+            .filter(p => p['Client'].id === row.id)
+            .map(y => ({ ...y, type: 'Entrada' }))
+            .concat(
+              Sales.filter(p => p['Client'] !== undefined)
+                .filter(p => p['Client'].id === row.id)
+                .map(y => ({ ...y, type: 'Saida' }))
+            )
+            .reduce((a, b) => {
+              if (b.type === 'Entrada') return a + b.Value
+              else return a - b.Value
+            }, 0)}
+        </TableCell>
         <TableCell style={{ width: '5%' }}>
           <Button
             onClick={() => {
@@ -219,28 +223,43 @@ function Row (props) {
         <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
           <Collapse in={open} timeout='auto' unmountOnExit>
             <Box sx={{ margin: 1 }}>
-              <Typography variant='h6' gutterBottom component='div'>
-                Products
+              <Typography gutterBottom component='div'>
+                Conta
               </Typography>
-              <Button
-                variant='outlined'
-                onClick={() => openProdEditModal({ Nome: '' })}
-              >
-                Novo produto
-              </Button>
               <Table size='small' aria-label='purchases'>
                 <TableHead>
                   <TableRow>
                     <TableCell>Nome</TableCell>
                     <TableCell />
-                    <TableCell />
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {Products ? (
-                    Products.filter(p => p['Client'].id === row.id).map(
+                  {Entries && Sales ? (
+                    Entries.filter(p => p['Client'] !== undefined)
+                      .filter(p => p['Client'].id === row.id)
+                      .map(y => ({ ...y, type: 'Entrada' }))
+                      .concat(
+                        Sales.filter(p => p['Client'] !== undefined)
+                          .filter(p => p['Client'].id === row.id)
+                          .map(y => ({ ...y, type: 'Saida' }))
+                      )
+                      .map(subRow => (
+                        <TableRow>
+                          <TableCell>
+                            {moment(
+                              new Date(row.Created.seconds * 1000)
+                            ).format()}
+                          </TableCell>
+                          <TableCell>{subRow.type}</TableCell>
+                        </TableRow>
+                      ))
+                  ) : (
+                    <></>
+                  )}
+                  {/*Products ? (
+                    Products.filter(p => p['Client'] !== undefined).filter(p => p['Client'].id === row.id).map(
                       historyRow => (
-                        <TableRow key={historyRow.date}>
+                        <TableRow >
                           <TableCell>{historyRow.Nome}</TableCell>
                           <TableCell style={{ float: 'right', width: '5%' }}>
                             <Button>
@@ -259,7 +278,7 @@ function Row (props) {
                     )
                   ) : (
                     <></>
-                  )}
+                  )*/}
                 </TableBody>
               </Table>
             </Box>

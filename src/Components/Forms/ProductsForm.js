@@ -3,30 +3,53 @@ import Button from '@mui/material/Button'
 import Modal from '@mui/material/Modal'
 import TextField from '@mui/material/TextField'
 import React, { useEffect, useState } from 'react'
-import { useState_ } from '../../Context/DataContext'
+import { useState_, useData } from '../../Context/DataContext'
 import firebase from '../../firebase.config'
 import FirebaseServices from '../../services/services'
 import Style from '../../Style'
+import NumberFormat from 'react-number-format'
+import PropTypes from 'prop-types'
 
-const customStyles = {
-  position: 'fixed',
-  top: '0',
-  height: '100%',
-  right: '0px',
-  width: 400,
-  bgcolor: 'background.paper',
-  boxShadow: 24,
-  p: 4
-}
 export const ProductsForm = props => {
   const classes = Style()
+  const NumberFormatCustom = React.forwardRef(function NumberFormatCustom (
+    props,
+    ref
+  ) {
+    const { onChange, ...other } = props
 
+    return (
+      <NumberFormat
+        {...other}
+        getInputRef={ref}
+        onValueChange={values => {
+          onChange({
+            target: {
+              name: props.name,
+              value: values.value
+            }
+          })
+        }}
+        thousandSeparator
+        isNumericString
+        prefix='$'
+      />
+    )
+  })
   const { modalIsOpen, setIsOpen } = props
   const { setState_ } = useState_()
-  const [CurrentClient, setCurrentClient] = useState(props.CurrentClient)
+  const [Client] = useState(props.Client)
+  const { updateTotalValue } = useData()
+  const [Entry] = useState(props.Entry)
   const [CurrentProduct, setCurrentProduct] = useState(props.CurrentProduct)
   function handleInputClient (e) {
-    setCurrentProduct({ ...CurrentProduct, [e.target.name]: e.target.value })
+    e.preventDefault()
+
+    setCurrentProduct({
+      ...CurrentProduct,
+      [e.target.name]:
+        e.target.name === 'Value' ? +e.target.value : e.target.value
+    })
   }
 
   function closeModal () {
@@ -35,22 +58,32 @@ export const ProductsForm = props => {
 
   function editProduct (e) {
     e.preventDefault()
-    if (CurrentClient) {
+    if (Client) {
       let ClientRef = firebase
         .firestore()
         .collection('Clients')
-        .doc(CurrentClient.id)
+        .doc(Client.id)
       CurrentProduct['Client'] = ClientRef
     }
+    if (Entry) {
+      let EntryRef = firebase
+        .firestore()
+        .collection('Entries')
+        .doc(Entry.id)
+      CurrentProduct['Entry'] = EntryRef
+    }
+
     if (CurrentProduct.hasOwnProperty('id')) {
       FirebaseServices.update('Products', CurrentProduct).then(x => {
         setIsOpen(false)
         setState_(true)
+          updateTotalValue(CurrentProduct)
       })
     } else {
       FirebaseServices.create('Products', CurrentProduct).then(x => {
         setIsOpen(false)
         setState_(true)
+          updateTotalValue(CurrentProduct)
       })
     }
   }
@@ -67,7 +100,7 @@ export const ProductsForm = props => {
       aria-labelledby='modal-modal-title'
       aria-describedby='modal-modal-description'
     >
-      <Box sx={customStyles}>
+      <Box className={classes.Panel}>
         <form onSubmit={editProduct}>
           <TextField
             id='Nome'
@@ -77,6 +110,21 @@ export const ProductsForm = props => {
             style={{ width: '100%' }}
             defaultValue={CurrentProduct.Nome}
             onChange={handleInputClient}
+          />
+          <TextField
+            label='Valor de venda'
+            type='Number'
+            value={CurrentProduct.Value}
+            onChange={e =>
+              setCurrentProduct({
+                ...CurrentProduct,
+                [e.target.name]:
+                  e.target.name === 'Value' ? +e.target.value : e.target.value
+              })
+            }
+            name='Value'
+            id='formatted-numberformat-input'
+            variant='standard'
           />
           <Button
             type='submit'

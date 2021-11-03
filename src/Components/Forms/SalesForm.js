@@ -8,17 +8,8 @@ import 'react-dropdown/style.css'
 import { useData, useState_ } from '../../Context/DataContext'
 import firebase from '../../firebase.config'
 import Style from '../../Style'
+import FirebaseServices from '../../services/services'
 
-const customStyles = {
-  position: 'fixed',
-  top: '0',
-  height: '100%',
-  right: '0px',
-  width: 400,
-  bgcolor: 'background.paper',
-  boxShadow: 24,
-  p: 4
-}
 export const SalesForm = props => {
   const classes = Style()
 
@@ -47,39 +38,28 @@ export const SalesForm = props => {
       )
     CurrentItem['Client'] = ClientRef
     if (CurrentItem.hasOwnProperty('id')) {
-      CurrentItem['Modified'] = new Date()
-      firebase
-        .firestore()
-        .collection('Sales')
-        .doc(CurrentItem.id)
-        .update(CurrentItem)
-        .then(x => {
-          setIsOpen(false)
-          setState_(true)
-        })
+      FirebaseServices.update('Sales', CurrentItem).then(x => {
+        setIsOpen(false)
+        setState_(true)
+      })
     } else {
-      CurrentItem['Created'] = new Date()
-      firebase
-        .firestore()
-        .collection('Sales')
-        .add(CurrentItem)
-        .then(x => {
-          setIsOpen(false)
-          setState_(true)
-        })
+      FirebaseServices.create('Sales', CurrentItem).then(x => {
+        setIsOpen(false)
+        setState_(true)
+      })
     }
   }
   useEffect(() => {
     let item_ = { ...props.CurrentItem }
     let Clients_ = [...Clients]
-    if (props.CurrentItem['Client']) {
+    if (props.CurrentItem['Client'] && modalIsOpen) {
       let Cli = props.CurrentItem['Client']
         ? Clients_.find(y => y.id === props.CurrentItem['Client'].id)
         : 0
       item_['Client'] = { value: Cli.id, label: Cli.Nome }
     }
     setCurrentItem(item_)
-  }, [props.CurrentItem])
+  }, [Clients, modalIsOpen, props.CurrentItem])
 
   return (
     <Modal
@@ -88,7 +68,7 @@ export const SalesForm = props => {
       aria-labelledby='modal-modal-title'
       aria-describedby='modal-modal-description'
     >
-      <Box sx={customStyles}>
+      <Box className={classes.Panel}>
         <form onSubmit={editProduct}>
           <TextField
             id='Nome'
@@ -99,17 +79,31 @@ export const SalesForm = props => {
             defaultValue={CurrentItem.Nome}
             onChange={handleInputClient}
           />
-
           <Dropdown
+            className={classes.input}
             options={Clients.map(x => ({ value: x.id, label: x.Nome }))}
             onChange={e => {
               let e_ = { target: { name: 'Client', value: e.value } }
               handleInputClient(e_)
             }}
             value={CurrentItem.Client}
-            placeholder='Select an option'
+            placeholder='Cliente'
           />
-
+          <TextField
+            label='Valor de venda'
+            type='Number'
+            value={CurrentItem.Value}
+            onChange={e =>
+              setCurrentItem({
+                ...CurrentItem,
+                [e.target.name]:
+                  e.target.name === 'Value' ? +e.target.value : e.target.value
+              })
+            }
+            name='Value'
+            id='formatted-numberformat-input'
+            variant='standard'
+          />
           <Button
             type='submit'
             className={classes.SubmitButton}

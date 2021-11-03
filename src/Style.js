@@ -11,9 +11,11 @@ const Style = makeStyles({
   },
   List: {
     margin: '0 50px',
+    fontSize:'12px',
+    borderRadius:'10px',
+    paddingBottom:'10px',
     backgroundColor: 'white',
     color: '#0A1929',
-    borderRadius: '10px'
   },
   AddButton: { float: 'left', margin: '10px' },
   RemoveButton: { float: 'right', margin: '10px' },
@@ -28,12 +30,15 @@ const Style = makeStyles({
     boxShadow: 24,
     p: 4
   },
+  input: {marginTop:'10px'},
   Panel: {
     position: 'fixed',
     top: '0',
+    backgroundColor: 'white',
     height: '100%',
     right: '0px',
-    width: 400,
+    width: 600,
+    padding:'10px 20px',
     bgcolor: 'background.paper',
     boxShadow: 24,
     p: 4

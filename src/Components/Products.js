@@ -33,14 +33,15 @@ const Products = () => {
         setIsOpen={setIsOpen}
       />
       <div
-        style={{ margin: '0 50px', backgroundColor: 'white', color: '#0A1929' }}
-      >
-        <Table aria-label='collapsible table'>
+        className={classes.List}
+        >
+        <Table aria-label='collapsible table' size='small'>
           <TableHead>
             <TableRow>
               <TableCell />
               <TableCell>Id</TableCell>
               <TableCell>Nome</TableCell>
+              <TableCell>Valor</TableCell>
               <TableCell />
               <TableCell />
               <TableCell />
@@ -63,6 +64,9 @@ const Products = () => {
                   {row.id}
                 </TableCell>
                 <TableCell style={{ width: '75%' }}>{row.Nome}</TableCell>
+                <TableCell style={{ width: '5%' }}>
+                {row.Value}
+                </TableCell>
                 <TableCell style={{ width: '5%' }}>
                   <Button onClick={() => openProdEditModal(row)}>
                     <ModeEditOutlineOutlinedIcon />

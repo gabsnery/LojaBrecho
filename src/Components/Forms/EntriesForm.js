@@ -28,7 +28,6 @@ export const EntriesForm = props => {
 
   function editProduct (e) {
     e.preventDefault()
-    let t = typeof CurrentItem.Client
     let ClientRef = firebase
       .firestore()
       .collection('Clients')
@@ -52,15 +51,14 @@ export const EntriesForm = props => {
   }
   useEffect(() => {
     let item_ = { ...props.CurrentItem }
-    if (props.CurrentItem['Client']) {
+    if (props.CurrentItem['Client'] && modalIsOpen) {
       let Cli = props.CurrentItem['Client']
         ? Clients.find(y => y.id === props.CurrentItem['Client'].id)
         : 0
       item_['Client'] = { value: Cli.id, label: Cli.Nome }
     }
     setCurrentItem(item_)
-  }, [props.CurrentItem])
-  useEffect(() => {}, [CurrentItem])
+  }, [Clients, modalIsOpen, props.CurrentItem])
 
   return (
     <Modal
@@ -69,7 +67,7 @@ export const EntriesForm = props => {
       aria-labelledby='modal-modal-title'
       aria-describedby='modal-modal-description'
     >
-      <Box>
+      <Box className={classes.Panel}>
         <form onSubmit={editProduct}>
           <TextField
             id='Nome'
@@ -90,7 +88,16 @@ export const EntriesForm = props => {
             value={CurrentItem.Client}
             placeholder='Select an option'
           />
-
+          <TextField
+            label='Valor de venda'
+            type="Number"
+            value={CurrentItem.Value}
+            onChange={(e)=>setCurrentItem({ ...CurrentItem, [e.target.name]: e.target.name==="Value"?+e.target.value:e.target.value })}
+            name='Value'
+            id='formatted-numberformat-input'
+            variant='standard'
+         
+          />
           <Button
             type='submit'
             className={classes.SubmitButton}

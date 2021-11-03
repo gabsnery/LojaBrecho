@@ -66,8 +66,8 @@ const Sales = () => {
         </Box>
       </Modal>
       <div
-        style={{ margin: '0 50px', backgroundColor: 'white', color: '#0A1929' }}
-      >
+        className={classes.List}
+        >
         <SalesForm
           modalIsOpen={modalIsOpen}
           CurrentItem={CurrentItem}
@@ -88,12 +88,13 @@ const Sales = () => {
         >
           Remove
         </Button>
-        <Table aria-label='collapsible table'>
+        <Table aria-label='collapsible table' size='small'>
           <TableHead>
             <TableRow>
               <TableCell />
-              <TableCell>Cliente</TableCell>
+              <TableCell style={{width:'50%'}}>Cliente</TableCell>
               <TableCell>Data</TableCell>
+              <TableCell>Valor</TableCell>
               <TableCell />
               <TableCell />
               <TableCell />
@@ -121,8 +122,11 @@ const Sales = () => {
                     ? Clients.find(x => x.id === row.Client.id)['Nome']
                     : ''}
                 </TableCell>
-                <TableCell style={{ width: '75%' }}>
+                <TableCell style={{ width: '70%' }}>
                   {moment(new Date(row.Created.seconds * 1000)).format()}
+                </TableCell>
+                <TableCell style={{ width: '5%' }}>
+                {row.Value}
                 </TableCell>
                 <TableCell style={{ width: '5%' }}>
                   <Button onClick={() => openEditModal(row)}>
