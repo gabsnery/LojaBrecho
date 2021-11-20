@@ -1,3 +1,4 @@
+import { Checkbox, FormControlLabel } from '@mui/material'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Modal from '@mui/material/Modal'
@@ -69,7 +70,7 @@ export const EntriesForm = props => {
     >
       <Box className={classes.Panel}>
         <form onSubmit={editProduct}>
-          <TextField
+          {/* <TextField
             id='Nome'
             label='Nome'
             variant='standard'
@@ -77,7 +78,7 @@ export const EntriesForm = props => {
             style={{ width: '100%' }}
             defaultValue={CurrentItem.Nome}
             onChange={handleInputClient}
-          />
+          /> */}
 
           <Dropdown
             options={Clients.map(x => ({ value: x.id, label: x.Nome }))}
@@ -96,7 +97,36 @@ export const EntriesForm = props => {
             name='Value'
             id='formatted-numberformat-input'
             variant='standard'
-         
+          />
+               <FormControlLabel
+            control={
+              <Checkbox
+                id='AutoCalculate'
+                checked={CurrentItem.AutoCalculate}
+                variant='standard'
+                name='AutoCalculate'
+                label='AutoCalculate'
+                onChange={e =>
+                  setCurrentItem({
+                    ...CurrentItem,
+                    [e.target.name]: e.target.checked,Credit:CurrentItem.Value*0.7
+                  })
+                  
+                }
+              />
+            }
+            label='Calcular automaticamente?'
+          />
+
+           <TextField
+            label='Valor de crédito'
+            type="Number"
+            disabled={CurrentItem.AutoCalculate}
+            value={CurrentItem.Credit}
+            onChange={(e)=>setCurrentItem({ ...CurrentItem, [e.target.name]: e.target.name==="Value"?+e.target.value:e.target.value })}
+            name='Credit'
+            id='formatted-numberformat-input'
+            variant='standard'
           />
           <Button
             type='submit'

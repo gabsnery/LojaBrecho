@@ -1,5 +1,4 @@
 import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined'
-import DeleteIcon from '@mui/icons-material/Delete'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
 import ModeEditOutlineOutlinedIcon from '@mui/icons-material/ModeEditOutlineOutlined'
@@ -15,18 +14,17 @@ import TableCell from '@mui/material/TableCell'
 import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
 import Typography from '@mui/material/Typography'
+import moment from 'moment'
 import React, { useState } from 'react'
 import { useData, useState_ } from '../Context/DataContext'
+import FirebaseServices from '../services/services'
 import Style from '../Style'
 import { ClientForm } from './Forms/ClientForm'
-import { ProductsForm } from './Forms/ProductsForm'
-import FirebaseServices from '../services/services'
-import moment from 'moment'
 
 const Clients = () => {
   const classes = Style()
 
-  const { Clients, setClients } = useData()
+  const { Clients } = useData()
   const { Products } = useData()
   const { Entries } = useData()
   const { setState_ } = useState_()
@@ -101,6 +99,7 @@ const Clients = () => {
               <TableCell />
               <TableCell>Id</TableCell>
               <TableCell>Nome</TableCell>
+              <TableCell>Crédito previsto</TableCell>
               <TableCell />
               <TableCell />
               <TableCell />
@@ -130,25 +129,15 @@ function Row (props) {
   const {
     row,
     openRemoveModal,
-    Products,
     openEditModal,
     index,
     SelectedRow
   } = props
   const [open, setOpen] = React.useState(false)
-  const [removeModalIsOpen, setremoveModalIsOpen] = React.useState(false)
-  const [modalIsOpen, setModalIsOpen] = React.useState(false)
-  const [CurrentProduct, setCurrentProduct] = useState({})
-  const { Entries } = useData()
-  const { Sales } = useData()
-  function openProdEditModal (Cli) {
-    setCurrentProduct(Cli)
-    setModalIsOpen(true)
-  }
-  function openProdremoveModal (Cli) {
-    setCurrentProduct(Cli)
-    setModalIsOpen(true)
-  }
+  const [removeModalIsOpen] = React.useState(false)
+  const { Entries,Products,Sales } = useData()
+console.log('Sales',Sales)
+console.log('Entries',Entries)
   function removeProduct () {}
   return (
     <React.Fragment>
@@ -163,12 +152,7 @@ function Row (props) {
         </Box>
       </Modal>
 
-      <ProductsForm
-        modalIsOpen={modalIsOpen}
-        Client={row}
-        CurrentProduct={CurrentProduct}
-        setIsOpen={setModalIsOpen}
-      />
+
 
       <TableRow sx={{ '& > *': { borderBottom: 'unset' } }} key={row.id}>
         <TableCell style={{ width: '5%' }} padding='checkbox'>
@@ -186,6 +170,9 @@ function Row (props) {
           {row.id}
         </TableCell>
         <TableCell style={{ width: '75%' }}>{row.Nome}</TableCell>
+        <TableCell style={{ width: '75%' }}>{Products?Products.filter(p => p['Client'] !== undefined)
+                      .filter(p => p['Client'].id === row.id).reduce((prev,next)=>prev['Value']+next['Value'],0):0}
+                      </TableCell>
         <TableCell style={{ width: '75%' }}>
           {Entries.filter(p => p['Client'] !== undefined)
             .filter(p => p['Client'].id === row.id)
@@ -219,7 +206,7 @@ function Row (props) {
           </IconButton>
         </TableCell>
       </TableRow>
-      <TableRow key={`Collapsed${index}`}>
+      <TableRow key={`Collapsed-CLI-${index}`}>
         <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
           <Collapse in={open} timeout='auto' unmountOnExit>
             <Box sx={{ margin: 1 }}>

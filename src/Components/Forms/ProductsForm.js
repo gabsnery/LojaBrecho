@@ -1,41 +1,24 @@
+import { Checkbox, FormControlLabel } from '@mui/material'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Modal from '@mui/material/Modal'
 import TextField from '@mui/material/TextField'
 import React, { useEffect, useState } from 'react'
-import { useState_, useData } from '../../Context/DataContext'
+import { useData, useState_ } from '../../Context/DataContext'
 import firebase from '../../firebase.config'
 import FirebaseServices from '../../services/services'
 import Style from '../../Style'
-import NumberFormat from 'react-number-format'
-import PropTypes from 'prop-types'
+import { Editor, EditorState } from 'draft-js'
+import "draft-js/dist/Draft.css";
 
 export const ProductsForm = props => {
   const classes = Style()
-  const NumberFormatCustom = React.forwardRef(function NumberFormatCustom (
-    props,
-    ref
-  ) {
-    const { onChange, ...other } = props
+  const [editorState, setEditorState] = React.useState(() =>
+    EditorState.createEmpty()
+  )
 
-    return (
-      <NumberFormat
-        {...other}
-        getInputRef={ref}
-        onValueChange={values => {
-          onChange({
-            target: {
-              name: props.name,
-              value: values.value
-            }
-          })
-        }}
-        thousandSeparator
-        isNumericString
-        prefix='$'
-      />
-    )
-  })
+  const editor = React.useRef(null)
+
   const { modalIsOpen, setIsOpen } = props
   const { setState_ } = useState_()
   const [Client] = useState(props.Client)
@@ -44,7 +27,7 @@ export const ProductsForm = props => {
   const [CurrentProduct, setCurrentProduct] = useState(props.CurrentProduct)
   function handleInputClient (e) {
     e.preventDefault()
-
+    console.log(e)
     setCurrentProduct({
       ...CurrentProduct,
       [e.target.name]:
@@ -77,20 +60,22 @@ export const ProductsForm = props => {
       FirebaseServices.update('Products', CurrentProduct).then(x => {
         setIsOpen(false)
         setState_(true)
-          updateTotalValue(CurrentProduct)
+        updateTotalValue(CurrentProduct)
       })
     } else {
       FirebaseServices.create('Products', CurrentProduct).then(x => {
         setIsOpen(false)
         setState_(true)
-          updateTotalValue(CurrentProduct)
+        updateTotalValue(CurrentProduct)
       })
     }
   }
   useEffect(() => {
     setCurrentProduct(props.CurrentProduct)
   }, [props.CurrentProduct])
-
+  const focusEditor = () => {
+    editor.current.focus()
+  }
   if (CurrentProduct === undefined) return <></>
 
   return (
@@ -101,31 +86,104 @@ export const ProductsForm = props => {
       aria-describedby='modal-modal-description'
     >
       <Box className={classes.Panel}>
+        <h1>Produto</h1>
         <form onSubmit={editProduct}>
           <TextField
             id='Nome'
-            label='Nome'
             variant='standard'
             name='Nome'
             style={{ width: '100%' }}
             defaultValue={CurrentProduct.Nome}
             onChange={handleInputClient}
           />
-          <TextField
-            label='Valor de venda'
-            type='Number'
-            value={CurrentProduct.Value}
-            onChange={e =>
-              setCurrentProduct({
-                ...CurrentProduct,
-                [e.target.name]:
-                  e.target.name === 'Value' ? +e.target.value : e.target.value
-              })
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(4,1fr)',
+              gridGap: '5px'
+            }}
+          >
+            <TextField
+              label='Categoria'
+              type='Number'
+              value={CurrentProduct.Stock}
+              onChange={e =>
+                setCurrentProduct({
+                  ...CurrentProduct,
+                  [e.target.name]:
+                    e.target.name === 'Stock' ? +e.target.value : e.target.value
+                })
+              }
+              name='Stock'
+              id='formatted-numberformat-input'
+              variant='standard'
+            />
+            <TextField
+              label='Estoque'
+              type='Number'
+              value={CurrentProduct.Stock}
+              onChange={e =>
+                setCurrentProduct({
+                  ...CurrentProduct,
+                  [e.target.name]:
+                    e.target.name === 'Stock' ? +e.target.value : e.target.value
+                })
+              }
+              name='Stock'
+              id='formatted-numberformat-input'
+              variant='standard'
+            />
+            <TextField
+              label='Valor de venda'
+              type='Number'
+              value={CurrentProduct.Value}
+              onChange={e =>
+                setCurrentProduct({
+                  ...CurrentProduct,
+                  [e.target.name]:
+                    e.target.name === 'Value' ? +e.target.value : e.target.value
+                })
+              }
+              name='Value'
+              id='formatted-numberformat-input'
+              variant='standard'
+            />
+          </div>
+
+          <div
+            style={{
+              border: '1px solid black',
+              minHeight: '6em',
+              cursor: 'text'
+            }}
+            onClick={focusEditor}
+          >
+            <Editor
+              ref={editor}
+              editorState={editorState}
+              onChange={setEditorState}
+              placeholder='Write something!'
+            />
+          </div>
+          <FormControlLabel
+            control={
+              <Checkbox
+                id='Site'
+                checked={CurrentProduct.Site}
+                variant='standard'
+                name='Site'
+                label='Site'
+                onChange={e =>
+                  setCurrentProduct({
+                    ...CurrentProduct,
+                    [e.target.name]: e.target.checked
+                  })
+                }
+              />
             }
-            name='Value'
-            id='formatted-numberformat-input'
-            variant='standard'
+            label='Site?'
           />
+
           <Button
             type='submit'
             className={classes.SubmitButton}

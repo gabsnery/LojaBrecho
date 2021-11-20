@@ -1,4 +1,3 @@
-import React from 'react'
 import { makeStyles } from '@mui/styles'
 
 const Style = makeStyles({
@@ -37,7 +36,7 @@ const Style = makeStyles({
     backgroundColor: 'white',
     height: '100%',
     right: '0px',
-    width: 600,
+    width: '70%',
     padding:'10px 20px',
     bgcolor: 'background.paper',
     boxShadow: 24,

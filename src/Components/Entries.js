@@ -1,4 +1,5 @@
 import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined'
+import DeleteIcon from '@mui/icons-material/Delete'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
 import ModeEditOutlineOutlinedIcon from '@mui/icons-material/ModeEditOutlineOutlined'
@@ -10,9 +11,6 @@ import Modal from '@mui/material/Modal'
 import Radio from '@mui/material/Radio'
 import Table from '@mui/material/Table'
 import TableBody from '@mui/material/TableBody'
-import DeleteIcon from '@mui/icons-material/Delete'
-import { ProductsForm } from './Forms/ProductsForm'
-
 import TableCell from '@mui/material/TableCell'
 import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
@@ -23,6 +21,7 @@ import { useData, useState_ } from '../Context/DataContext'
 import FirebaseServices from '../services/services'
 import Style from '../Style'
 import { EntriesForm } from './Forms/EntriesForm'
+import { ProductsForm } from './Forms/ProductsForm'
 
 const style = {
   position: 'absolute',
@@ -68,9 +67,7 @@ const Entries = () => {
           <Button variant='outlined' onClick={() => removeItem()}></Button>
         </Box>
       </Modal>
-      <div
-               className={classes.List}
-      >
+      <div className={classes.List}>
         <EntriesForm
           modalIsOpen={modalIsOpen}
           CurrentItem={CurrentEntry}
@@ -96,11 +93,11 @@ const Entries = () => {
           <TableHead>
             <TableRow>
               <TableCell />
-              <TableCell style={{width:'50%'}}>Cliente</TableCell>
+              <TableCell style={{ width: '50%' }}>Cliente</TableCell>
               <TableCell>Data</TableCell>
-              <TableCell>N</TableCell>
-              <TableCell>$</TableCell>
-              <TableCell />
+              <TableCell>Nº de produtos</TableCell>
+              <TableCell>Valor</TableCell>
+              <TableCell>Crédito</TableCell>
               <TableCell />
               <TableCell />
               <TableCell />
@@ -128,7 +125,6 @@ function Row (props) {
   const { Products } = useData()
 
   const [ProductsOpen, setProductsOpen] = React.useState(false)
-  const [removeModalIsOpen, setremoveModalIsOpen] = React.useState(false)
   const [modalIsOpen, setModalIsOpen] = React.useState(false)
   const [CurrentProduct, setCurrentProduct] = useState({})
   function openProdEditModal (Cli) {
@@ -161,18 +157,25 @@ function Row (props) {
             ? Clients.find(x => x.id === row.Client.id)['Nome']
             : ''}
         </TableCell>
-        <TableCell style={{ width: '50%' }}>
+        <TableCell style={{ width: '30%' }}>
           {moment(new Date(row.Created.seconds * 1000)).format()}
         </TableCell>
-        <TableCell style={{ width: '10%' }}>
-        {Products ? (Products.filter(p => p['Entry'] !== undefined).filter(p => p['Entry'].id === row.id)).length:0}
+        <TableCell style={{ width: '20%' }}>
+          {Products
+            ? Products.filter(p => p['Entry'] !== undefined).filter(
+                p => p['Entry'].id === row.id
+              ).length
+            : 0}
         </TableCell>
-        <TableCell style={{ width: '10%' }}>
-        {Products ? (Products.filter(p => p['Entry'] !== undefined).filter(p => p['Entry'].id === row.id)).map(item => item.Value).reduce((prev, next) => prev + next):0}
+        <TableCell style={{ width: '20%' }}>
+          {Products
+            ? Products.filter(p => p['Entry'] !== undefined)
+                .filter(p => p['Entry'].id === row.id)
+                .map(item => item.Value)
+                .reduce((prev, next) => prev + next,0)
+            : 0}
         </TableCell>
-        <TableCell style={{ width: '5%' }}>
-                {row.Value}
-                </TableCell>
+        <TableCell style={{ width: '5%' }}>{row.Credit}</TableCell>
         <TableCell style={{ width: '5%' }}>
           <Button onClick={() => openEditModal(row)}>
             <ModeEditOutlineOutlinedIcon />
@@ -211,8 +214,9 @@ function Row (props) {
                 </TableHead>
                 <TableBody>
                   {Products ? (
-                    Products.filter(p => p['Entry'] !== undefined).filter(p => p['Entry'].id === row.id).map(
-                      historyRow => (
+                    Products.filter(p => p['Entry'] !== undefined)
+                      .filter(p => p['Entry'].id === row.id)
+                      .map(historyRow => (
                         <TableRow key={`Collapsed_${index}`}>
                           <TableCell>{historyRow.Nome}</TableCell>
                           <TableCell style={{ float: 'right', width: '5%' }}>
@@ -228,8 +232,7 @@ function Row (props) {
                             </Button>
                           </TableCell>
                         </TableRow>
-                      )
-                    )
+                      ))
                   ) : (
                     <></>
                   )}

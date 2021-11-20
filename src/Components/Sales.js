@@ -1,7 +1,11 @@
 import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined'
+import DeleteIcon from '@mui/icons-material/Delete'
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
 import ModeEditOutlineOutlinedIcon from '@mui/icons-material/ModeEditOutlineOutlined'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
+import Collapse from '@mui/material/Collapse'
 import IconButton from '@mui/material/IconButton'
 import Modal from '@mui/material/Modal'
 import Radio from '@mui/material/Radio'
@@ -10,12 +14,15 @@ import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
 import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
+import Typography from '@mui/material/Typography'
+import moment from 'moment'
 import React, { useState } from 'react'
+
 import { useData, useState_ } from '../Context/DataContext'
 import FirebaseServices from '../services/services'
-import { SalesForm } from './Forms/SalesForm'
-import moment from 'moment'
 import Style from '../Style'
+import { ProductsForm } from './Forms/ProductsForm'
+import { SalesForm } from './Forms/SalesForm'
 
 const style = {
   position: 'absolute',
@@ -98,15 +105,43 @@ const Sales = () => {
               <TableCell />
               <TableCell />
               <TableCell />
+              <TableCell />
             </TableRow>
           </TableHead>
           <TableBody>
             {Sales.map((row, index) => (
-              <TableRow
-                sx={{ '& > *': { borderBottom: 'unset' } }}
-                key={row.id}
-              >
-                <TableCell style={{ width: '5%' }} padding='checkbox'>
+              <Row
+              row={row}
+              index={index}
+              openEditModal={openEditModal}
+              setCurrentItem={setCurrentItem}
+              CurrentItem={CurrentItem}
+            />
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+    </div>
+  )
+}
+function Row (props) {
+  const { row, openEditModal, index, setCurrentItem, CurrentItem } = props
+  const { Clients } = useData()
+  const { Products } = useData()
+
+  const [ProductsOpen, setProductsOpen] = React.useState(false)
+  const [modalIsOpen, setModalIsOpen] = React.useState(false)
+  const [CurrentProduct, setCurrentProduct] = useState({})
+  function openProdEditModal (Cli) {
+    setCurrentProduct(Cli)
+    setModalIsOpen(true)
+  }
+  return (
+    <>
+
+
+      <TableRow sx={{ '& > *': { borderBottom: 'unset' } }} key={row.id}>
+      <TableCell style={{ width: '5%' }} padding='checkbox'>
                   <Radio
                     checked={row === CurrentItem}
                     onChange={() => {
@@ -136,13 +171,54 @@ const Sales = () => {
                 <TableCell style={{ width: '5%' }}>
                   <IconButton aria-label='expand row' size='small'></IconButton>
                 </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </div>
-    </div>
+
+
+        <TableCell style={{ width: '5%' }}>
+          <IconButton
+            aria-label='expand row'
+            size='small'
+            onClick={() => setProductsOpen(!ProductsOpen)}
+          >
+            {ProductsOpen ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+          </IconButton>
+        </TableCell>
+      </TableRow>
+
+
+      <TableRow key={`Collapsed${index}`}>
+        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+          <Collapse in={ProductsOpen} timeout='auto' unmountOnExit>
+            <Box sx={{ margin: 1 }}>
+              <Typography variant='h6' gutterBottom component='div'>
+                Products
+              </Typography>
+         
+              <Table size='small'>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Nome</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {Products ? (
+                    Products.filter(p => p['Sale'] !== undefined).filter(p => p['Sale'].id === row.id).map(
+                      historyRow => (
+                        <TableRow key={`Collapsed_${index}`}>
+                          <TableCell>{historyRow.Nome}</TableCell>
+                          
+                        </TableRow>
+                      )
+                    )
+                  ) : (
+                    <></>
+                  )}
+                </TableBody>
+              </Table>
+            </Box>
+          </Collapse>
+        </TableCell>
+      </TableRow>
+    </>
   )
 }
-
 export default Sales
