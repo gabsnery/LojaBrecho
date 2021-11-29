@@ -7,6 +7,7 @@ import Entries from './Components/Entries'
 import Login from './Components/Login'
 import Products from './Components/Products'
 import Sales from './Components/Sales'
+import PedingCredit from './Components/PedingCredit'
 import DataProvider, { useState_ } from './Context/DataContext'
 import firebase from './firebase.config'
 
@@ -90,7 +91,7 @@ function LoggedArea (props) {
                 {...a11yProps(1)}
               />
               <Tab
-                label='Entradas'
+                label='Entradas brechó'
                 style={{ color: 'white' }}
                 {...a11yProps(2)}
               />
@@ -98,6 +99,16 @@ function LoggedArea (props) {
                 label='Saidas/Vendas'
                 style={{ color: 'white' }}
                 {...a11yProps(3)}
+              />
+              <Tab
+                label='Créditos a liberar'
+                style={{ color: 'white' }}
+                {...a11yProps(4)}
+              />
+              <Tab
+                label='Créditos '
+                style={{ color: 'white' }}
+                {...a11yProps(5)}
               />
             </Tabs>
           </Box>
@@ -111,6 +122,12 @@ function LoggedArea (props) {
             <Entries></Entries>
           </TabPanel>
           <TabPanel value={value} index={3}>
+            <Sales></Sales>
+          </TabPanel>
+          <TabPanel value={value} index={4}>
+            <PedingCredit key={4}></PedingCredit>
+          </TabPanel>
+          <TabPanel value={value} index={5}>
             <Sales></Sales>
           </TabPanel>
         </>

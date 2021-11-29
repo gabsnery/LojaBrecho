@@ -136,8 +136,6 @@ function Row (props) {
   const [open, setOpen] = React.useState(false)
   const [removeModalIsOpen] = React.useState(false)
   const { Entries,Products,Sales } = useData()
-console.log('Sales',Sales)
-console.log('Entries',Entries)
   function removeProduct () {}
   return (
     <React.Fragment>

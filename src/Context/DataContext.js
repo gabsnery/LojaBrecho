@@ -42,6 +42,26 @@ export default function DataProvider ({ children }) {
     Items_.sort((a, b) => (a[sort] > b[sort] ? 1 : b[sort] > a[sort] ? -1 : 0))
     return Items_
   }
+  async function ReleasedCredit (CreditValue, Client, Products) {
+    Products = Products.map(item =>
+      firebase
+        .firestore()
+        .collection('Products')
+        .doc(item.id)
+    )
+
+    firebase
+      .firestore()
+      .collection('Clients')
+      .doc(Client)
+      .collection('Credits')
+      .add({ Value: CreditValue, Type: 'Entry', Products: Products }).then(()=>{
+        Products.map(item=>{
+          item.update({ReleasedCredit:true});
+        })
+      })
+
+  }
   async function updateSalesProducts (Sale, Products) {
     let Products_ = (
       await firebase
@@ -62,7 +82,6 @@ export default function DataProvider ({ children }) {
         }
       }
     }
-    console.log('Products', Products)
 
     let ProductsToAdd =
       Products_.length > 0
@@ -100,7 +119,7 @@ export default function DataProvider ({ children }) {
         .firestore()
         .collection('Products')
         .doc(item.id)
-        .update({ Stock: item.Stock - 1 })
+        .update({ Stock: item.Stock - 1,Sold:true })
     )
   }
   async function updateTotalValue (product) {
@@ -148,7 +167,8 @@ export default function DataProvider ({ children }) {
         setSales,
         updateTotalValue,
         reduceStock,
-        updateSalesProducts
+        updateSalesProducts,
+        ReleasedCredit
       }}
     >
       {children}
@@ -170,7 +190,8 @@ export function useData () {
     setSales,
     updateTotalValue,
     reduceStock,
-    updateSalesProducts
+    updateSalesProducts,
+    ReleasedCredit
   } = context
   return {
     Clients,
@@ -183,7 +204,8 @@ export function useData () {
     setSales,
     updateTotalValue,
     reduceStock,
-    updateSalesProducts
+    updateSalesProducts,
+    ReleasedCredit
   }
 }
 

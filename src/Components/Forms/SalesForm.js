@@ -187,7 +187,6 @@ export const SalesForm = props => {
             onChange={e => {
               let prod = Products.find(x => x.id === e.value)
               setOrderProducts([...OrderProducts, prod])
-              console.log(OrderProducts)
             }}
             style={{ marginTop: '20px', width: '100%' }}
             placeholder='Select an option'

@@ -8,26 +8,31 @@ import { useData, useState_ } from '../../Context/DataContext'
 import firebase from '../../firebase.config'
 import FirebaseServices from '../../services/services'
 import Style from '../../Style'
-import { Editor, EditorState } from 'draft-js'
-import "draft-js/dist/Draft.css";
+
+import '../../App.css'
+import { Editor } from 'react-draft-wysiwyg'
+import { EditorState, convertToRaw, convertFromRaw } from 'draft-js'
+import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css'
 
 export const ProductsForm = props => {
   const classes = Style()
-  const [editorState, setEditorState] = React.useState(() =>
-    EditorState.createEmpty()
-  )
-
-  const editor = React.useRef(null)
-
   const { modalIsOpen, setIsOpen } = props
   const { setState_ } = useState_()
   const [Client] = useState(props.Client)
   const { updateTotalValue } = useData()
   const [Entry] = useState(props.Entry)
   const [CurrentProduct, setCurrentProduct] = useState(props.CurrentProduct)
+  const [editorState, setEditorState] = useState(EditorState.createEmpty())
+
+  const onEditorStateChange = editorState => {
+    setCurrentProduct({
+      ...CurrentProduct,
+      Description: convertToRaw(editorState.getCurrentContent())
+    })
+    setEditorState(editorState)
+  }
   function handleInputClient (e) {
     e.preventDefault()
-    console.log(e)
     setCurrentProduct({
       ...CurrentProduct,
       [e.target.name]:
@@ -72,10 +77,22 @@ export const ProductsForm = props => {
   }
   useEffect(() => {
     setCurrentProduct(props.CurrentProduct)
+    props.CurrentProduct['Type']="ThriftStore"
+    props.CurrentProduct['Sold']=false
+    props.CurrentProduct['ReleasedCredit']=false
+    props.CurrentProduct['Stock']=0
+    //props.CurrentProduct['Type']="New";
+    if (props.CurrentProduct['Description']) {
+      setEditorState(
+        EditorState.createWithContent(
+          convertFromRaw(props.CurrentProduct['Description'])
+        )
+      )
+    } else {
+      setEditorState(EditorState.createEmpty())
+    }
   }, [props.CurrentProduct])
-  const focusEditor = () => {
-    editor.current.focus()
-  }
+
   if (CurrentProduct === undefined) return <></>
 
   return (
@@ -149,41 +166,110 @@ export const ProductsForm = props => {
               variant='standard'
             />
           </div>
-
           <div
             style={{
-              border: '1px solid black',
-              minHeight: '6em',
-              cursor: 'text'
+              border: '1px solid grey',
+              padding:'10px',
+              marginTop: '10px',
+              display: 'grid',
+              gridTemplateColumns: 'repeat(4,1fr)',
+              gridGap: '5px'
             }}
-            onClick={focusEditor}
           >
-            <Editor
-              ref={editor}
-              editorState={editorState}
-              onChange={setEditorState}
-              placeholder='Write something!'
+            <TextField
+              id='Tamanho1'
+              variant='standard'
+              name='Tamanho1'
+              value={CurrentProduct.Tamanho1}
+              onChange={handleInputClient}
+            />
+            <TextField
+              id='Tamanho2'
+              variant='standard'
+              name='Tamanho2'
+              value={CurrentProduct.Tamanho2}
+              onChange={handleInputClient}
+            />
+            <TextField
+              id='Tamanho3'
+              variant='standard'
+              name='Tamanho3'
+              value={CurrentProduct.Tamanho3}
+              onChange={handleInputClient}
+            />
+            <TextField
+              id='Tamanho4'
+              variant='standard'
+              name='Tamanho4'
+              value={CurrentProduct.Tamanho4}
+              onChange={handleInputClient}
+            />
+            <TextField
+              id='Tamanho5'
+              variant='standard'
+              name='Tamanho5'
+              value={CurrentProduct.Tamanho5}
+              onChange={handleInputClient}
+            />
+            <TextField
+              id='Tamanho6'
+              variant='standard'
+              name='Tamanho6'
+              value={CurrentProduct.Tamanho6}
+              onChange={handleInputClient}
+            />
+            <TextField
+              id='Tamanho7'
+              variant='standard'
+              name='Tamanho7'
+              value={CurrentProduct.Tamanho7}
+              onChange={handleInputClient}
+            />
+            <TextField
+              id='Tamanho8'
+              variant='standard'
+              name='Tamanho8'
+              value={CurrentProduct.Tamanho8}
+              onChange={handleInputClient}
+            />
+            <TextField
+              id='Tamanho9'
+              variant='standard'
+              name='Tamanho9'
+              value={CurrentProduct.Tamanho9}
+              onChange={handleInputClient}
+            />
+            <TextField
+              id='Tamanho10'
+              variant='standard'
+              name='Tamanho10'
+              value={CurrentProduct.Tamanho10}
+              onChange={handleInputClient}
+            />
+            <TextField
+              id='Tamanho11'
+              variant='standard'
+              name='Tamanho11'
+              value={CurrentProduct.Tamanho11}
+              onChange={handleInputClient}
+            />
+            <TextField
+              id='Tamanho12'
+              variant='standard'
+              name='Tamanho12'
+              value={CurrentProduct.Tamanho12}
+              onChange={handleInputClient}
             />
           </div>
-          <FormControlLabel
-            control={
-              <Checkbox
-                id='Site'
-                checked={CurrentProduct.Site}
-                variant='standard'
-                name='Site'
-                label='Site'
-                onChange={e =>
-                  setCurrentProduct({
-                    ...CurrentProduct,
-                    [e.target.name]: e.target.checked
-                  })
-                }
-              />
-            }
-            label='Site?'
-          />
-
+          <div style={{ border: '1px solid grey', marginTop: '10px' }}>
+            <Editor
+              editorState={editorState}
+              toolbarClassName='toolbarClassName'
+              wrapperClassName='wrapperClassName'
+              editorClassName='editorClassName'
+              onEditorStateChange={onEditorStateChange}
+            />
+          </div>
           <Button
             type='submit'
             className={classes.SubmitButton}
