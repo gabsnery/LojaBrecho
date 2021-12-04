@@ -25,7 +25,6 @@ const PedingCredit = () => {
   useEffect(() => {
     const calculateCredits = () => {
       let _temp = Clients.map(({ Products, ...keepAttrs }) => keepAttrs)
-      console.log('Clients', Clients)
       Products.filter(
         p =>
           p['Client'] !== undefined &&
@@ -65,9 +64,8 @@ const PedingCredit = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {console.log('why: ClientswCredit', ClientswCredit)}
             {ClientswCredit.map((row, index) => (
-              <Row key={row.id} row={row} />
+              <Row key={`PedingCredits_${index}`} row={row} />
             ))}
           </TableBody>
         </Table>
@@ -93,7 +91,7 @@ function Row (props) {
     let CreditValue = row['Products'].reduce((prev, next) => {
       return prev + next['Value']
     }, 0)
-    ReleasedCredit(CreditValue, row.id, row.Products)
+    ReleasedCredit(CreditValue*0.3, row.id, row.Products,'Entry')
     setreleasaCreditModalIsOpen(false)
   }
   return (
@@ -125,7 +123,7 @@ function Row (props) {
           {row['Products']
             ? row['Products'].reduce((prev, next) => {
                 return prev + next['Value']
-              }, 0)
+              }, 0)*0.3 || 0
             : 0}
         </TableCell>
         <TableCell style={{ width: '5%' }}>
@@ -162,35 +160,13 @@ function Row (props) {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {row['Products'].map(item => (
-                    <TableRow>
+                  {row['Products'].map((item,index) => (
+                    <TableRow key={`Collapsed_PedingCredits_${index}`}>
                       <TableCell>{item.Nome}</TableCell>
-                      <TableCell>{item.Value}</TableCell>
+                      <TableCell>{item.Value || 0}</TableCell>
                     </TableRow>
                   ))}
-                  {/*Products ? (
-                    Products.filter(p => p['Client'] !== undefined).filter(p => p['Client'].id === row.id).map(
-                      historyRow => (
-                        <TableRow >
-                          <TableCell>{historyRow.Nome}</TableCell>
-                          <TableCell style={{ float: 'right', width: '5%' }}>
-                            <Button>
-                              <DeleteIcon />
-                            </Button>
-                          </TableCell>
-                          <TableCell style={{ float: 'right', width: '5%' }}>
-                            <Button
-                              onClick={() => openProdEditModal(historyRow)}
-                            >
-                              <ModeEditOutlineOutlinedIcon />
-                            </Button>
-                          </TableCell>
-                        </TableRow>
-                      )
-                    )
-                  ) : (
-                    <></>
-                  )*/}
+        
                 </TableBody>
               </Table>
             </Box>

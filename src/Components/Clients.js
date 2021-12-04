@@ -131,6 +131,7 @@ function Row (props) {
   const [removeModalIsOpen] = React.useState(false)
   const { Entries, Products, Sales } = useData()
   function removeProduct () {}
+ 
   return (
     <React.Fragment>
       <Modal
@@ -164,7 +165,8 @@ function Row (props) {
           {Products
             ? Products.filter(p => p['Client'] !== undefined)
                 .filter(p => p['Client'].id === row.id)
-                .reduce((prev, next) => prev['Value'] + next['Value'], 0) || 0
+                .filter(p => p['Value'] !== undefined)
+                .reduce((prev, next) => +prev + +next.Value, 0)
             : 0}
         </TableCell>
         <TableCell style={{ width: '75%' }}>
@@ -177,8 +179,8 @@ function Row (props) {
                 .map(y => ({ ...y, type: 'Saida' }))
             )
             .reduce((a, b) => {
-              if (b.type === 'Entrada') return a + b.Value
-              else return a - b.Value
+              if (b.type === 'Entrada') return +a + +b.Value
+              else return +a - +b.Value
             }, 0) || 0}
         </TableCell>
         <TableCell style={{ width: '5%' }}>

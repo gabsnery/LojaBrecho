@@ -17,11 +17,17 @@ export const SalesForm = props => {
 
   const { modalIsOpen, setIsOpen } = props
   const { setState_ } = useState_()
-  const { Clients, reduceStock, updateSalesProducts } = useData()
+  const {
+    Clients,
+    ReleasedCredit,
+    reduceStock,
+    updateSalesProducts
+  } = useData()
 
   const { Products } = useData()
   const [CurrentItem, setCurrentItem] = useState(props.CurrentItem)
   const [OrderProducts, setOrderProducts] = useState([])
+  const [AvalibleCredit, setAvalibleCredit] = useState(0)
 
   function handleInputClient (e) {
     setCurrentItem({ ...CurrentItem, [e.target.name]: e.target.value })
@@ -35,11 +41,12 @@ export const SalesForm = props => {
       let total = OrderProducts.reduce((a, b) => {
         return a + b.Value
       }, 0)
-      let discont = CurrentItem.Discount ? CurrentItem.Discount : 0
+      let Credit = CurrentItem.Credit ? CurrentItem.Credit : 0
+
       setCurrentItem({
         ...CurrentItem,
         ValueProducts: total,
-        Value: total - total * (+discont / 100)
+        Value: total - Credit
       })
     }
   }, [OrderProducts])
@@ -69,9 +76,18 @@ export const SalesForm = props => {
             .doc(item.id)
             .collection('Sales')
             .add({ Sale: SaleRef })
-          return null;
+          return null
         })
         reduceStock(OrderProducts)
+        if (CurrentItem.Credit > 0) {
+          ReleasedCredit(
+            -CurrentItem.Credit,
+            CurrentItem['Client'].id,
+            OrderProducts,
+            'Used'
+          )
+        }
+
         setIsOpen(false)
         setState_(true)
       })
@@ -85,10 +101,10 @@ export const SalesForm = props => {
             .doc(item.id)
             .collection('Sales')
             .add({ Sale: x })
-          return null;
-
+          return null
         })
         reduceStock(OrderProducts)
+
         setIsOpen(false)
         setState_(true)
       })
@@ -101,6 +117,12 @@ export const SalesForm = props => {
       let Cli = props.CurrentItem['Client']
         ? Clients_.find(y => y.id === props.CurrentItem['Client'].id)
         : 0
+      let credit = Clients.find(y => y.id === Cli.id)
+        ? Clients.find(y => y.id === Cli.id)['Credits'].reduce((prev, next) => {
+            return +prev + +next.Value
+          }, 0)
+        : 0
+      setAvalibleCredit(credit)
       item_['Client'] = { value: Cli.id, label: Cli.Nome }
     }
     let Items_ = []
@@ -125,8 +147,8 @@ export const SalesForm = props => {
     }
 
     setCurrentItem(item_)
-  }, [props.CurrentItem])
-
+  }, [Clients, Products, modalIsOpen, props.CurrentItem])
+  console.log(CurrentItem)
   return (
     <Modal
       open={modalIsOpen}
@@ -141,6 +163,16 @@ export const SalesForm = props => {
             options={Clients.map(x => ({ value: x.id, label: x.Nome }))}
             onChange={e => {
               let e_ = { target: { name: 'Client', value: e.value } }
+              let credit = Clients.find(y => y.id === e.value)
+                ? Clients.find(y => y.id === e.value)['Credits'].reduce(
+                    (prev, next) => {
+                      return +prev + +next.Value
+                    },
+                    0
+                  )
+                : 0
+              setAvalibleCredit(credit)
+
               handleInputClient(e_)
             }}
             value={CurrentItem.Client}
@@ -165,23 +197,49 @@ export const SalesForm = props => {
             }
             label='Site?'
           />
+
           <FormControlLabel
             control={
               <Checkbox
                 id='UseCredit'
-                checked={CurrentItem.UseCredit}
+                value={CurrentItem.UseCredit || false}
                 variant='standard'
                 name='UseCredit'
-                onChange={e =>
+                onChange={e => {
                   setCurrentItem({
                     ...CurrentItem,
-                    [e.target.name]: e.target.checked
+                    [e.target.name]: e.target.checked,
+                    Value: CurrentItem.ValueProducts,
+                    Credit: 0
                   })
-                }
+                }}
               />
             }
             label='Usar crédito?'
           />
+          <span style={{ color: 'grey' }}>{AvalibleCredit}</span>
+          {CurrentItem.UseCredit ? (
+            <TextField
+              label='Crédito'
+              type='Number'
+              value={CurrentItem.Credit}
+              onChange={e =>
+                setCurrentItem({
+                  ...CurrentItem,
+                  [e.target.name]:
+                    e.target.name === 'Credit'
+                      ? +e.target.value
+                      : e.target.value,
+                  Value: CurrentItem.ValueProducts - +e.target.value
+                })
+              }
+              name='Credit'
+              id='formatted-numberformat-input'
+              variant='standard'
+            />
+          ) : (
+            <></>
+          )}
           <Dropdown
             options={Products.filter(x => x['Stock'] !== null)
               .filter(x => x.Stock > 0 && !x.Site)

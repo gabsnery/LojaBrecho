@@ -89,45 +89,6 @@ export const EntriesForm = props => {
             value={CurrentItem.Client}
             placeholder='Select an option'
           />
-          <TextField
-            label='Valor de venda'
-            type="Number"
-            value={CurrentItem.Value}
-            onChange={(e)=>setCurrentItem({ ...CurrentItem, [e.target.name]: e.target.name==="Value"?+e.target.value:e.target.value })}
-            name='Value'
-            id='formatted-numberformat-input'
-            variant='standard'
-          />
-               <FormControlLabel
-            control={
-              <Checkbox
-                id='AutoCalculate'
-                checked={CurrentItem.AutoCalculate}
-                variant='standard'
-                name='AutoCalculate'
-                label='AutoCalculate'
-                onChange={e =>
-                  setCurrentItem({
-                    ...CurrentItem,
-                    [e.target.name]: e.target.checked,Credit:CurrentItem.Value*0.7
-                  })
-                  
-                }
-              />
-            }
-            label='Calcular automaticamente?'
-          />
-
-           <TextField
-            label='Valor de crédito'
-            type="Number"
-            disabled={CurrentItem.AutoCalculate}
-            value={CurrentItem.Credit}
-            onChange={(e)=>setCurrentItem({ ...CurrentItem, [e.target.name]: e.target.name==="Value"?+e.target.value:e.target.value })}
-            name='Credit'
-            id='formatted-numberformat-input'
-            variant='standard'
-          />
           <Button
             type='submit'
             className={classes.SubmitButton}

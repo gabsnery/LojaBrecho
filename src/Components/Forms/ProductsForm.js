@@ -12,7 +12,6 @@ import firebase from '../../firebase.config'
 import FirebaseServices from '../../services/services'
 import Style from '../../Style'
 
-
 export const ProductsForm = props => {
   const classes = Style()
   const { modalIsOpen, setIsOpen } = props
@@ -76,10 +75,10 @@ export const ProductsForm = props => {
   }
   useEffect(() => {
     setCurrentProduct(props.CurrentProduct)
-    props.CurrentProduct['Type']="ThriftStore"
-    props.CurrentProduct['Sold']=false
-    props.CurrentProduct['ReleasedCredit']=false
-    props.CurrentProduct['Stock']=0
+    props.CurrentProduct['Type'] = 'ThriftStore'
+    props.CurrentProduct['Sold'] = false
+    props.CurrentProduct['ReleasedCredit'] = false
+    props.CurrentProduct['Stock'] = 1
     //props.CurrentProduct['Type']="New";
     if (props.CurrentProduct['Description']) {
       setEditorState(
@@ -138,6 +137,7 @@ export const ProductsForm = props => {
               label='Estoque'
               type='Number'
               value={CurrentProduct.Stock}
+              disabled={CurrentProduct.Type === 'ThriftStore'}
               onChange={e =>
                 setCurrentProduct({
                   ...CurrentProduct,
@@ -168,7 +168,7 @@ export const ProductsForm = props => {
           <div
             style={{
               border: '1px solid grey',
-              padding:'10px',
+              padding: '10px',
               marginTop: '10px',
               display: 'grid',
               gridTemplateColumns: 'repeat(4,1fr)',

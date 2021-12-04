@@ -16,7 +16,18 @@ export default function DataProvider ({ children }) {
   })
   useEffect(() => {
     async function fetchData () {
-      setClients(await getData('Clients', 'Nome'))
+      let _Clients = await getData('Clients', 'Nome');
+      for (let x=0;x<_Clients.length;x++){
+        let data=await firebase
+        .firestore()
+        .collection('Clients')
+        .doc(_Clients[x].id)
+        .collection('Credits').get()
+        let List = data.docs
+        _Clients[x]["Credits"]=List.map(item=>item.data())
+      }
+
+      setClients(_Clients)
       setProducts(await getData('Products', 'Nome'))
       setEntries(await getData('Entries', 'Nome'))
       setSales(await getData('Sales', 'Nome'))
@@ -42,7 +53,7 @@ export default function DataProvider ({ children }) {
     Items_.sort((a, b) => (a[sort] > b[sort] ? 1 : b[sort] > a[sort] ? -1 : 0))
     return Items_
   }
-  async function ReleasedCredit (CreditValue, Client, Products) {
+  async function ReleasedCredit (CreditValue, Client, Products,Type) {
     Products = Products.map(item =>
       firebase
         .firestore()
@@ -55,7 +66,7 @@ export default function DataProvider ({ children }) {
       .collection('Clients')
       .doc(Client)
       .collection('Credits')
-      .add({ Value: CreditValue, Type: 'Entry', Products: Products })
+      .add({ Value: CreditValue, Type: Type, Products: Products })
       .then(() => {
         Products.map(item => item.update({ ReleasedCredit: true }))
       })

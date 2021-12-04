@@ -55,9 +55,8 @@ const Sales = () => {
     })
   }
   const handleClose = () => setremoveIsOpen(false)
-
-  return (
-    <div className='Sales'>
+  const removeSaleModal = () => {
+    return (
       <Modal
         open={removeModalIsOpen}
         onClose={handleClose}
@@ -69,6 +68,11 @@ const Sales = () => {
           <Button variant='outlined' onClick={() => removeItem()}></Button>
         </Box>
       </Modal>
+    )
+  }
+  return (
+    <div className='Sales'>
+      {removeSaleModal()}
       <div className={classes.List}>
         <SalesForm
           modalIsOpen={modalIsOpen}
@@ -97,8 +101,6 @@ const Sales = () => {
               <TableCell style={{ width: '50%' }}>Cliente</TableCell>
               <TableCell>Data</TableCell>
               <TableCell>Valor</TableCell>
-              <TableCell />
-              <TableCell />
               <TableCell />
               <TableCell />
             </TableRow>
@@ -154,7 +156,7 @@ function Row (props) {
         <TableCell style={{ width: '70%' }}>
           {moment(new Date(row.Created.seconds * 1000)).format()}
         </TableCell>
-        <TableCell style={{ width: '5%' }}>{row.Value}</TableCell>
+        <TableCell style={{ width: '5%' }}>{row.Value || 0}</TableCell>
         <TableCell style={{ width: '5%' }}>
           <Button onClick={() => openEditModal(row)}>
             <ModeEditOutlineOutlinedIcon />
