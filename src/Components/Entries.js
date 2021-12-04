@@ -106,6 +106,7 @@ const Entries = () => {
           <TableBody>
             {Entries.map((row, index) => (
               <Row
+                key={`Entries_Row_${index}`}
                 row={row}
                 index={index}
                 openEditModal={openEditModal}
@@ -172,7 +173,7 @@ function Row (props) {
             ? Products.filter(p => p['Entry'] !== undefined)
                 .filter(p => p['Entry'].id === row.id)
                 .map(item => item.Value)
-                .reduce((prev, next) => prev + next,0)
+                .reduce((prev, next) => prev + next, 0) || 0
             : 0}
         </TableCell>
         <TableCell style={{ width: '5%' }}>{row.Credit}</TableCell>
@@ -217,7 +218,7 @@ function Row (props) {
                     Products.filter(p => p['Entry'] !== undefined)
                       .filter(p => p['Entry'].id === row.id)
                       .map(historyRow => (
-                        <TableRow key={`Collapsed_${index}`}>
+                        <TableRow key={`Collapsed__Entries_Row_${index}`}>
                           <TableCell>{historyRow.Nome}</TableCell>
                           <TableCell style={{ float: 'right', width: '5%' }}>
                             <Button>

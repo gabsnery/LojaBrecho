@@ -109,7 +109,7 @@ const Clients = () => {
           <TableBody>
             {Clients.map((row, index) => (
               <Row
-                key={row.id}
+                key={`Client_Row_${row.id}`}
                 openEditModal={openEditModal}
                 Products={Products}
                 SelectedRow={CurrentClient}
@@ -126,16 +126,10 @@ const Clients = () => {
 }
 
 function Row (props) {
-  const {
-    row,
-    openRemoveModal,
-    openEditModal,
-    index,
-    SelectedRow
-  } = props
+  const { row, openRemoveModal, openEditModal, index, SelectedRow } = props
   const [open, setOpen] = React.useState(false)
   const [removeModalIsOpen] = React.useState(false)
-  const { Entries,Products,Sales } = useData()
+  const { Entries, Products, Sales } = useData()
   function removeProduct () {}
   return (
     <React.Fragment>
@@ -150,9 +144,7 @@ function Row (props) {
         </Box>
       </Modal>
 
-
-
-      <TableRow sx={{ '& > *': { borderBottom: 'unset' } }} key={row.id}>
+      <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
         <TableCell style={{ width: '5%' }} padding='checkbox'>
           <Radio
             checked={row === SelectedRow}
@@ -168,9 +160,13 @@ function Row (props) {
           {row.id}
         </TableCell>
         <TableCell style={{ width: '75%' }}>{row.Nome}</TableCell>
-        <TableCell style={{ width: '75%' }}>{Products?Products.filter(p => p['Client'] !== undefined)
-                      .filter(p => p['Client'].id === row.id).reduce((prev,next)=>prev['Value']+next['Value'],0):0}
-                      </TableCell>
+        <TableCell style={{ width: '75%' }}>
+          {Products
+            ? Products.filter(p => p['Client'] !== undefined)
+                .filter(p => p['Client'].id === row.id)
+                .reduce((prev, next) => prev['Value'] + next['Value'], 0) || 0
+            : 0}
+        </TableCell>
         <TableCell style={{ width: '75%' }}>
           {Entries.filter(p => p['Client'] !== undefined)
             .filter(p => p['Client'].id === row.id)
@@ -183,7 +179,7 @@ function Row (props) {
             .reduce((a, b) => {
               if (b.type === 'Entrada') return a + b.Value
               else return a - b.Value
-            }, 0)}
+            }, 0) || 0}
         </TableCell>
         <TableCell style={{ width: '5%' }}>
           <Button
@@ -228,8 +224,8 @@ function Row (props) {
                           .filter(p => p['Client'].id === row.id)
                           .map(y => ({ ...y, type: 'Saida' }))
                       )
-                      .map(subRow => (
-                        <TableRow>
+                      .map((subRow, index) => (
+                        <TableRow key={`Client_Row_${row.id}_${index}`}>
                           <TableCell>
                             {moment(
                               new Date(row.Created.seconds * 1000)

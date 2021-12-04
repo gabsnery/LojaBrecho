@@ -1,5 +1,4 @@
 import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined'
-import DeleteIcon from '@mui/icons-material/Delete'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
 import ModeEditOutlineOutlinedIcon from '@mui/icons-material/ModeEditOutlineOutlined'
@@ -17,11 +16,9 @@ import TableRow from '@mui/material/TableRow'
 import Typography from '@mui/material/Typography'
 import moment from 'moment'
 import React, { useState } from 'react'
-
 import { useData, useState_ } from '../Context/DataContext'
 import FirebaseServices from '../services/services'
 import Style from '../Style'
-import { ProductsForm } from './Forms/ProductsForm'
 import { SalesForm } from './Forms/SalesForm'
 
 const style = {
@@ -45,7 +42,7 @@ const Sales = () => {
 
   const { Sales } = useData()
   const { setState_ } = useState_()
-  const { Clients } = useData()
+  //const { Clients } = useData()
 
   function openEditModal (Cli) {
     setCurrentItem(Cli)
@@ -72,9 +69,7 @@ const Sales = () => {
           <Button variant='outlined' onClick={() => removeItem()}></Button>
         </Box>
       </Modal>
-      <div
-        className={classes.List}
-        >
+      <div className={classes.List}>
         <SalesForm
           modalIsOpen={modalIsOpen}
           CurrentItem={CurrentItem}
@@ -99,7 +94,7 @@ const Sales = () => {
           <TableHead>
             <TableRow>
               <TableCell />
-              <TableCell style={{width:'50%'}}>Cliente</TableCell>
+              <TableCell style={{ width: '50%' }}>Cliente</TableCell>
               <TableCell>Data</TableCell>
               <TableCell>Valor</TableCell>
               <TableCell />
@@ -111,12 +106,13 @@ const Sales = () => {
           <TableBody>
             {Sales.map((row, index) => (
               <Row
-              row={row}
-              index={index}
-              openEditModal={openEditModal}
-              setCurrentItem={setCurrentItem}
-              CurrentItem={CurrentItem}
-            />
+                key={`Sale_Row_${row.id}`}
+                row={row}
+                index={index}
+                openEditModal={openEditModal}
+                setCurrentItem={setCurrentItem}
+                CurrentItem={CurrentItem}
+              />
             ))}
           </TableBody>
         </Table>
@@ -130,48 +126,43 @@ function Row (props) {
   const { Products } = useData()
 
   const [ProductsOpen, setProductsOpen] = React.useState(false)
-  const [modalIsOpen, setModalIsOpen] = React.useState(false)
-  const [CurrentProduct, setCurrentProduct] = useState({})
-  function openProdEditModal (Cli) {
-    setCurrentProduct(Cli)
-    setModalIsOpen(true)
-  }
+  // const [modalIsOpen, setModalIsOpen] = React.useState(false)
+  // const [CurrentProduct, setCurrentProduct] = useState({})
+  // function openProdEditModal (Cli) {
+  //   setCurrentProduct(Cli)
+  //   setModalIsOpen(true)
+  // }
   return (
     <>
-
-
-      <TableRow sx={{ '& > *': { borderBottom: 'unset' } }} key={row.id}>
-      <TableCell style={{ width: '5%' }} padding='checkbox'>
-                  <Radio
-                    checked={row === CurrentItem}
-                    onChange={() => {
-                      setCurrentItem(row)
-                    }}
-                    value={row.Nome}
-                    name='radio-buttons'
-                    inputProps={{ 'aria-label': 'A' }}
-                  />
-                </TableCell>
-                <TableCell style={{ width: '10%' }} component='th' scope='row'>
-                  {Clients.find(x => x.id === row.Client.id)
-                    ? Clients.find(x => x.id === row.Client.id)['Nome']
-                    : ''}
-                </TableCell>
-                <TableCell style={{ width: '70%' }}>
-                  {moment(new Date(row.Created.seconds * 1000)).format()}
-                </TableCell>
-                <TableCell style={{ width: '5%' }}>
-                {row.Value}
-                </TableCell>
-                <TableCell style={{ width: '5%' }}>
-                  <Button onClick={() => openEditModal(row)}>
-                    <ModeEditOutlineOutlinedIcon />
-                  </Button>
-                </TableCell>
-                <TableCell style={{ width: '5%' }}>
-                  <IconButton aria-label='expand row' size='small'></IconButton>
-                </TableCell>
-
+      <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
+        <TableCell style={{ width: '5%' }} padding='checkbox'>
+          <Radio
+            checked={row === CurrentItem}
+            onChange={() => {
+              setCurrentItem(row)
+            }}
+            value={row.Nome}
+            name='radio-buttons'
+            inputProps={{ 'aria-label': 'A' }}
+          />
+        </TableCell>
+        <TableCell style={{ width: '10%' }} component='th' scope='row'>
+          {Clients.find(x => x.id === row.Client.id)
+            ? Clients.find(x => x.id === row.Client.id)['Nome']
+            : ''}
+        </TableCell>
+        <TableCell style={{ width: '70%' }}>
+          {moment(new Date(row.Created.seconds * 1000)).format()}
+        </TableCell>
+        <TableCell style={{ width: '5%' }}>{row.Value}</TableCell>
+        <TableCell style={{ width: '5%' }}>
+          <Button onClick={() => openEditModal(row)}>
+            <ModeEditOutlineOutlinedIcon />
+          </Button>
+        </TableCell>
+        <TableCell style={{ width: '5%' }}>
+          <IconButton aria-label='expand row' size='small'></IconButton>
+        </TableCell>
 
         <TableCell style={{ width: '5%' }}>
           <IconButton
@@ -184,7 +175,6 @@ function Row (props) {
         </TableCell>
       </TableRow>
 
-
       <TableRow key={`Collapsed${index}`}>
         <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
           <Collapse in={ProductsOpen} timeout='auto' unmountOnExit>
@@ -192,7 +182,7 @@ function Row (props) {
               <Typography variant='h6' gutterBottom component='div'>
                 Products
               </Typography>
-         
+
               <Table size='small'>
                 <TableHead>
                   <TableRow>
@@ -201,14 +191,13 @@ function Row (props) {
                 </TableHead>
                 <TableBody>
                   {Products ? (
-                    Products.filter(p => p['Sale'] !== undefined).filter(p => p['Sale'].id === row.id).map(
-                      historyRow => (
-                        <TableRow key={`Collapsed_${index}`}>
+                    Products.filter(p => p['Sale'] !== undefined)
+                      .filter(p => p['Sale'].id === row.id)
+                      .map(historyRow => (
+                        <TableRow key={`Collapsed_Sales_${index}`}>
                           <TableCell>{historyRow.Nome}</TableCell>
-                          
                         </TableRow>
-                      )
-                    )
+                      ))
                   ) : (
                     <></>
                   )}

@@ -1,18 +1,17 @@
-import { Checkbox, FormControlLabel } from '@mui/material'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Modal from '@mui/material/Modal'
 import TextField from '@mui/material/TextField'
+import { convertFromRaw, convertToRaw, EditorState } from 'draft-js'
 import React, { useEffect, useState } from 'react'
+import { Editor } from 'react-draft-wysiwyg'
+import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css'
+import '../../App.css'
 import { useData, useState_ } from '../../Context/DataContext'
 import firebase from '../../firebase.config'
 import FirebaseServices from '../../services/services'
 import Style from '../../Style'
 
-import '../../App.css'
-import { Editor } from 'react-draft-wysiwyg'
-import { EditorState, convertToRaw, convertFromRaw } from 'draft-js'
-import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css'
 
 export const ProductsForm = props => {
   const classes = Style()

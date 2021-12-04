@@ -55,12 +55,10 @@ export default function DataProvider ({ children }) {
       .collection('Clients')
       .doc(Client)
       .collection('Credits')
-      .add({ Value: CreditValue, Type: 'Entry', Products: Products }).then(()=>{
-        Products.map(item=>{
-          item.update({ReleasedCredit:true});
-        })
+      .add({ Value: CreditValue, Type: 'Entry', Products: Products })
+      .then(() => {
+        Products.map(item => item.update({ ReleasedCredit: true }))
       })
-
   }
   async function updateSalesProducts (Sale, Products) {
     let Products_ = (
@@ -111,6 +109,7 @@ export default function DataProvider ({ children }) {
         .doc(Sale.id)
         .collection('Products')
         .add({ Product: ProductsRef })
+      return null
     })
   }
   async function reduceStock (products) {
@@ -119,7 +118,7 @@ export default function DataProvider ({ children }) {
         .firestore()
         .collection('Products')
         .doc(item.id)
-        .update({ Stock: item.Stock - 1,Sold:true })
+        .update({ Stock: item.Stock - 1, Sold: true })
     )
   }
   async function updateTotalValue (product) {

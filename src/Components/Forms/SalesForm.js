@@ -32,15 +32,14 @@ export const SalesForm = props => {
   }
   useEffect(() => {
     if (OrderProducts.length > 0) {
-      let total= OrderProducts.reduce((a, b) => {
+      let total = OrderProducts.reduce((a, b) => {
         return a + b.Value
-      }, 0);
-      let discont = CurrentItem.Discount?CurrentItem.Discount:0;
+      }, 0)
+      let discont = CurrentItem.Discount ? CurrentItem.Discount : 0
       setCurrentItem({
         ...CurrentItem,
-        ValueProducts: total,Value:
-        total -
-        total * (+discont / 100)
+        ValueProducts: total,
+        Value: total - total * (+discont / 100)
       })
     }
   }, [OrderProducts])
@@ -70,6 +69,7 @@ export const SalesForm = props => {
             .doc(item.id)
             .collection('Sales')
             .add({ Sale: SaleRef })
+          return null;
         })
         reduceStock(OrderProducts)
         setIsOpen(false)
@@ -85,6 +85,8 @@ export const SalesForm = props => {
             .doc(item.id)
             .collection('Sales')
             .add({ Sale: x })
+          return null;
+
         })
         reduceStock(OrderProducts)
         setIsOpen(false)

@@ -105,11 +105,7 @@ function LoggedArea (props) {
                 style={{ color: 'white' }}
                 {...a11yProps(4)}
               />
-              <Tab
-                label='Créditos '
-                style={{ color: 'white' }}
-                {...a11yProps(5)}
-              />
+        
             </Tabs>
           </Box>
           <TabPanel value={value} index={0}>
@@ -127,9 +123,7 @@ function LoggedArea (props) {
           <TabPanel value={value} index={4}>
             <PedingCredit key={4}></PedingCredit>
           </TabPanel>
-          <TabPanel value={value} index={5}>
-            <Sales></Sales>
-          </TabPanel>
+        
         </>
       ) : (
         <></>

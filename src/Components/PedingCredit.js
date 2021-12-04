@@ -21,26 +21,30 @@ const PedingCredit = () => {
   const { Products } = useData()
   const [ClientswCredit, setClientswCredit] = useState([])
 
-  useEffect(() => {
-    let _temp = Clients.map(({ Products, ...keepAttrs }) => keepAttrs)
-    console.log('Clients', Clients)
-    Products.filter(
-      p =>
-        p['Client'] !== undefined &&
-        p['Sold'] !== undefined &&
-        p['ReleasedCredit'] !== undefined
-    )
-      .filter(p1 => (p1['Sold'] === true && p1['ReleasedCredit'] === false))
-      .map(it => {
-        let Index = _temp.findIndex(x => x.id === it['Client'].id)
-        if (!_temp[Index].hasOwnProperty('Products')) {
-          _temp[Index]['Products'] = []
-        }
 
-        _temp[Index]['Products'].push(it)
-        return {}
-      })
-    setClientswCredit(_temp.filter(x => x.Products !== undefined))
+  useEffect(() => {
+    const calculateCredits = () => {
+      let _temp = Clients.map(({ Products, ...keepAttrs }) => keepAttrs)
+      console.log('Clients', Clients)
+      Products.filter(
+        p =>
+          p['Client'] !== undefined &&
+          p['Sold'] !== undefined &&
+          p['ReleasedCredit'] !== undefined
+      )
+        .filter(p1 => p1['Sold'] === true && p1['ReleasedCredit'] === false)
+        .map(it => {
+          let Index = _temp.findIndex(x => x.id === it['Client'].id)
+          if (!_temp[Index].hasOwnProperty('Products')) {
+            _temp[Index]['Products'] = []
+          }
+  
+          _temp[Index]['Products'].push(it)
+          return {}
+        })
+      setClientswCredit(_temp.filter(x => x.Products !== undefined))
+    }
+    calculateCredits();
   }, [])
   const classes = Style()
 
@@ -91,7 +95,6 @@ function Row (props) {
     }, 0)
     ReleasedCredit(CreditValue, row.id, row.Products)
     setreleasaCreditModalIsOpen(false)
-
   }
   return (
     <React.Fragment>
@@ -103,7 +106,10 @@ function Row (props) {
       >
         <Box className={classes.RemoveModal}>
           Remover?
-          <Button variant='outlined' onClick={() => _ReleasedCredit()}> Vai</Button>
+          <Button variant='outlined' onClick={() => _ReleasedCredit()}>
+            {' '}
+            Vai
+          </Button>
         </Box>
       </Modal>
 
