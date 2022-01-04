@@ -8,18 +8,22 @@ import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
 import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
-import React, { useState } from 'react'
-import { useData } from '../Context/DataContext'
-import { ProductsForm } from './Forms/ProductsForm'
-import Style from '../Style'
-
-const Products = () => {
+import React, { useState,useEffect } from 'react'
+import { useData } from '../../Context/DataContext'
+import { ProductsForm } from './ProductsForm'
+import Style from '../../Style'
+const Products = (props ) => {
   const classes = Style()
 
-  const { Products } = useData()
+  const { Products,setProducts } = useData()
   const [modalIsOpen, setIsOpen] = useState(false)
   const [showAll, setshowAll] = useState(false)
   const [CurrentItem, setCurrentItem] = useState({})
+  useEffect(() => {
+    if (props.Products.length>0){
+      setProducts(props.Products)
+    }
+  }, [])
 
   function openProdEditModal (Cli) {
     setCurrentItem(Cli)
@@ -27,7 +31,7 @@ const Products = () => {
   }
 
   return (
-    <div className='Products'>
+    <div className='Products' >
       <ProductsForm
         CurrentProduct={CurrentItem}
         modalIsOpen={modalIsOpen}
@@ -57,7 +61,7 @@ const Products = () => {
               <TableCell />
             </TableRow>
           </TableHead>
-          <TableBody>
+          <TableBody data-testid = 'table-products'>
             {Products.filter(x => showAll || x.Stock > 0).map((row, index) => (
               <TableRow
                 sx={{

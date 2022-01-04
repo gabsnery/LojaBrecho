@@ -17,11 +17,11 @@ import TableRow from '@mui/material/TableRow'
 import Typography from '@mui/material/Typography'
 import moment from 'moment'
 import React, { useState } from 'react'
-import { useData, useState_ } from '../Context/DataContext'
-import FirebaseServices from '../services/services'
-import Style from '../Style'
-import { EntriesForm } from './Forms/EntriesForm'
-import { ProductsForm } from './Forms/ProductsForm'
+import { useData, useState_ } from '../../Context/DataContext'
+import FirebaseServices from '../../services/services'
+import Style from '../../Style'
+import { EntriesForm } from './EntriesForm'
+import { ProductsForm } from '../Products/ProductsForm'
 
 const style = {
   position: 'absolute',

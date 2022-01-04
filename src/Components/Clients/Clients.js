@@ -16,10 +16,10 @@ import TableRow from '@mui/material/TableRow'
 import Typography from '@mui/material/Typography'
 import moment from 'moment'
 import React, { useState } from 'react'
-import { useData, useState_ } from '../Context/DataContext'
-import FirebaseServices from '../services/services'
-import Style from '../Style'
-import { ClientForm } from './Forms/ClientForm'
+import { useData, useState_ } from '../../Context/DataContext'
+import FirebaseServices from '../../services/services'
+import Style from '../../Style'
+import { ClientForm } from './ClientForm'
 
 const Clients = () => {
   const classes = Style()

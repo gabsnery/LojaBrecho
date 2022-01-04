@@ -9,11 +9,7 @@ export default function DataProvider ({ children }) {
   const [Products, setProducts] = useState([])
   const [Entries, setEntries] = useState([])
   const [Sales, setSales] = useState([])
-  firebase.auth().onAuthStateChanged(function (user) {
-    if (user) {
-      //setState_(true)
-    }
-  })
+
   useEffect(() => {
     async function fetchData () {
       let _Clients = await getData('Clients', 'Nome');
