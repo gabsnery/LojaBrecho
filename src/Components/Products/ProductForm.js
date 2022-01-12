@@ -12,7 +12,7 @@ import firebase from '../../firebase.config'
 import FirebaseServices from '../../services/services'
 import Style from '../../Style'
 
-export const ProductsForm = props => {
+export const ProductForm = props => {
   const classes = Style()
   const { modalIsOpen, setIsOpen } = props
   const { setState_ } = useState_()
@@ -110,6 +110,7 @@ export const ProductsForm = props => {
             style={{ width: '100%' }}
             defaultValue={CurrentProduct.Nome}
             onChange={handleInputClient}
+            autoComplete='off'
           />
           <div
             style={{

@@ -10,6 +10,7 @@ import Sales from './Components/Sales/Sales'
 import PedingCredit from './Components/PedingCredit'
 import DataProvider, { useState_ } from './Context/DataContext'
 import firebase from './firebase.config'
+import FirebaseServices from './services/services'
 
 function a11yProps (index) {
   return {
@@ -70,11 +71,14 @@ function LoggedArea (props) {
   const handleChange = (event, newValue) => {
     setValue(newValue)
   }
+  const truncateFirebase = () =>{
+    FirebaseServices.truncate()
+
+  }
   return (
-    <>
-      {authenticated ? (
         <>
           <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+            <button onClick={truncateFirebase}>clear all</button>
             <Tabs
               value={value}
               onChange={handleChange}
@@ -123,11 +127,6 @@ function LoggedArea (props) {
           <TabPanel value={value} index={4}>
             <PedingCredit key={4}></PedingCredit>
           </TabPanel>
-        
-        </>
-      ) : (
-        <></>
-      )}
     </>
   )
 }

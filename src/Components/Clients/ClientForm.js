@@ -59,6 +59,7 @@ export const ClientForm = props => {
             style={{ width: '100%' }}
             defaultValue={CurrentClient.Nome}
             onChange={handleInputClient}
+            autoComplete='off'
           />
           <TextField
             id='Endereço'

@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
 import firebase from '../firebase.config'
 
-const DataContext = createContext()
+export const DataContext = createContext()
 
 export default function DataProvider ({ children }) {
   const [State_, setState_] = useState(true)
@@ -12,21 +12,41 @@ export default function DataProvider ({ children }) {
 
   useEffect(() => {
     async function fetchData () {
-      let _Clients = await getData('Clients', 'Nome');
-      for (let x=0;x<_Clients.length;x++){
-        let data=await firebase
-        .firestore()
-        .collection('Clients')
-        .doc(_Clients[x].id)
-        .collection('Credits').get()
+      let _Clients = await getData('Clients', 'Nome')
+      for (let x = 0; x < _Clients.length; x++) {
+        let data = await firebase
+          .firestore()
+          .collection('Clients')
+          .doc(_Clients[x].id)
+          .collection('Credits')
+          .get()
         let List = data.docs
-        _Clients[x]["Credits"]=List.map(item=>item.data())
+        _Clients[x]['Credits'] = List.map(item => item.data())
       }
 
       setClients(_Clients)
-      setProducts(await getData('Products', 'Nome'))
+
+      let _Sales = await getData('Sales', 'Nome')
+      let _Products = await getData('Products', 'Nome')
+
+      for (let x = 0; x < _Sales.length; x++) {
+        let data_ = await firebase
+          .firestore()
+          .collection('Sales')
+          .doc(_Sales[x].id)
+          .collection('Products')
+          .get()
+        let List_ = data_.docs.map(data1 => data1.data()['Product'])
+        _Sales[x]['Products'] = []
+        for (let y = 0; y < List_.length; y++) {
+          _Sales[x]['Products'].push(_Products.find(x => x.id === List_[y].id))
+        }
+      }
+
+      setSales(_Sales)
+
+      setProducts(_Products)
       setEntries(await getData('Entries', 'Nome'))
-      setSales(await getData('Sales', 'Nome'))
     }
 
     if (State_) {
@@ -49,7 +69,7 @@ export default function DataProvider ({ children }) {
     Items_.sort((a, b) => (a[sort] > b[sort] ? 1 : b[sort] > a[sort] ? -1 : 0))
     return Items_
   }
-  async function ReleasedCredit (CreditValue, Client, Products,Type) {
+  async function ReleasedCredit (CreditValue, Client, Products, Type) {
     Products = Products.map(item =>
       firebase
         .firestore()
@@ -65,6 +85,7 @@ export default function DataProvider ({ children }) {
       .add({ Value: CreditValue, Type: Type, Products: Products })
       .then(() => {
         Products.map(item => item.update({ ReleasedCredit: true }))
+        setState_(true)
       })
   }
   async function updateSalesProducts (Sale, Products) {
@@ -116,7 +137,6 @@ export default function DataProvider ({ children }) {
         .doc(Sale.id)
         .collection('Products')
         .add({ Product: ProductsRef })
-      return null
     })
   }
   async function reduceStock (products) {

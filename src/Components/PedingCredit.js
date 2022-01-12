@@ -44,7 +44,7 @@ const PedingCredit = () => {
       setClientswCredit(_temp.filter(x => x.Products !== undefined))
     }
     calculateCredits();
-  }, [])
+  }, [Clients, Products])
   const classes = Style()
 
   return (
@@ -105,7 +105,6 @@ function Row (props) {
         <Box className={classes.RemoveModal}>
           Remover?
           <Button variant='outlined' onClick={() => _ReleasedCredit()}>
-            {' '}
             Vai
           </Button>
         </Box>
