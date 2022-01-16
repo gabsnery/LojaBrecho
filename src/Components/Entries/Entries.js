@@ -27,12 +27,10 @@ const style = {
 }
 const Entries = () => {
   const classes = Style()
-
   const [CurrentEntry, setCurrentEntry] = useState({})
   const [modalIsOpen, setIsOpen] = useState(false)
-
   const [removeModalIsOpen, setremoveIsOpen] = useState(false)
-  const { Entries } = useData()
+  const { Entries, Products } = useData()
   const { setState_ } = useState_()
   function removeItem () {
     FirebaseServices.remove('Entries', CurrentEntry).then(x => {
@@ -83,12 +81,10 @@ const Entries = () => {
         <Table aria-label='collapsible table' size='small'>
           <TableHead>
             <TableRow>
-              <TableCell />
               <TableCell style={{ width: '50%' }}>Cliente</TableCell>
               <TableCell>Data</TableCell>
               <TableCell>Nº de produtos</TableCell>
               <TableCell>Valor</TableCell>
-              <TableCell>Crédito</TableCell>
               <TableCell />
               <TableCell />
               <TableCell />
@@ -100,6 +96,13 @@ const Entries = () => {
                 key={`Entries_Row_${index}`}
                 Entry={row}
                 index={index}
+                EntryProducts={
+                  Products
+                    ? Products.filter(p => p['Entry'] !== undefined).filter(
+                        p => p['Entry'].id === row.id
+                      )
+                    : []
+                }
               />
             ))}
           </TableBody>

@@ -1,15 +1,13 @@
-import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
 import ModeEditOutlineOutlinedIcon from '@mui/icons-material/ModeEditOutlineOutlined'
+import { TableBody } from '@mui/material'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Collapse from '@mui/material/Collapse'
 import IconButton from '@mui/material/IconButton'
 import Modal from '@mui/material/Modal'
-import Radio from '@mui/material/Radio'
 import Table from '@mui/material/Table'
-import {TableBody} from '@mui/material'
 import TableCell from '@mui/material/TableCell'
 import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
@@ -18,7 +16,6 @@ import moment from 'moment'
 import React, { useState } from 'react'
 import { useData, useState_ } from '../../Context/DataContext'
 import FirebaseServices from '../../services/services'
-import Style from '../../Style'
 import { SalesForm } from './SalesForm'
 
 const style = {
@@ -66,8 +63,6 @@ export const Sale = (props) => {
       </Modal>
     )
   }
-  console.log('Sale',Sale)
-  console.log('Products',Products)
   return (
     <>
       {removeSaleModal()}
@@ -130,8 +125,8 @@ export const Sale = (props) => {
                 <TableBody>
                   {Products ? (
                     Sale['Products']
-                      .map(historyRow => (
-                        <TableRow key={`Collapsed_Sales_${index}`}>
+                      .map((historyRow,index2) => (
+                        <TableRow key={`Collapsed_Sales_${index2}`}>
                           <TableCell>{historyRow.Nome}</TableCell>
                         </TableRow>
                       ))

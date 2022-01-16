@@ -36,10 +36,9 @@ const Clients = () => {
         <Table aria-label='collapsible table' size='small'>
           <TableHead>
             <TableRow>
-              <TableCell />
               <TableCell>Id</TableCell>
               <TableCell>Nome</TableCell>
-              <TableCell>Crédito previsto</TableCell>
+              <TableCell>Crédito</TableCell>
               <TableCell />
               <TableCell />
               <TableCell />

@@ -84,7 +84,7 @@ export const SalesForm = props => {
             -CurrentItem.Credit,
             CurrentItem['Client'].id,
             OrderProducts,
-            'Used'
+            'Credit used'
           )
         }
 
@@ -94,6 +94,14 @@ export const SalesForm = props => {
     } else {
       FirebaseServices.create('Sales', CurrentItem).then(x => {
         updateSalesProducts(x, OrderProducts)
+        if (CurrentItem.Credit > 0) {
+          ReleasedCredit(
+            -CurrentItem.Credit,
+            CurrentItem['Client'].id,
+            OrderProducts,
+            'Credit used'
+          )
+        }
         OrderProducts.map(item => {
           firebase
             .firestore()
@@ -148,7 +156,6 @@ export const SalesForm = props => {
 
     setCurrentItem(item_)
   }, [Clients, Products, modalIsOpen, props.CurrentItem])
-  console.log(CurrentItem)
   return (
     <Modal
       open={modalIsOpen}

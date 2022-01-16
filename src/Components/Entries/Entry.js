@@ -33,7 +33,7 @@ const style = {
   p: 4
 }
 export const Entry = props => {
-  const { Entry, index} = props
+  const { Entry,EntryProducts,index} = props
   const { Clients } = useData()
   const { Products } = useData()
   const [removeModalIsOpen, setremoveIsOpen] = useState(false)
@@ -52,6 +52,7 @@ export const Entry = props => {
       setState_(true)
     })
   }
+  console.log('EntryProducts',EntryProducts)
   return (
     <>
       <EntriesForm
@@ -86,20 +87,16 @@ export const Entry = props => {
             : ''}
         </TableCell>
         <TableCell style={{ width: '30%' }}>
-          {moment(new Date(Entry.Created.seconds * 1000)).format()}
+          {moment(new Date(Entry.Created.seconds * 1000)).format('MM/D/yyyy HH:mm')}
         </TableCell>
         <TableCell style={{ width: '20%' }}>
-          {Products
-            ? Products.filter(p => p['Entry'] !== undefined).filter(
-                p => p['Entry'].id === Entry.id
-              ).length
+          {EntryProducts
+            ? EntryProducts.length
             : 0}
         </TableCell>
         <TableCell style={{ width: '20%' }}>
-          {Products
-            ? Products.filter(p => p['Entry'] !== undefined)
-                .filter(p => p['Entry'].id === Entry.id)
-                .map(item => item.Value)
+          {EntryProducts
+            ? EntryProducts.map(item => item.Value)
                 .reduce((prev, next) => prev + next, 0) || 0
             : 0}
         </TableCell>
@@ -137,11 +134,12 @@ export const Entry = props => {
               </Typography>
               <Button
                 variant='outlined'
+                style={{float:'left'}}
                 onClick={() => setnewProductIsOpen(true)}
               >
                 Novo produto
               </Button>
-              <Table size='small'>
+              <Table size='small' >
                 <TableHead>
                   <TableRow>
                     <TableCell>Nome</TableCell>
@@ -150,9 +148,8 @@ export const Entry = props => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {Products ? (
-                    Products.filter(p => p['Entry'] !== undefined)
-                      .filter(p => p['Entry'].id === Entry.id)
+                  {EntryProducts ? (
+                    EntryProducts
                       .map((historyEntry,index) => (
                         <Product key={`Products_Row_${index}`}  Product={historyEntry} Entry={Entry} index={index}/>
                       ))

@@ -71,14 +71,10 @@ function LoggedArea (props) {
   const handleChange = (event, newValue) => {
     setValue(newValue)
   }
-  const truncateFirebase = () =>{
-    FirebaseServices.truncate()
 
-  }
   return (
         <>
           <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-            <button onClick={truncateFirebase}>clear all</button>
             <Tabs
               value={value}
               onChange={handleChange}

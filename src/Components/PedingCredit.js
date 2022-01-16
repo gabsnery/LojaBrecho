@@ -15,11 +15,13 @@ import Typography from '@mui/material/Typography'
 import React, { useEffect, useState } from 'react'
 import { useData } from '../Context/DataContext'
 import Style from '../Style'
+import { useTranslation } from "react-i18next";
 
 const PedingCredit = () => {
   const { Clients } = useData()
   const { Products } = useData()
   const [ClientswCredit, setClientswCredit] = useState([])
+  const { t, i18n } = useTranslation();
 
 
   useEffect(() => {
@@ -91,7 +93,7 @@ function Row (props) {
     let CreditValue = row['Products'].reduce((prev, next) => {
       return prev + next['Value']
     }, 0)
-    ReleasedCredit(CreditValue*0.3, row.id, row.Products,'Entry')
+    ReleasedCredit(CreditValue*0.3, row.id, row.Products,'CreditUsed')
     setreleasaCreditModalIsOpen(false)
   }
   return (

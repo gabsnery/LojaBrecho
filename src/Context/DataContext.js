@@ -77,17 +77,25 @@ export default function DataProvider ({ children }) {
         .doc(item.id)
     )
 
-    firebase
+    await firebase
       .firestore()
       .collection('Clients')
       .doc(Client)
       .collection('Credits')
-      .add({ Value: CreditValue, Type: Type, Products: Products })
+      .add({
+        Value: CreditValue,
+        Created: new Date(),
+        Type: Type,
+        Products: Products
+      })
       .then(() => {
         Products.map(item => item.update({ ReleasedCredit: true }))
         setState_(true)
       })
+
+    return
   }
+
   async function updateSalesProducts (Sale, Products) {
     let Products_ = (
       await firebase
@@ -137,6 +145,7 @@ export default function DataProvider ({ children }) {
         .doc(Sale.id)
         .collection('Products')
         .add({ Product: ProductsRef })
+      return {}
     })
   }
   async function reduceStock (products) {
