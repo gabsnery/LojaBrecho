@@ -14,6 +14,7 @@ function ClientHistory (props) {
   useEffect(() => {
     i18n.changeLanguage('pt')
     setClientHistory(CreateResume(props.Client))
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props])
 
   const CreateResume = Client => {

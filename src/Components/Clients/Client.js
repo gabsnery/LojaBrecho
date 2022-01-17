@@ -9,10 +9,8 @@ import Modal from '@mui/material/Modal'
 import Table from '@mui/material/Table'
 import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
-import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
 import TextField from '@mui/material/TextField'
-import Typography from '@mui/material/Typography'
 import React, { useEffect } from 'react'
 import { useData } from '../../Context/DataContext'
 import Style from '../../Style'
@@ -37,10 +35,10 @@ function Client (props) {
 
   useEffect(() => {
     setCurrentAvailablebleCredit(CalculateCurrentCredit(Client))
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props])
 
   const CalculateCurrentCredit = Client_ => {
-    console.log('Client_.Credit', Client_['Credits'])
     let temp = Client_.Credits
       ? Client_.Credits.reduce((a, b) => {
           return +a + b.Value

@@ -15,13 +15,11 @@ import Typography from '@mui/material/Typography'
 import React, { useEffect, useState } from 'react'
 import { useData } from '../Context/DataContext'
 import Style from '../Style'
-import { useTranslation } from "react-i18next";
 
 const PedingCredit = () => {
   const { Clients } = useData()
   const { Products } = useData()
   const [ClientswCredit, setClientswCredit] = useState([])
-  const { t, i18n } = useTranslation();
 
 
   useEffect(() => {

@@ -5,12 +5,11 @@ import React, { useEffect } from 'react'
 import Clients from './Components/Clients/Clients'
 import Entries from './Components/Entries/Entries'
 import Login from './Components/Login'
+import PedingCredit from './Components/PedingCredit'
 import Products from './Components/Products/Products'
 import Sales from './Components/Sales/Sales'
-import PedingCredit from './Components/PedingCredit'
 import DataProvider, { useState_ } from './Context/DataContext'
 import firebase from './firebase.config'
-import FirebaseServices from './services/services'
 
 function a11yProps (index) {
   return {

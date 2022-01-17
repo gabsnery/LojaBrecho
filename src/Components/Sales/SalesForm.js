@@ -49,7 +49,7 @@ export const SalesForm = props => {
         Value: total - Credit
       })
     }
-  }, [OrderProducts])
+  }, [OrderProducts, CurrentItem])
 
   function editProduct (e) {
     e.preventDefault()
@@ -118,44 +118,48 @@ export const SalesForm = props => {
       })
     }
   }
+  const CalcularCredit = Client => {
+    let Cli = Client ? Clients.find(y => y.id === Client.id) : 0
+    let credit = Clients.find(y => y.id === Cli.id)
+      ? Clients.find(y => y.id === Cli.id)['Credits'].reduce((prev, next) => {
+          return +prev + +next.Value
+        }, 0)
+      : 0
+    setAvalibleCredit(credit)
+    return Cli
+  }
   useEffect(() => {
     let item_ = { ...props.CurrentItem }
-    let Clients_ = [...Clients]
-    if (props.CurrentItem['Client'] && modalIsOpen) {
-      let Cli = props.CurrentItem['Client']
-        ? Clients_.find(y => y.id === props.CurrentItem['Client'].id)
-        : 0
-      let credit = Clients.find(y => y.id === Cli.id)
-        ? Clients.find(y => y.id === Cli.id)['Credits'].reduce((prev, next) => {
-            return +prev + +next.Value
-          }, 0)
-        : 0
-      setAvalibleCredit(credit)
-      item_['Client'] = { value: Cli.id, label: Cli.Nome }
-    }
-    let Items_ = []
-    if (props.CurrentItem.hasOwnProperty('id')) {
-      firebase
-        .firestore()
-        .collection('Sales')
-        .doc(props.CurrentItem.id)
-        .collection('Products')
-        .get()
-        .then(data => {
-          let List = data.docs
-          for (let index = 0; index < List.length; index++) {
-            let item = List[index].data()
+    if (props.modalIsOpen) {
+      if (props.CurrentItem['Client'] && props.modalIsOpen) {
+        let Cli = CalcularCredit(props.CurrentItem)
 
-            Items_.push(Products.find(x => x.id === item['Product'].id))
-          }
-          setOrderProducts(Items_)
-        })
-    } else {
-      setOrderProducts([])
-    }
+        item_['Client'] = { value: Cli.id, label: Cli.Nome }
+      }
+      let Items_ = []
+      if (props.CurrentItem.hasOwnProperty('id')) {
+        firebase
+          .firestore()
+          .collection('Sales')
+          .doc(props.CurrentItem.id)
+          .collection('Products')
+          .get()
+          .then(data => {
+            let List = data.docs
+            for (let index = 0; index < List.length; index++) {
+              let item = List[index].data()
 
-    setCurrentItem(item_)
-  }, [Clients, Products, modalIsOpen, props.CurrentItem])
+              Items_.push(Products.find(x => x.id === item['Product'].id))
+            }
+            setOrderProducts(Items_)
+          })
+      } else {
+        setOrderProducts([])
+      }
+
+      setCurrentItem(item_)
+    }
+  }, [props])
   return (
     <Modal
       open={modalIsOpen}

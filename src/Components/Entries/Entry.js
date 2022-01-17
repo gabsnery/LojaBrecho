@@ -1,4 +1,6 @@
 import DeleteIcon from '@mui/icons-material/Delete'
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
 import ModeEditOutlineOutlinedIcon from '@mui/icons-material/ModeEditOutlineOutlined'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
@@ -8,8 +10,8 @@ import Modal from '@mui/material/Modal'
 import Table from '@mui/material/Table'
 import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
-import TableRow from '@mui/material/TableRow'
 import TableHead from '@mui/material/TableHead'
+import TableRow from '@mui/material/TableRow'
 import Typography from '@mui/material/Typography'
 import moment from 'moment'
 import React, { useState } from 'react'
@@ -18,8 +20,6 @@ import FirebaseServices from '../../services/services'
 import { ProductForm } from '../Products/ProductForm'
 import { EntriesForm } from './EntriesForm'
 import { Product } from './Product'
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
-import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
 
 const style = {
   position: 'absolute',
@@ -35,7 +35,6 @@ const style = {
 export const Entry = props => {
   const { Entry,EntryProducts,index} = props
   const { Clients } = useData()
-  const { Products } = useData()
   const [removeModalIsOpen, setremoveIsOpen] = useState(false)
   const [modalIsOpen, setModalIsOpen] = useState(false)
   const [newProductIsOpen, setnewProductIsOpen] = useState(false)
@@ -52,7 +51,6 @@ export const Entry = props => {
       setState_(true)
     })
   }
-  console.log('EntryProducts',EntryProducts)
   return (
     <>
       <EntriesForm

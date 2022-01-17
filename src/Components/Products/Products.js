@@ -16,7 +16,8 @@ const Products = (props ) => {
     if (props.Products){
       setProducts(props.Products)
     }
-  }, [])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props])
 
   return (
     <div className='Products' >

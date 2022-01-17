@@ -44,32 +44,33 @@ export const ProductForm = props => {
 
   function editProduct (e) {
     e.preventDefault()
+    let _CurrentProduct = CurrentProduct;
     if (Client) {
       let ClientRef = firebase
         .firestore()
         .collection('Clients')
         .doc(Client.id)
-      CurrentProduct['Client'] = ClientRef
+        _CurrentProduct['Client'] = ClientRef
     }
     if (Entry) {
       let EntryRef = firebase
         .firestore()
         .collection('Entries')
         .doc(Entry.id)
-      CurrentProduct['Entry'] = EntryRef
+        _CurrentProduct['Entry'] = EntryRef
     }
 
-    if (CurrentProduct.hasOwnProperty('id')) {
-      FirebaseServices.update('Products', CurrentProduct).then(x => {
+    if (_CurrentProduct.hasOwnProperty('id')) {
+      FirebaseServices.update('Products', _CurrentProduct).then(x => {
         setIsOpen(false)
         setState_(true)
-        updateTotalValue(CurrentProduct)
+        updateTotalValue(_CurrentProduct)
       })
     } else {
-      FirebaseServices.create('Products', CurrentProduct).then(x => {
+      FirebaseServices.create('Products', _CurrentProduct).then(x => {
         setIsOpen(false)
         setState_(true)
-        updateTotalValue(CurrentProduct)
+        updateTotalValue(_CurrentProduct)
       })
     }
   }
