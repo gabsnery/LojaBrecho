@@ -12,7 +12,6 @@ function ClientHistory (props) {
   const { t, i18n } = useTranslation()
 
   useEffect(() => {
-    i18n.changeLanguage('pt')
     setClientHistory(CreateResume(props.Client))
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props])
@@ -24,8 +23,8 @@ function ClientHistory (props) {
       .filter(p => p['Client'].id === Client.id)
       .map(t =>
         temp.push({
-          type: 'Entrada',
-          Created: new Date(t.Created.seconds * 1000),
+          type: 'Entry',
+          created: new Date(t.created.seconds * 1000),
           Value: t.Value
         })
       )
@@ -34,19 +33,19 @@ function ClientHistory (props) {
       .filter(p => p['Client'].id === Client.id)
       .map(y =>
         temp.push({
-          type: 'Saida',
-          Created: new Date(y.Created.seconds * 1000),
+          type: 'Sold',
+          created: new Date(y.created.seconds * 1000),
           Value: y.Value
         })
       )
     Client.Credits.map(p =>
       temp.push({
-        type: p.Type,
-        Created: new Date(p.Created.seconds * 1000),
+        type: p.type,
+        created: new Date(p.created.seconds * 1000),
         Value: p.Value
       })
     )
-    temp = temp.sort((a, b) =>  b.Created -a.Created)
+    temp = temp.sort((a, b) =>  b.created -a.created)
     return temp
   }
   return (
@@ -55,7 +54,7 @@ function ClientHistory (props) {
         ClientHistory.map((subRow, index) => (
           <TableRow key={`Client_Row_${Client.id}_${index}`}>
             <TableCell>
-              {moment(subRow.Created).format('MM/D/yyyy HH:mm')}
+              {moment(subRow.created).format('MM/D/yyyy HH:mm')}
             </TableCell>
             <TableCell>{t(subRow.type)}</TableCell>
             <TableCell>{subRow.Value}</TableCell>

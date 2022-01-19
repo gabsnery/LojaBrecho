@@ -14,7 +14,8 @@ import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
 import Typography from '@mui/material/Typography'
 import moment from 'moment'
-import React, { useState } from 'react'
+import React, { useState } from 'react' 
+ import { useTranslation } from 'react-i18next'
 import { useData, useState_ } from '../../Context/DataContext'
 import FirebaseServices from '../../services/services'
 import { ProductForm } from '../Products/ProductForm'
@@ -40,6 +41,7 @@ export const Entry = props => {
   const [newProductIsOpen, setnewProductIsOpen] = useState(false)
   const { setState_ } = useState_()
   const handleClose = () => setremoveIsOpen(false)
+  const { t, i18n } = useTranslation()
 
   const [ProductsOpen, setProductsOpen] = React.useState(false)
   function openEditModal (Cli) {
@@ -63,7 +65,7 @@ export const Entry = props => {
         modalIsOpen={newProductIsOpen}
         Entry={Entry}
         Client={Clients.find(x => x.id === Entry.Client.id)}
-        CurrentProduct={({ Nome: '' })}
+        CurrentProduct={({ name: '' })}
         setIsOpen={setnewProductIsOpen}
       />
       <Modal
@@ -73,7 +75,7 @@ export const Entry = props => {
         aria-describedby='modal-modal-description'
       >
         <Box sx={style}>
-          Remover?
+        {t('Remove.label')}?
           <Button variant='outlined' onClick={() => removeItem()}></Button>
         </Box>
       </Modal>
@@ -81,11 +83,11 @@ export const Entry = props => {
 
         <TableCell style={{ width: '10%' }} component='th' scope='Entry'>
           {Clients.find(x => x.id === Entry.Client.id)
-            ? Clients.find(x => x.id === Entry.Client.id)['Nome']
+            ? Clients.find(x => x.id === Entry.Client.id)['name']
             : ''}
         </TableCell>
         <TableCell style={{ width: '30%' }}>
-          {moment(new Date(Entry.Created.seconds * 1000)).format('MM/D/yyyy HH:mm')}
+          {moment(new Date(Entry.created.seconds * 1000)).format('MM/D/yyyy HH:mm')}
         </TableCell>
         <TableCell style={{ width: '20%' }}>
           {EntryProducts
@@ -94,7 +96,7 @@ export const Entry = props => {
         </TableCell>
         <TableCell style={{ width: '20%' }}>
           {EntryProducts
-            ? EntryProducts.map(item => item.Value)
+            ? EntryProducts.map(item => item.value)
                 .reduce((prev, next) => prev + next, 0) || 0
             : 0}
         </TableCell>
@@ -128,19 +130,19 @@ export const Entry = props => {
           <Collapse in={ProductsOpen} timeout='auto' unmountOnExit>
             <Box sx={{ margin: 1 }}>
               <Typography variant='h6' gutterBottom component='div'>
-                Products
+              {t('Products.label')}
               </Typography>
               <Button
                 variant='outlined'
                 style={{float:'left'}}
                 onClick={() => setnewProductIsOpen(true)}
               >
-                Novo produto
+                {t('NewItem.label')}
               </Button>
               <Table size='small' >
                 <TableHead>
                   <TableRow>
-                    <TableCell>Nome</TableCell>
+                    <TableCell>{t('Name.label')}</TableCell>
                     <TableCell />
                     <TableCell />
                   </TableRow>

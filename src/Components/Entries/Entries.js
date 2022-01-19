@@ -7,7 +7,8 @@ import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
 import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
-import React, { useState } from 'react'
+import React, { useState } from 'react' 
+ import { useTranslation } from 'react-i18next'
 import { useData, useState_ } from '../../Context/DataContext'
 import FirebaseServices from '../../services/services'
 import Style from '../../Style'
@@ -32,6 +33,8 @@ const Entries = () => {
   const [removeModalIsOpen, setremoveIsOpen] = useState(false)
   const { Entries, Products } = useData()
   const { setState_ } = useState_()
+  const { t, i18n } = useTranslation()
+
   function removeItem () {
     FirebaseServices.remove('Entries', CurrentEntry).then(x => {
       setremoveIsOpen(false)
@@ -52,7 +55,7 @@ const Entries = () => {
         aria-describedby='modal-modal-description'
       >
         <Box sx={style}>
-          Remover?
+        {t('Remove.label')}?
           <Button variant='outlined' onClick={() => removeItem()}></Button>
         </Box>
       </Modal>
@@ -69,22 +72,22 @@ const Entries = () => {
           onClick={() => openEditModal({ Nome: '' })}
         >
           <AddCircleOutlineOutlinedIcon />
-          Novo item
+          {t('NewItem.label')}
         </Button>
         <Button
           className={classes.RemoveButton}
           variant='outlined'
           onClick={() => setremoveIsOpen(true)}
         >
-          Remove
+          {t('Remove.label')}
         </Button>
         <Table aria-label='collapsible table' size='small'>
           <TableHead>
             <TableRow>
-              <TableCell style={{ width: '50%' }}>Cliente</TableCell>
-              <TableCell>Data</TableCell>
-              <TableCell>Nº de produtos</TableCell>
-              <TableCell>Valor</TableCell>
+              <TableCell style={{ width: '50%' }}>{t('Client.label')}</TableCell>
+              <TableCell>{t('Date.label')}</TableCell>
+              <TableCell>{t('ProductsCount.label')}</TableCell>
+              <TableCell>{t('Value.label')}</TableCell>
               <TableCell />
               <TableCell />
               <TableCell />

@@ -2,7 +2,8 @@ import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Modal from '@mui/material/Modal'
 import TextField from '@mui/material/TextField'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react' 
+ import { useTranslation } from 'react-i18next'
 import Dropdown from 'react-dropdown'
 import 'react-dropdown/style.css'
 import { useData, useState_ } from '../../Context/DataContext'
@@ -14,12 +15,12 @@ import { DataGrid } from '@mui/x-data-grid'
 
 export const SalesForm = props => {
   const classes = Style()
-
+  const { t, i18n } = useTranslation()
   const { modalIsOpen, setIsOpen } = props
   const { setState_ } = useState_()
   const {
     Clients,
-    ReleasedCredit,
+    handleCredit,
     reduceStock,
     updateSalesProducts
   } = useData()
@@ -39,7 +40,7 @@ export const SalesForm = props => {
   useEffect(() => {
     if (OrderProducts.length > 0) {
       let total = OrderProducts.reduce((a, b) => {
-        return a + b.Value
+        return a + b.value
       }, 0)
       let Credit = CurrentItem.Credit ? CurrentItem.Credit : 0
 
@@ -59,7 +60,7 @@ export const SalesForm = props => {
       .doc(
         typeof CurrentItem.Client == 'string'
           ? CurrentItem.Client
-          : CurrentItem['Client'].value
+          : CurrentItem['Client'].Value
       )
     CurrentItem['Client'] = ClientRef
     if (CurrentItem.hasOwnProperty('id')) {
@@ -80,11 +81,11 @@ export const SalesForm = props => {
         })
         reduceStock(OrderProducts)
         if (CurrentItem.Credit > 0) {
-          ReleasedCredit(
+          handleCredit(
             -CurrentItem.Credit,
             CurrentItem['Client'].id,
             OrderProducts,
-            'Credit used'
+            'CreditUsed'
           )
         }
 
@@ -95,11 +96,11 @@ export const SalesForm = props => {
       FirebaseServices.create('Sales', CurrentItem).then(x => {
         updateSalesProducts(x, OrderProducts)
         if (CurrentItem.Credit > 0) {
-          ReleasedCredit(
+          handleCredit(
             -CurrentItem.Credit,
             CurrentItem['Client'].id,
             OrderProducts,
-            'Credit used'
+            'CreditUsed'
           )
         }
         OrderProducts.map(item => {
@@ -134,7 +135,7 @@ export const SalesForm = props => {
       if (props.CurrentItem['Client'] && props.modalIsOpen) {
         let Cli = CalcularCredit(props.CurrentItem)
 
-        item_['Client'] = { value: Cli.id, label: Cli.Nome }
+        item_['Client'] = { value: Cli.id, label: Cli.name }
       }
       let Items_ = []
       if (props.CurrentItem.hasOwnProperty('id')) {
@@ -171,7 +172,7 @@ export const SalesForm = props => {
         <form onSubmit={editProduct}>
           <Dropdown
             className={classes.input}
-            options={Clients.map(x => ({ value: x.id, label: x.Nome }))}
+            options={Clients.map(x => ({ value: x.id, label: x.name }))}
             onChange={e => {
               let e_ = { target: { name: 'Client', value: e.value } }
               let credit = Clients.find(y => y.id === e.value)
@@ -187,7 +188,7 @@ export const SalesForm = props => {
               handleInputClient(e_)
             }}
             value={CurrentItem.Client}
-            placeholder='Cliente'
+            placeholder={t('Client.label')}
           />
           <FormControlLabel
             control={
@@ -197,7 +198,7 @@ export const SalesForm = props => {
                 checked={CurrentItem.Site}
                 variant='standard'
                 name='Site'
-                label='Site'
+                label={t('Site.label')}
                 onChange={e =>
                   setCurrentItem({
                     ...CurrentItem,
@@ -226,12 +227,12 @@ export const SalesForm = props => {
                 }}
               />
             }
-            label='Usar crédito?'
+            label={t('UseCredit.label')}
           />
           <span style={{ color: 'grey' }}>{AvalibleCredit}</span>
           {CurrentItem.UseCredit ? (
             <TextField
-              label='Crédito'
+              label={t('Credit.label')}
               type='Number'
               value={CurrentItem.Credit}
               onChange={e =>
@@ -252,19 +253,19 @@ export const SalesForm = props => {
             <></>
           )}
           <Dropdown
-            options={Products.filter(x => x['Stock'] !== null)
-              .filter(x => x.Stock > 0 && !x.Site)
-              .map(x => ({ value: x.id, label: x.Nome }))}
+            options={Products.filter(x => x['stock'] !== null)
+              .filter(x => x.stock > 0 && !x.Site)
+              .map(x => ({ value: x.id, label: x.name }))}
             onChange={e => {
               let prod = Products.find(x => x.id === e.value)
               setOrderProducts([...OrderProducts, prod])
             }}
             style={{ marginTop: '20px', width: '100%' }}
-            placeholder='Select an option'
+            placeholder={t('SelectOption.label')}
           />
           <ProductsList OrderProducts={OrderProducts} />
           <TextField
-            label='Valor de venda'
+            label={t('Value.label')}
             type='Number'
             value={CurrentItem.ValueProducts}
             disabled={true}
@@ -282,7 +283,7 @@ export const SalesForm = props => {
             variant='standard'
           />
           <TextField
-            label='Desconto(%)'
+            label={`${t('Discount.label')}?`}
             type='Number'
             value={CurrentItem.Discount}
             onChange={e =>
@@ -308,7 +309,7 @@ export const SalesForm = props => {
             value='Submit'
             variant='outlined'
           >
-            Submit
+            {t('Submit.label')}
           </Button>
         </form>
       </Box>
@@ -316,24 +317,26 @@ export const SalesForm = props => {
   )
 }
 
-const columns = [
-  {
-    field: 'Nome',
-    headerName: 'Nome',
-    width: 150,
-    editable: true
-  },
-  {
-    field: 'Value',
-    headerName: 'Value',
-    width: 150,
-    editable: true
-  }
-]
+
 
 function ProductsList (props) {
   const { OrderProducts } = props
+  const { t, i18n } = useTranslation()
 
+  const columns = [
+    {
+      field: 'name',
+      headerName: t('Name.label'),
+      width: 150,
+      editable: true
+    },
+    {
+      field: 'value',
+      headerName: t('Value.label'),
+      width: 150,
+      editable: true
+    }
+  ]
   return (
     <div style={{ height: 400, marginTop: '20px', width: '100%' }}>
       <DataGrid

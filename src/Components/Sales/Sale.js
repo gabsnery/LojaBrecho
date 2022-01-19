@@ -1,3 +1,4 @@
+import DeleteIcon from '@mui/icons-material/Delete'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
 import ModeEditOutlineOutlinedIcon from '@mui/icons-material/ModeEditOutlineOutlined'
@@ -13,7 +14,8 @@ import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
 import Typography from '@mui/material/Typography'
 import moment from 'moment'
-import React, { useState } from 'react'
+import React, { useState } from 'react' 
+ import { useTranslation } from 'react-i18next'
 import { useData, useState_ } from '../../Context/DataContext'
 import FirebaseServices from '../../services/services'
 import { SalesForm } from './SalesForm'
@@ -30,15 +32,14 @@ const style = {
   p: 4
 }
 
-
-export const Sale = (props) => {
-
+export const Sale = props => {
   const { Sale, index } = props
   const { Clients } = useData()
   const { Products } = useData()
   const [removeModalIsOpen, setremoveIsOpen] = useState(false)
   const { setState_ } = useState_()
   const [EditModalIsOpen, setEditModalIsOpen] = useState(false)
+  const { t, i18n } = useTranslation()
 
   const [ProductsOpen, setProductsOpen] = React.useState(false)
   function removeItem () {
@@ -57,7 +58,7 @@ export const Sale = (props) => {
         aria-describedby='modal-modal-description'
       >
         <Box sx={style}>
-          Remover?
+        {t('Remove.label')}?
           <Button variant='outlined' onClick={() => removeItem()}></Button>
         </Box>
       </Modal>
@@ -67,19 +68,21 @@ export const Sale = (props) => {
     <>
       {removeSaleModal()}
       <SalesForm
-          modalIsOpen={EditModalIsOpen}
-          CurrentItem={Sale}
-          setIsOpen={setEditModalIsOpen}
-        />
+        modalIsOpen={EditModalIsOpen}
+        CurrentItem={Sale}
+        setIsOpen={setEditModalIsOpen}
+      />
       <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
-
-        <TableCell style={{ width: '10%' }} component='th' scope='row'>
-          {Clients.find(x => x.id === Sale.Client.id)
-            ? Clients.find(x => x.id === Sale.Client.id)['Nome']
-            : ''}
+        <TableCell style={{ width: '10%' }}>
+          {moment(new Date(Sale.created.seconds * 1000)).format(
+            'MM/D/yyyy HH:mm'
+          )}
         </TableCell>
-        <TableCell style={{ width: '70%' }}>
-          {moment(new Date(Sale.Created.seconds * 1000)).format()}
+
+        <TableCell style={{ width: '7%' }} >
+          {Clients.find(x => x.id === Sale.Client.id)
+            ? Clients.find(x => x.id === Sale.Client.id)['name']
+            : ''}
         </TableCell>
         <TableCell style={{ width: '5%' }}>{Sale.Value || 0}</TableCell>
         <TableCell style={{ width: '5%' }}>
@@ -87,11 +90,8 @@ export const Sale = (props) => {
             <ModeEditOutlineOutlinedIcon />
           </Button>
         </TableCell>
-        <Button
-          variant='outlined'
-          onClick={() => setremoveIsOpen()}
-        >
-          Remove
+        <Button onClick={() => setremoveIsOpen()}>
+        <DeleteIcon />
         </Button>
         <TableCell style={{ width: '5%' }}>
           <IconButton aria-label='expand row' size='small'></IconButton>
@@ -113,23 +113,22 @@ export const Sale = (props) => {
           <Collapse in={ProductsOpen} timeout='auto' unmountOnExit>
             <Box sx={{ margin: 1 }}>
               <Typography variant='h6' gutterBottom component='div'>
-                Products
+              {t('Products.label')}
               </Typography>
 
               <Table size='small'>
                 <TableHead>
                   <TableRow>
-                    <TableCell>Nome</TableCell>
+                    <TableCell>{t('Name.label')}</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {Products ? (
-                    Sale['Products']
-                      .map((historyRow,index2) => (
-                        <TableRow key={`Collapsed_Sales_${index2}`}>
-                          <TableCell>{historyRow.Nome}</TableCell>
-                        </TableRow>
-                      ))
+                    Sale['Products'].map((historyRow, index2) => (
+                      <TableRow key={`Collapsed_Sales_${index2}`}>
+                        <TableCell>{historyRow.name}</TableCell>
+                      </TableRow>
+                    ))
                   ) : (
                     <></>
                   )}

@@ -15,12 +15,13 @@ import Typography from '@mui/material/Typography'
 import React, { useEffect, useState } from 'react'
 import { useData } from '../Context/DataContext'
 import Style from '../Style'
+import { useTranslation } from 'react-i18next'
 
 const PedingCredit = () => {
   const { Clients } = useData()
   const { Products } = useData()
   const [ClientswCredit, setClientswCredit] = useState([])
-
+  const { t, i18n } = useTranslation()
 
   useEffect(() => {
     const calculateCredits = () => {
@@ -28,22 +29,22 @@ const PedingCredit = () => {
       Products.filter(
         p =>
           p['Client'] !== undefined &&
-          p['Sold'] !== undefined &&
-          p['ReleasedCredit'] !== undefined
+          p['sold'] !== undefined &&
+          p['releasedCredit'] !== undefined
       )
-        .filter(p1 => p1['Sold'] === true && p1['ReleasedCredit'] === false)
+        .filter(p1 => p1['sold'] === true && p1['releasedCredit'] === false)
         .map(it => {
           let Index = _temp.findIndex(x => x.id === it['Client'].id)
           if (!_temp[Index].hasOwnProperty('Products')) {
             _temp[Index]['Products'] = []
           }
-  
+
           _temp[Index]['Products'].push(it)
           return {}
         })
       setClientswCredit(_temp.filter(x => x.Products !== undefined))
     }
-    calculateCredits();
+    calculateCredits()
   }, [Clients, Products])
   const classes = Style()
 
@@ -54,9 +55,8 @@ const PedingCredit = () => {
           <TableHead>
             <TableRow>
               <TableCell />
-              <TableCell>Id</TableCell>
-              <TableCell>Nome</TableCell>
-              <TableCell>Crédito previsto</TableCell>
+              <TableCell>{t('Name.label')}</TableCell>
+              <TableCell>{t('Credit.label')}</TableCell>
               <TableCell />
               <TableCell />
               <TableCell />
@@ -75,23 +75,25 @@ const PedingCredit = () => {
 }
 
 function Row (props) {
+  const { t, i18n } = useTranslation()
+
   const { row } = props
   const [open, setOpen] = React.useState(false)
   const [
     releasaCreditModalIsOpen,
     setreleasaCreditModalIsOpen
   ] = React.useState(false)
-  const { ReleasedCredit } = useData()
+  const { handleCredit } = useData()
   const classes = Style()
 
   function closeModal () {
     setreleasaCreditModalIsOpen(false)
   }
-  const _ReleasedCredit = () => {
+  const approveCredit = () => {
     let CreditValue = row['Products'].reduce((prev, next) => {
-      return prev + next['Value']
+      return prev + next['value']
     }, 0)
-    ReleasedCredit(CreditValue*0.3, row.id, row.Products,'CreditUsed')
+    handleCredit(CreditValue * 0.3, row.id, row.Products, 'ReleasedCredit')
     setreleasaCreditModalIsOpen(false)
   }
   return (
@@ -103,9 +105,20 @@ function Row (props) {
         aria-describedby='modal-modal-description'
       >
         <Box className={classes.RemoveModal}>
-          Remover?
-          <Button variant='outlined' onClick={() => _ReleasedCredit()}>
-            Vai
+          Está ação criará um valor de ___ de crédito disponivel para o cliente XXX
+          <Button
+            variant='outlined'
+            style={{
+              float: 'right',
+              right: 0,
+              bottom: 0,
+              margin: '1em 1em',
+              display: 'flex',
+              position: 'fixed'
+            }}
+            onClick={() => approveCredit()}
+          >
+            Liberar
           </Button>
         </Box>
       </Modal>
@@ -114,15 +127,13 @@ function Row (props) {
         <TableCell style={{ width: '5%' }} padding='checkbox'>
           <Radio name='radio-buttons' inputProps={{ 'aria-label': 'A' }} />
         </TableCell>
-        <TableCell style={{ width: '10%' }} component='th' scope='row'>
-          {row.id}
-        </TableCell>
-        <TableCell style={{ width: '75%' }}>{row.Nome}</TableCell>
+
+        <TableCell style={{ width: '75%' }}>{row.name}</TableCell>
         <TableCell style={{ width: '5%' }}>
           {row['Products']
             ? row['Products'].reduce((prev, next) => {
-                return prev + next['Value']
-              }, 0)*0.3 || 0
+                return prev + next['value']
+              }, 0) * 0.3 || 0
             : 0}
         </TableCell>
         <TableCell style={{ width: '5%' }}>
@@ -130,7 +141,7 @@ function Row (props) {
             variant='outlined'
             onClick={() => setreleasaCreditModalIsOpen(true)}
           >
-            Liberar
+            {t('Release.label')}
           </Button>
         </TableCell>
 
@@ -149,23 +160,22 @@ function Row (props) {
           <Collapse in={open} timeout='auto' unmountOnExit>
             <Box sx={{ margin: 1 }}>
               <Typography gutterBottom component='div'>
-                Conta
+                {t('Account.label')}
               </Typography>
               <Table size='small' aria-label='purchases'>
                 <TableHead>
                   <TableRow>
-                    <TableCell>Nome</TableCell>
-                    <TableCell></TableCell>
+                    <TableCell>{t('Name.label')}</TableCell>
+                    <TableCell>{t('Value.label')}</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {row['Products'].map((item,index) => (
+                  {row['Products'].map((item, index) => (
                     <TableRow key={`Collapsed_PedingCredits_${index}`}>
-                      <TableCell>{item.Nome}</TableCell>
-                      <TableCell>{item.Value || 0}</TableCell>
+                      <TableCell>{item.name}</TableCell>
+                      <TableCell>{item.value || 0}</TableCell>
                     </TableRow>
                   ))}
-        
                 </TableBody>
               </Table>
             </Box>

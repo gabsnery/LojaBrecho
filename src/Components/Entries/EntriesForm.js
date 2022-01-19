@@ -1,7 +1,8 @@
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Modal from '@mui/material/Modal'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react' 
+ import { useTranslation } from 'react-i18next'
 import Dropdown from 'react-dropdown'
 import 'react-dropdown/style.css'
 import { useData, useState_ } from '../../Context/DataContext'
@@ -53,7 +54,7 @@ export const EntriesForm = props => {
       let Cli = props.CurrentItem['Client']
         ? Clients.find(y => y.id === props.CurrentItem['Client'].id)
         : 0
-      item_['Client'] = { value: Cli.id, label: Cli.Nome }
+      item_['Client'] = { value: Cli.id, label: Cli.name }
     }
     setCurrentItem(item_)
   }, [Clients, modalIsOpen, props.CurrentItem])
@@ -67,18 +68,8 @@ export const EntriesForm = props => {
     >
       <Box className={classes.Panel}>
         <form onSubmit={editProduct}>
-          {/* <TextField
-            id='Nome'
-            label='Nome'
-            variant='standard'
-            name='Nome'
-            style={{ width: '100%' }}
-            defaultValue={CurrentItem.Nome}
-            onChange={handleInputClient}
-          /> */}
-
           <Dropdown
-            options={Clients.map(x => ({ value: x.id, label: x.Nome }))}
+            options={Clients.map(x => ({ value: x.id, label: x.name }))}
             onChange={e => {
               let e_ = { target: { name: 'Client', value: e.value } }
               handleInputClient(e_)

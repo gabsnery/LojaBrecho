@@ -2,13 +2,15 @@ import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Modal from '@mui/material/Modal'
 import TextField from '@mui/material/TextField'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react' 
+ import { useTranslation } from 'react-i18next'
 import { useState_ } from '../../Context/DataContext'
 import FirebaseServices from '../../services/services'
 import Style from '../../Style'
 
 export const ClientForm = props => {
   const classes = Style()
+  const { t, i18n } = useTranslation()
 
   const { modalIsOpen, setIsOpen } = props
   const { setState_ } = useState_()
@@ -52,22 +54,22 @@ export const ClientForm = props => {
       <Box className={classes.Panel}>
         <form onSubmit={editClient}>
           <TextField
-            id='Nome'
-            label='Nome'
+            id='name'
+            label={t('Name.label')}
             variant='standard'
-            name='Nome'
+            name='name'
             style={{ width: '100%' }}
-            defaultValue={CurrentClient.Nome}
+            defaultValue={CurrentClient.name}
             onChange={handleInputClient}
             autoComplete='off'
           />
           <TextField
-            id='Endereço'
-            label='Endereço'
+            id='address'
+            label={t('Address.label')}
             variant='standard'
-            name='Address'
+            name='address'
             style={{ width: '100%' }}
-            defaultValue={CurrentClient.Address}
+            defaultValue={CurrentClient.address}
             onChange={handleInputClient}
           />
           <Button

@@ -11,7 +11,8 @@ import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
 import TableRow from '@mui/material/TableRow'
 import TextField from '@mui/material/TextField'
-import React, { useEffect } from 'react'
+import React, { useEffect } from 'react' 
+ import { useTranslation } from 'react-i18next'
 import { useData } from '../../Context/DataContext'
 import Style from '../../Style'
 import { ClientForm } from './ClientForm'
@@ -26,12 +27,13 @@ function Client (props) {
     CurrentAvailablebleCredit,
     setCurrentAvailablebleCredit
   ] = React.useState(0)
-  const [WithdrawaCredit, setWithdrawaCredit] = React.useState(0)
-  const { ReleasedCredit } = useData()
+  const [WithdrawalCredit, setWithdrawaCredit] = React.useState(0)
+  const { handleCredit } = useData()
   const [WithdrawalModalIsOpen, setWithdrawalModalIsOpen] = React.useState(
     false
   )
   const [EditIsOpen, setEditIsOpen] = React.useState(false)
+  const { t, i18n } = useTranslation()
 
   useEffect(() => {
     setCurrentAvailablebleCredit(CalculateCurrentCredit(Client))
@@ -56,9 +58,9 @@ function Client (props) {
       >
         <Box className={classes.RemoveModal}>
           <TextField
-            label='Desconto(%)'
+            label={t("Value.label")}
             type='Number'
-            value={CurrentAvailablebleCredit}
+            value={WithdrawalCredit}
             onChange={e => setWithdrawaCredit(e.target.value)}
             name='Discount'
             id='formatted-numberformat-input'
@@ -66,17 +68,25 @@ function Client (props) {
           />
           <Button
             variant='outlined'
+            style={{
+              float: 'right',
+              right: 0,
+              bottom: 0,
+              margin: '1em 1em',
+              display: 'flex',
+              position: 'fixed'
+            }}
             onClick={() => {
-              ReleasedCredit(
-                -WithdrawaCredit,
+              handleCredit(
+                -WithdrawalCredit,
                 Client.id,
                 [],
-                'WithdrawaCredit'
+                'WithdrawalCredit'
               ).then(() => {
                 setWithdrawalModalIsOpen(false)
               })
             }}
-          ></Button>
+          >{t('Withdrawal')}</Button>
         </Box>
       </Modal>
       <ClientForm
@@ -85,11 +95,9 @@ function Client (props) {
         setIsOpen={setEditIsOpen}
       />
       <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
-        <TableCell style={{ width: '10%' }} component='th' scope='row'>
-          {Client.id}
-        </TableCell>
+ 
         <TableCell style={{ width: '75%' }}>
-          {Client.Nome}
+          {Client.name}
         </TableCell>
         <TableCell style={{ width: '75%' }}>
           {CurrentAvailablebleCredit}
@@ -111,7 +119,7 @@ function Client (props) {
                 setWithdrawalModalIsOpen(Client)
               }}
             >
-              Retirar
+              {t('WithdrawalCredit.label')}
             </Button>
           ) : (
             <></>

@@ -3,7 +3,8 @@ import ModeEditOutlineOutlinedIcon from '@mui/icons-material/ModeEditOutlineOutl
 import Button from '@mui/material/Button'
 import TableCell from '@mui/material/TableCell'
 import TableRow from '@mui/material/TableRow'
-import React, { useState } from 'react'
+import React, { useState } from 'react' 
+ import { useTranslation } from 'react-i18next'
 import { useData, useState_ } from '../../Context/DataContext'
 import FirebaseServices from '../../services/services'
 import { ProductForm } from '../Products/ProductForm'
@@ -59,7 +60,7 @@ export const Product = props => {
         setIsOpen={setEditModalIsOpen}
       />
       <TableRow key={`Collapsed__Entries_Entry_${index}`}>
-        <TableCell style={{ width: '90%' }}>{Product.Nome}</TableCell>
+        <TableCell style={{ width: '90%' }}>{Product.name}</TableCell>
         <TableCell style={{ width: '5%', padding: '0px' }}>
           <Button onClick={() => openProdEditModal(Product)}>
             <ModeEditOutlineOutlinedIcon />

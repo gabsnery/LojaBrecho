@@ -5,7 +5,8 @@ import Table from '@mui/material/Table'
 import TableCell from '@mui/material/TableCell'
 import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
-import React, { useState } from 'react'
+import React, { useState } from 'react' 
+ import { useTranslation } from 'react-i18next'
 import { useData } from '../../Context/DataContext'
 import Style from '../../Style'
 import { Sale } from './Sale'
@@ -14,6 +15,7 @@ import { SalesForm } from './SalesForm'
 const Sales = () => {
   const classes = Style()
   const [modalIsOpen, setIsOpen] = useState(false)
+  const { t, i18n } = useTranslation()
 
   const { Sales } = useData()
 
@@ -31,16 +33,15 @@ const Sales = () => {
           onClick={() => setIsOpen(true)}
         >
           <AddCircleOutlineOutlinedIcon />
-          Novo item
+          {t('NewItem.label')}
         </Button>
     
         <Table aria-label='collapsible table' size='small'>
           <TableHead>
             <TableRow>
-              <TableCell />
-              <TableCell style={{ width: '50%' }}>Cliente</TableCell>
-              <TableCell>Data</TableCell>
-              <TableCell>Valor</TableCell>
+              <TableCell>{t('Date.label')}</TableCell>
+              <TableCell style={{ width: '50%' }}>{t('Client.label')}</TableCell>
+              <TableCell>{t('Value.label')}</TableCell>
               <TableCell />
               <TableCell />
             </TableRow>

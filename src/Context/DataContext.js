@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useEffect, useState } from 'react'
+import React, { createContext, useContext, useEffect, useState } from 'react' 
+ import { useTranslation } from 'react-i18next'
 import firebase from '../firebase.config'
 
 export const DataContext = createContext()
@@ -26,8 +27,8 @@ export default function DataProvider ({ children }) {
 
       setClients(_Clients)
 
-      let _Sales = await getData('Sales', 'Nome')
-      let _Products = await getData('Products', 'Nome')
+      let _Sales = await getData('Sales', 'name')
+      let _Products = await getData('Products', 'name')
 
       for (let x = 0; x < _Sales.length; x++) {
         let data_ = await firebase
@@ -46,7 +47,7 @@ export default function DataProvider ({ children }) {
       setSales(_Sales)
 
       setProducts(_Products)
-      setEntries(await getData('Entries', 'Nome'))
+      setEntries(await getData('Entries', 'name'))
     }
 
     if (State_) {
@@ -69,7 +70,7 @@ export default function DataProvider ({ children }) {
     Items_.sort((a, b) => (a[sort] > b[sort] ? 1 : b[sort] > a[sort] ? -1 : 0))
     return Items_
   }
-  async function ReleasedCredit (CreditValue, Client, Products, Type) {
+  async function handleCredit (CreditValue, Client, Products, Type) {
     Products = Products.map(item =>
       firebase
         .firestore()
@@ -84,12 +85,12 @@ export default function DataProvider ({ children }) {
       .collection('Credits')
       .add({
         Value: CreditValue,
-        Created: new Date(),
-        Type: Type,
+        created: new Date(),
+        type: Type,
         Products: Products
       })
       .then(() => {
-        Products.map(item => item.update({ ReleasedCredit: true }))
+        Products.map(item => item.update({ releasedCredit: true }))
         setState_(true)
       })
 
@@ -154,16 +155,16 @@ export default function DataProvider ({ children }) {
         .firestore()
         .collection('Products')
         .doc(item.id)
-        .update({ Stock: item.Stock - 1, Sold: true })
+        .update({ stock: item.stock - 1, sold: true })
     )
   }
   async function updateTotalValue (product) {
     let total = 0
 
-    let Products_ = await getData('Products', 'Nome')
+    let Products_ = await getData('Products', 'name')
     Products_.filter(t => t['Entry'] !== undefined)
       .filter(l => l['Entry'].id === product['Entry'].id)
-      .map(y => (total += y.Value))
+      .map(y => (total += y.value))
     firebase
       .firestore()
       .collection('Entries')
@@ -203,7 +204,7 @@ export default function DataProvider ({ children }) {
         updateTotalValue,
         reduceStock,
         updateSalesProducts,
-        ReleasedCredit
+        handleCredit
       }}
     >
       {children}
@@ -226,7 +227,7 @@ export function useData () {
     updateTotalValue,
     reduceStock,
     updateSalesProducts,
-    ReleasedCredit
+    handleCredit
   } = context
   return {
     Clients,
@@ -240,7 +241,7 @@ export function useData () {
     updateTotalValue,
     reduceStock,
     updateSalesProducts,
-    ReleasedCredit
+    handleCredit
   }
 }
 

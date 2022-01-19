@@ -3,7 +3,8 @@ import Button from '@mui/material/Button'
 import IconButton from '@mui/material/IconButton'
 import TableCell from '@mui/material/TableCell'
 import TableRow from '@mui/material/TableRow'
-import React, { useState } from 'react'
+import React, { useState } from 'react' 
+ import { useTranslation } from 'react-i18next'
 import { ProductForm } from './ProductForm'
 export const Product = props => {
   const { Product } = props;
@@ -24,16 +25,14 @@ export const Product = props => {
         sx={{
           '& > *': {
             borderBottom: 'unset',
-            backgroundColor: Product.Stock === 0 ? 'red' : 'white'
+            backgroundColor: Product.stock === 0 ? 'red' : 'white'
           }
         }}
         key={Product.id}
       >
-        <TableCell style={{ width: '10%' }} component='th' scope='row'>
-          {Product.id}
-        </TableCell>
-        <TableCell style={{ width: '75%' }}>{Product.Nome}</TableCell>
-        <TableCell style={{ width: '5%' }}>{Product.Value}</TableCell>
+    
+        <TableCell style={{ width: '75%' }}>{Product.name}</TableCell>
+        <TableCell style={{ width: '5%' }}>{Product.value}</TableCell>
         <TableCell style={{ width: '5%' }}>
           <Button onClick={() => openProdEditModal()}>
             <ModeEditOutlineOutlinedIcon />

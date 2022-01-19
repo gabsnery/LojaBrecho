@@ -20,14 +20,15 @@ const Style = makeStyles({
   RemoveButton: { float: 'right', margin: '10px' },
   RemoveModal: {
     position: 'absolute',
+    backgroundColor:'white',
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
     width: 400,
-    bgcolor: 'background.paper',
+    height: 100,
+    padding:15,
     border: '2px solid #000',
-    boxShadow: 24,
-    p: 4
+    boxShadow: '2px 2px tea',
   },
   input: {marginTop:'10px'},
   Panel: {

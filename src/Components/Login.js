@@ -4,7 +4,8 @@ import {
   signInWithPopup,
   signOut
 } from 'firebase/auth'
-import React from 'react'
+import React from 'react' 
+ import { useTranslation } from 'react-i18next'
 import firebase from '../firebase.config'
 
 const provider = new GoogleAuthProvider()
@@ -55,7 +56,8 @@ const Login = (props) => {
       })
   }
   return (
-    <div>
+    <div style ={{width: 'fit-content',
+    display: 'inline'}}>
       <button className='button' onClick={log}>
         <i className='fab fa-google'></i>Logar
       </button>

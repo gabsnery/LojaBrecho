@@ -3,7 +3,8 @@ import Button from '@mui/material/Button'
 import Modal from '@mui/material/Modal'
 import TextField from '@mui/material/TextField'
 import { convertFromRaw, convertToRaw, EditorState } from 'draft-js'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react' 
+ import { useTranslation } from 'react-i18next'
 import { Editor } from 'react-draft-wysiwyg'
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css'
 import '../../App.css'
@@ -21,6 +22,7 @@ export const ProductForm = props => {
   const [Entry] = useState(props.Entry)
   const [CurrentProduct, setCurrentProduct] = useState(props.CurrentProduct)
   const [editorState, setEditorState] = useState(EditorState.createEmpty())
+  const { t, i18n } = useTranslation()
 
   const onEditorStateChange = editorState => {
     setCurrentProduct({
@@ -44,20 +46,20 @@ export const ProductForm = props => {
 
   function editProduct (e) {
     e.preventDefault()
-    let _CurrentProduct = CurrentProduct;
+    let _CurrentProduct = CurrentProduct
     if (Client) {
       let ClientRef = firebase
         .firestore()
         .collection('Clients')
         .doc(Client.id)
-        _CurrentProduct['Client'] = ClientRef
+      _CurrentProduct['Client'] = ClientRef
     }
     if (Entry) {
       let EntryRef = firebase
         .firestore()
         .collection('Entries')
         .doc(Entry.id)
-        _CurrentProduct['Entry'] = EntryRef
+      _CurrentProduct['Entry'] = EntryRef
     }
 
     if (_CurrentProduct.hasOwnProperty('id')) {
@@ -75,22 +77,24 @@ export const ProductForm = props => {
     }
   }
   useEffect(() => {
-    setCurrentProduct(props.CurrentProduct)
-    props.CurrentProduct['Type'] = 'ThriftStore'
-    props.CurrentProduct['Sold'] = false
-    props.CurrentProduct['ReleasedCredit'] = false
-    props.CurrentProduct['Stock'] = 1
-    //props.CurrentProduct['Type']="New";
-    if (props.CurrentProduct['Description']) {
-      setEditorState(
-        EditorState.createWithContent(
-          convertFromRaw(props.CurrentProduct['Description'])
-        )
-      )
-    } else {
-      setEditorState(EditorState.createEmpty())
+    if (props.modalIsOpen && !props.CurrentProduct.hasOwnProperty('id')) {
+      setCurrentProduct(props.CurrentProduct)
+      props.CurrentProduct['type'] = 'ThriftStore'
+      props.CurrentProduct['sold'] = false
+      props.CurrentProduct['releasedCredit'] = false
+      props.CurrentProduct['stock'] = 1
+      //props.CurrentProduct['type']="New";
     }
-  }, [props.CurrentProduct])
+      if (props.CurrentProduct['Description']) {
+        setEditorState(
+          EditorState.createWithContent(
+            convertFromRaw(props.CurrentProduct['Description'])
+          )
+        )
+      } else {
+        setEditorState(EditorState.createEmpty())
+      }
+  }, [props])
 
   if (CurrentProduct === undefined) return <></>
 
@@ -102,14 +106,14 @@ export const ProductForm = props => {
       aria-describedby='modal-modal-description'
     >
       <Box className={classes.Panel}>
-        <h1>Produto</h1>
+        <h1>{t('Product.label')}</h1>
         <form onSubmit={editProduct}>
           <TextField
-            id='Nome'
+            id='name'
             variant='standard'
-            name='Nome'
+            name='name'
             style={{ width: '100%' }}
-            defaultValue={CurrentProduct.Nome}
+            defaultValue={CurrentProduct.name}
             onChange={handleInputClient}
             autoComplete='off'
           />
@@ -121,48 +125,48 @@ export const ProductForm = props => {
             }}
           >
             <TextField
-              label='Categoria'
+              label={t('Category.label')}
               type='Number'
-              value={CurrentProduct.Stock}
+              value={CurrentProduct.stock}
               onChange={e =>
                 setCurrentProduct({
                   ...CurrentProduct,
                   [e.target.name]:
-                    e.target.name === 'Stock' ? +e.target.value : e.target.value
+                    e.target.name === 'stock' ? +e.target.value : e.target.value
                 })
               }
-              name='Stock'
+              name='category'
               id='formatted-numberformat-input'
               variant='standard'
             />
             <TextField
-              label='Estoque'
+              label={t('Stock.label')}
               type='Number'
-              value={CurrentProduct.Stock}
-              disabled={CurrentProduct.Type === 'ThriftStore'}
+              value={CurrentProduct.stock}
+              disabled={CurrentProduct.type === 'ThriftStore'}
               onChange={e =>
                 setCurrentProduct({
                   ...CurrentProduct,
                   [e.target.name]:
-                    e.target.name === 'Stock' ? +e.target.value : e.target.value
+                    e.target.name === 'stock' ? +e.target.value : e.target.value
                 })
               }
-              name='Stock'
+              name='stock'
               id='formatted-numberformat-input'
               variant='standard'
             />
             <TextField
-              label='Valor de venda'
+              label={t('Value.label')}
               type='Number'
-              value={CurrentProduct.Value}
+              value={CurrentProduct.value}
               onChange={e =>
                 setCurrentProduct({
                   ...CurrentProduct,
                   [e.target.name]:
-                    e.target.name === 'Value' ? +e.target.value : e.target.value
+                    e.target.name === 'value' ? +e.target.value : e.target.value
                 })
               }
-              name='Value'
+              name='value'
               id='formatted-numberformat-input'
               variant='standard'
             />
@@ -277,7 +281,7 @@ export const ProductForm = props => {
             value='Submit'
             variant='outlined'
           >
-            Submit
+            {t('Submit.label')}
           </Button>
         </form>
       </Box>

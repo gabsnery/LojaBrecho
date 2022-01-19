@@ -2,7 +2,7 @@ import firebase from '../firebase.config'
 
 
 const create = (collection, data) => {
-  data['Created'] = new Date()
+  data['created'] = new Date()
   return firebase
     .firestore()
     .collection(collection)
@@ -11,7 +11,7 @@ const create = (collection, data) => {
 
 
 const update = (collection, data) => {
-  data['Modified'] = new Date()
+  data['modified'] = new Date()
 
   return firebase
     .firestore()

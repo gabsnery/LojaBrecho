@@ -6,12 +6,14 @@ import TableCell from '@mui/material/TableCell'
 import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
 import React from 'react'
+import { useTranslation } from 'react-i18next'
 import { useData } from '../../Context/DataContext'
 import Style from '../../Style'
 import Client from './Client'
 import { ClientForm } from './ClientForm'
 
 const Clients = () => {
+  const { t, i18n } = useTranslation()
   const classes = Style()
   const { Clients } = useData()
   const [EditIsOpen, setEditIsOpen] = React.useState(false)
@@ -21,7 +23,7 @@ const Clients = () => {
       <div className={classes.List}>
         <ClientForm
           modalIsOpen={EditIsOpen}
-          CurrentClient={({ Nome: '' })}
+          CurrentClient={({ name: '' })}
           setIsOpen={setEditIsOpen}
         />
         <Button
@@ -30,15 +32,14 @@ const Clients = () => {
           onClick={() => setEditIsOpen(true)}
         >
           <AddCircleOutlineOutlinedIcon />
-          Novo item
+          {t('NewItem.label')} 
         </Button>
 
         <Table aria-label='collapsible table' size='small'>
           <TableHead>
             <TableRow>
-              <TableCell>Id</TableCell>
-              <TableCell>Nome</TableCell>
-              <TableCell>Crédito</TableCell>
+              <TableCell>{t('Name.label')}</TableCell>
+              <TableCell>{t('Credit.label')}</TableCell>
               <TableCell />
               <TableCell />
               <TableCell />
