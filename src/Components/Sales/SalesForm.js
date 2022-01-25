@@ -16,7 +16,7 @@ import { DataGrid } from '@mui/x-data-grid'
 export const SalesForm = props => {
   const classes = Style()
   const { t, i18n } = useTranslation()
-  const { modalIsOpen, setIsOpen } = props
+  const { EditModalIsOpen, setEditModalIsOpen } = props
   const { setState_ } = useState_()
   const {
     Clients,
@@ -35,7 +35,7 @@ export const SalesForm = props => {
   }
 
   function closeModal () {
-    setIsOpen(false)
+    setEditModalIsOpen(false)
   }
   useEffect(() => {
     if (OrderProducts.length > 0) {
@@ -89,7 +89,7 @@ export const SalesForm = props => {
           )
         }
 
-        setIsOpen(false)
+        setEditModalIsOpen(false)
         setState_(true)
       })
     } else {
@@ -114,7 +114,7 @@ export const SalesForm = props => {
         })
         reduceStock(OrderProducts)
 
-        setIsOpen(false)
+        setEditModalIsOpen(false)
         setState_(true)
       })
     }
@@ -131,9 +131,9 @@ export const SalesForm = props => {
   }
   useEffect(() => {
     let item_ = { ...props.CurrentItem }
-    if (props.modalIsOpen) {
-      if (props.CurrentItem['Client'] && props.modalIsOpen) {
-        let Cli = CalcularCredit(props.CurrentItem)
+    if (props.EditModalIsOpen) {
+      if (props.CurrentItem['Client'] && props.EditModalIsOpen) {
+        let Cli = CalcularCredit(props.CurrentItem['Client'])
 
         item_['Client'] = { value: Cli.id, label: Cli.name }
       }
@@ -161,9 +161,11 @@ export const SalesForm = props => {
       setCurrentItem(item_)
     }
   }, [props])
+  console.log('EditModalIsOpen',EditModalIsOpen)
+  console.log('EditModalIsOpen',props)
   return (
     <Modal
-      open={modalIsOpen}
+      open={EditModalIsOpen}
       onClose={closeModal}
       aria-labelledby='modal-modal-title'
       aria-describedby='modal-modal-description'

@@ -68,9 +68,9 @@ export const Sale = props => {
     <>
       {removeSaleModal()}
       <SalesForm
-        modalIsOpen={EditModalIsOpen}
+        EditModalIsOpen={EditModalIsOpen}
         CurrentItem={Sale}
-        setIsOpen={setEditModalIsOpen}
+        setEditModalIsOpen={setEditModalIsOpen}
       />
       <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
         <TableCell style={{ width: '10%' }}>
@@ -86,7 +86,7 @@ export const Sale = props => {
         </TableCell>
         <TableCell style={{ width: '5%' }}>{Sale.Value || 0}</TableCell>
         <TableCell style={{ width: '5%' }}>
-          <Button onClick={() => setEditModalIsOpen()}>
+          <Button onClick={() => setEditModalIsOpen(true)}>
             <ModeEditOutlineOutlinedIcon />
           </Button>
         </TableCell>
