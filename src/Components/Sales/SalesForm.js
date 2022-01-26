@@ -161,8 +161,6 @@ export const SalesForm = props => {
       setCurrentItem(item_)
     }
   }, [props])
-  console.log('EditModalIsOpen',EditModalIsOpen)
-  console.log('EditModalIsOpen',props)
   return (
     <Modal
       open={EditModalIsOpen}

@@ -18,12 +18,10 @@ const Login = props => {
 
   const log = () => {
     const auth = getAuth()
-    console.log("aqi1")
 
     signInWithPopup(auth, provider)
       .then(result => {
         // This gives you a Google Access Token. You can use it to access the Google API.
-        console.log("aqi")
         const credential = GoogleAuthProvider.credentialFromResult(result)
         const token = credential.accessToken
         const user = result.user
@@ -35,11 +33,6 @@ const Login = props => {
           .then(i => {
             // The signed-in user info.
             let teste = firebase.auth().user
-            console.log('credential', credential)
-            console.log('token', token)
-            console.log('user', user)
-            console.log('teste', teste)
-            console.log('i', i)
             setAuthenticated(true)
           })
           .catch(e => {
