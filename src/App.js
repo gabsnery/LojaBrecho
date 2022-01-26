@@ -12,8 +12,13 @@ import Products from './Components/Products/Products'
 import Sales from './Components/Sales/Sales'
 import DataProvider, { useState_ } from './Context/DataContext'
 import firebase from './firebase.config'
-
-
+import {
+  getAuth,
+  GoogleAuthProvider,
+  signInWithPopup,
+  signOut
+} from 'firebase/auth'
+import { FirebaseAuth } from 'firebase/compat/auth'
 function a11yProps (index) {
   return {
     id: `simple-tab-${index}`,
@@ -23,14 +28,13 @@ function a11yProps (index) {
 
 function TabPanel (props) {
   const { children, value, index, ...other } = props
-  
   return (
     <div
-    role='tabpanel'
-    hidden={value !== index}
-    id={`simple-tabpanel-${index}`}
-    aria-labelledby={`simple-tab-${index}`}
-    {...other}
+      role='tabpanel'
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+      {...other}
     >
       {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
     </div>
@@ -39,46 +43,39 @@ function TabPanel (props) {
 function App () {
   const [authenticated, setAuthenticated] = React.useState(false)
   const { t, i18n } = useTranslation()
-  
+
+  useEffect(() => {
+    firebase.auth().onAuthStateChanged(user => {
+      if (user.auth.currentUser) {
+        firebase
+          .firestore()
+          .collection('Users')
+          .doc(user.auth.currentUser.email)
+          .get()
+          .then(i => {
+            setAuthenticated(i.exists)
+          })
+      }
+    })
+  }, [])
   return (
     <DataProvider>
       <Login
         authenticated={authenticated}
         setAuthenticated={setAuthenticated}
-        />
-      <div style ={{width: 'fit-content',
-    display: 'inline'}}>
-    
-        <Button onClick={()=>i18n.changeLanguage('pt')}>Português</Button>
-        <Button onClick={()=>i18n.changeLanguage('en')}>English</Button>
-      </div>
-      <LoggedArea
-        authenticated={authenticated}
-        setAuthenticated={setAuthenticated}
       />
+      <div style={{ width: 'fit-content', display: 'inline' }}>
+        <Button onClick={() => i18n.changeLanguage('pt')}>Português</Button>
+        <Button onClick={() => i18n.changeLanguage('en')}>English</Button>
+      </div>
+      {authenticated ? <LoggedArea /> : <></>}
     </DataProvider>
   )
 }
 function LoggedArea (props) {
   const [value, setValue] = React.useState(0)
-  const { authenticated, setAuthenticated } = props
-  const { setState_ } = useState_()
-  const { t, i18n } = useTranslation()
+  const { t } = useTranslation()
 
-  useEffect(() => {
-    setState_(true)
-  }, [authenticated, setState_])
-  useEffect(() => {
-    function waitAuth () {
-      setTimeout(() => {
-        if (firebase.auth().currentUser) {
-          setAuthenticated(true)
-        }
-      }, 1000)
-    }
-    waitAuth()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
   const handleChange = (event, newValue) => {
     setValue(newValue)
   }
@@ -91,8 +88,16 @@ function LoggedArea (props) {
           onChange={handleChange}
           aria-label='basic tabs example'
         >
-          <Tab label={t('Clients.label')} style={{ color: 'white' }} {...a11yProps(0)} />
-          <Tab label={t('Products.label')} style={{ color: 'white' }} {...a11yProps(1)} />
+          <Tab
+            label={t('Clients.label')}
+            style={{ color: 'white' }}
+            {...a11yProps(0)}
+          />
+          <Tab
+            label={t('Products.label')}
+            style={{ color: 'white' }}
+            {...a11yProps(1)}
+          />
           <Tab
             label={t('Entries.label')}
             style={{ color: 'white' }}

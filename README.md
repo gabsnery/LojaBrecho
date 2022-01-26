@@ -1,4 +1,5 @@
 # Project idea
+npm run build
 
 The project aims to facilitate the process for thrift stores that work with items on consignment
 
