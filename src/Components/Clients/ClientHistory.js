@@ -9,7 +9,7 @@ function ClientHistory (props) {
   const { Client } = props
   const [ClientHistory, setClientHistory] = useState([])
   const { Entries, Sales } = useData()
-  const { t, i18n } = useTranslation()
+  const { t } = useTranslation()
 
   useEffect(() => {
     setClientHistory(CreateResume(props.Client))

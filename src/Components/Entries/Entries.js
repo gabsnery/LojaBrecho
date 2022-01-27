@@ -33,7 +33,7 @@ const Entries = () => {
   const [removeModalIsOpen, setremoveIsOpen] = useState(false)
   const { Entries, Products } = useData()
   const { setState_ } = useState_()
-  const { t, i18n } = useTranslation()
+  const { t} = useTranslation()
 
   function removeItem () {
     FirebaseServices.remove('Entries', CurrentEntry).then(x => {

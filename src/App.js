@@ -10,15 +10,8 @@ import Login from './Components/Login'
 import PedingCredit from './Components/PedingCredit'
 import Products from './Components/Products/Products'
 import Sales from './Components/Sales/Sales'
-import DataProvider, { useState_ } from './Context/DataContext'
+import DataProvider from './Context/DataContext'
 import firebase from './firebase.config'
-import {
-  getAuth,
-  GoogleAuthProvider,
-  signInWithPopup,
-  signOut
-} from 'firebase/auth'
-import { FirebaseAuth } from 'firebase/compat/auth'
 function a11yProps (index) {
   return {
     id: `simple-tab-${index}`,
@@ -42,32 +35,34 @@ function TabPanel (props) {
 }
 function App () {
   const [authenticated, setAuthenticated] = React.useState(false)
-  const { t, i18n } = useTranslation()
+  const { i18n } = useTranslation()
 
   useEffect(() => {
     firebase.auth().onAuthStateChanged(user => {
-      if (user.auth.currentUser) {
-        firebase
-          .firestore()
-          .collection('Users')
-          .doc(user.auth.currentUser.email)
-          .get()
-          .then(i => {
-            setAuthenticated(i.exists)
-          })
-      }
+      if (user)
+        if (user.auth.currentUser) {
+          firebase
+            .firestore()
+            .collection('Users')
+            .doc(user.auth.currentUser.email)
+            .get()
+            .then(i => {
+              setAuthenticated(i.exists)
+            })
+        }
     })
   }, [])
   return (
     <DataProvider>
-      <Login
-        authenticated={authenticated}
-        setAuthenticated={setAuthenticated}
-      />
       <div style={{ width: 'fit-content', display: 'inline' }}>
         <Button onClick={() => i18n.changeLanguage('pt')}>Português</Button>
         <Button onClick={() => i18n.changeLanguage('en')}>English</Button>
       </div>
+      <Login
+        authenticated={authenticated}
+        setAuthenticated={setAuthenticated}
+      />
+
       {authenticated ? <LoggedArea /> : <></>}
     </DataProvider>
   )

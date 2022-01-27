@@ -39,7 +39,7 @@ export const Sale = props => {
   const [removeModalIsOpen, setremoveIsOpen] = useState(false)
   const { setState_ } = useState_()
   const [EditModalIsOpen, setEditModalIsOpen] = useState(false)
-  const { t, i18n } = useTranslation()
+  const { t } = useTranslation()
 
   const [ProductsOpen, setProductsOpen] = React.useState(false)
   function removeItem () {
@@ -90,9 +90,12 @@ export const Sale = props => {
             <ModeEditOutlineOutlinedIcon />
           </Button>
         </TableCell>
+        <TableCell style={{ width: '5%' }}>
+
         <Button onClick={() => setremoveIsOpen()}>
         <DeleteIcon />
         </Button>
+        </TableCell>
         <TableCell style={{ width: '5%' }}>
           <IconButton aria-label='expand row' size='small'></IconButton>
         </TableCell>

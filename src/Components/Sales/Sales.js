@@ -15,7 +15,7 @@ import { SalesForm } from './SalesForm'
 const Sales = () => {
   const classes = Style()
   const [modalIsOpen, setIsOpen] = useState(false)
-  const { t, i18n } = useTranslation()
+  const { t } = useTranslation()
 
   const { Sales } = useData()
 
@@ -23,9 +23,9 @@ const Sales = () => {
     <div className='Sales'>
       <div className={classes.List}>
         <SalesForm
-          modalIsOpen={modalIsOpen}
+          EditModalIsOpen={modalIsOpen}
           CurrentItem={({ Nome: '' })}
-          setIsOpen={setIsOpen}
+          setEditModalIsOpen={setIsOpen}
         />
         <Button
           className={classes.AddButton}

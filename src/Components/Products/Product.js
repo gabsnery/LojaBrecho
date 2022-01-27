@@ -4,7 +4,6 @@ import IconButton from '@mui/material/IconButton'
 import TableCell from '@mui/material/TableCell'
 import TableRow from '@mui/material/TableRow'
 import React, { useState } from 'react' 
- import { useTranslation } from 'react-i18next'
 import { ProductForm } from './ProductForm'
 export const Product = props => {
   const { Product } = props;

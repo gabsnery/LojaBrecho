@@ -15,7 +15,7 @@ import { DataGrid } from '@mui/x-data-grid'
 
 export const SalesForm = props => {
   const classes = Style()
-  const { t, i18n } = useTranslation()
+  const { t } = useTranslation()
   const { EditModalIsOpen, setEditModalIsOpen } = props
   const { setState_ } = useState_()
   const {
@@ -131,7 +131,10 @@ export const SalesForm = props => {
   }
   useEffect(() => {
     let item_ = { ...props.CurrentItem }
+    console.log('props',props)
+    console.log('item_',item_)
     if (props.EditModalIsOpen) {
+      debugger;
       if (props.CurrentItem['Client'] && props.EditModalIsOpen) {
         let Cli = CalcularCredit(props.CurrentItem['Client'])
 
@@ -160,6 +163,7 @@ export const SalesForm = props => {
 
       setCurrentItem(item_)
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props])
   return (
     <Modal
@@ -321,7 +325,7 @@ export const SalesForm = props => {
 
 function ProductsList (props) {
   const { OrderProducts } = props
-  const { t, i18n } = useTranslation()
+  const { t } = useTranslation()
 
   const columns = [
     {

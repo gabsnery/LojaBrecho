@@ -41,7 +41,7 @@ export const Entry = props => {
   const [newProductIsOpen, setnewProductIsOpen] = useState(false)
   const { setState_ } = useState_()
   const handleClose = () => setremoveIsOpen(false)
-  const { t, i18n } = useTranslation()
+  const { t } = useTranslation()
 
   const [ProductsOpen, setProductsOpen] = React.useState(false)
   function openEditModal (Cli) {

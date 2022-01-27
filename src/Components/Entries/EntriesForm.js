@@ -2,7 +2,6 @@ import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Modal from '@mui/material/Modal'
 import React, { useEffect, useState } from 'react' 
- import { useTranslation } from 'react-i18next'
 import Dropdown from 'react-dropdown'
 import 'react-dropdown/style.css'
 import { useData, useState_ } from '../../Context/DataContext'
@@ -50,7 +49,7 @@ export const EntriesForm = props => {
   }
   useEffect(() => {
     let item_ = { ...props.CurrentItem }
-    if (props.CurrentItem['Client'] && modalIsOpen) {
+    if (props.CurrentItem['Client'] || modalIsOpen) {
       let Cli = props.CurrentItem['Client']
         ? Clients.find(y => y.id === props.CurrentItem['Client'].id)
         : 0

@@ -33,7 +33,7 @@ function Client (props) {
     false
   )
   const [EditIsOpen, setEditIsOpen] = React.useState(false)
-  const { t, i18n } = useTranslation()
+  const { t } = useTranslation()
 
   useEffect(() => {
     setCurrentAvailablebleCredit(CalculateCurrentCredit(Client))

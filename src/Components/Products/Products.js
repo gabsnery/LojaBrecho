@@ -17,7 +17,7 @@ const Products = props => {
   const [OrderedProducts, setOrderedProducts] = useState([])
   const [showAll, setshowAll] = useState(false)
   const [Order, setOrder] = useState({ order: 'asc', field: 'name' })
-  const { t, i18n } = useTranslation()
+  const { t } = useTranslation()
 
   useEffect(() => {
     if (props.Products) {

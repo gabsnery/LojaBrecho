@@ -10,7 +10,7 @@ import Style from '../../Style'
 
 export const ClientForm = props => {
   const classes = Style()
-  const { t, i18n } = useTranslation()
+  const { t } = useTranslation()
 
   const { modalIsOpen, setIsOpen } = props
   const { setState_ } = useState_()

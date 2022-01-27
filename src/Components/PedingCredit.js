@@ -21,7 +21,7 @@ const PedingCredit = () => {
   const { Clients } = useData()
   const { Products } = useData()
   const [ClientswCredit, setClientswCredit] = useState([])
-  const { t, i18n } = useTranslation()
+  const { t } = useTranslation()
 
   useEffect(() => {
     const calculateCredits = () => {
@@ -75,7 +75,7 @@ const PedingCredit = () => {
 }
 
 function Row (props) {
-  const { t, i18n } = useTranslation()
+  const { t } = useTranslation()
 
   const { row } = props
   const [open, setOpen] = React.useState(false)

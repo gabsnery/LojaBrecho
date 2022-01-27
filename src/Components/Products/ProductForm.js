@@ -22,7 +22,7 @@ export const ProductForm = props => {
   const [Entry] = useState(props.Entry)
   const [CurrentProduct, setCurrentProduct] = useState(props.CurrentProduct)
   const [editorState, setEditorState] = useState(EditorState.createEmpty())
-  const { t, i18n } = useTranslation()
+  const { t } = useTranslation()
 
   const onEditorStateChange = editorState => {
     setCurrentProduct({

@@ -13,7 +13,7 @@ import Client from './Client'
 import { ClientForm } from './ClientForm'
 
 const Clients = () => {
-  const { t, i18n } = useTranslation()
+  const { t } = useTranslation()
   const classes = Style()
   const { Clients } = useData()
   const [EditIsOpen, setEditIsOpen] = React.useState(false)
