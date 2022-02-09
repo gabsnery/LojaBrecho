@@ -116,7 +116,6 @@ export default function DataProvider ({ children }) {
         }
       }
     }
-
     let ProductsToAdd =
       Products_.length > 0
         ? Products.filter(el => {
@@ -125,15 +124,15 @@ export default function DataProvider ({ children }) {
             })
           })
         : Products
-    let ProductsToRemove =
+    /*let ProductsToRemove =
       Products_.length > 0
         ? Products_.filter(el => {
             return Products.every(f => {
               return el.id !== f.id
             })
           })
-        : Products
-
+        : Products*/
+    debugger
     Products.map(item => {
       let ProductsRef = firebase
         .firestore()
@@ -145,6 +144,7 @@ export default function DataProvider ({ children }) {
         .doc(Sale.id)
         .collection('Products')
         .add({ Product: ProductsRef })
+      reduceStock(ProductsToAdd)
       return {}
     })
   }

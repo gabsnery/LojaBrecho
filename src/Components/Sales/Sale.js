@@ -92,7 +92,7 @@ export const Sale = props => {
         </TableCell>
         <TableCell style={{ width: '5%' }}>
 
-        <Button onClick={() => setremoveIsOpen()}>
+        <Button disabled onClick={() => setremoveIsOpen(true)}>
         <DeleteIcon />
         </Button>
         </TableCell>

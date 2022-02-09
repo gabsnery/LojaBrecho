@@ -83,12 +83,24 @@ function Row (props) {
     releasaCreditModalIsOpen,
     setreleasaCreditModalIsOpen
   ] = React.useState(false)
+  const [
+    Credit,
+    setCredit
+  ] = React.useState(<></>)
   const { handleCredit } = useData()
   const classes = Style()
 
   function closeModal () {
     setreleasaCreditModalIsOpen(false)
   }
+  useEffect(() => {
+    let sum_= row['Products']
+            ? row['Products'].reduce((prev, next) => {
+                return prev + next['value']
+              }, 0) * 0.3 || 0
+            : 0;
+    setCredit(<span style={{fontWeight:'bold'}}>R${sum_}</span>);
+  }, [])
   const approveCredit = () => {
     let CreditValue = row['Products'].reduce((prev, next) => {
       return prev + next['value']
@@ -105,7 +117,8 @@ function Row (props) {
         aria-describedby='modal-modal-description'
       >
         <Box className={classes.RemoveModal}>
-          Está ação criará um valor de ___ de crédito disponivel para o cliente XXX
+        {t('ActionWillReleaseCredit1')} {Credit} {t('ActionWillReleaseCredit2')} <span style={{fontWeight:'bold'}}>{row.name}</span>
+       
           <Button
             variant='outlined'
             style={{
@@ -118,7 +131,7 @@ function Row (props) {
             }}
             onClick={() => approveCredit()}
           >
-            Liberar
+            {t('Release.label')}
           </Button>
         </Box>
       </Modal>
@@ -130,11 +143,7 @@ function Row (props) {
 
         <TableCell style={{ width: '75%' }}>{row.name}</TableCell>
         <TableCell style={{ width: '5%' }}>
-          {row['Products']
-            ? row['Products'].reduce((prev, next) => {
-                return prev + next['value']
-              }, 0) * 0.3 || 0
-            : 0}
+          {Credit}
         </TableCell>
         <TableCell style={{ width: '5%' }}>
           <Button

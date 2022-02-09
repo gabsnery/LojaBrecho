@@ -2,8 +2,8 @@ import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Modal from '@mui/material/Modal'
 import TextField from '@mui/material/TextField'
-import React, { useEffect, useState } from 'react' 
- import { useTranslation } from 'react-i18next'
+import React, { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import Dropdown from 'react-dropdown'
 import 'react-dropdown/style.css'
 import { useData, useState_ } from '../../Context/DataContext'
@@ -18,20 +18,17 @@ export const SalesForm = props => {
   const { t } = useTranslation()
   const { EditModalIsOpen, setEditModalIsOpen } = props
   const { setState_ } = useState_()
-  const {
-    Clients,
-    handleCredit,
-    reduceStock,
-    updateSalesProducts
-  } = useData()
+  const { Clients, handleCredit, updateSalesProducts } = useData()
 
   const { Products } = useData()
   const [CurrentItem, setCurrentItem] = useState(props.CurrentItem)
+  const [SelectedClient, setSelectedClient] = useState({})
   const [OrderProducts, setOrderProducts] = useState([])
   const [AvalibleCredit, setAvalibleCredit] = useState(0)
 
   function handleInputClient (e) {
-    setCurrentItem({ ...CurrentItem, [e.target.name]: e.target.value })
+    console.log(e)
+    setSelectedClient({ value: e.value, label: e.label })
   }
 
   function closeModal () {
@@ -50,18 +47,17 @@ export const SalesForm = props => {
         Value: total - Credit
       })
     }
-  }, [OrderProducts, CurrentItem])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [OrderProducts])
 
   function editProduct (e) {
     e.preventDefault()
     let ClientRef = firebase
       .firestore()
       .collection('Clients')
-      .doc(
-        typeof CurrentItem.Client == 'string'
-          ? CurrentItem.Client
-          : CurrentItem['Client'].Value
-      )
+      .doc(SelectedClient.value)
+    console.log('CurrentItem', CurrentItem)
+    console.log('ClientRef', ClientRef)
     CurrentItem['Client'] = ClientRef
     if (CurrentItem.hasOwnProperty('id')) {
       let SaleRef = firebase
@@ -79,7 +75,6 @@ export const SalesForm = props => {
             .add({ Sale: SaleRef })
           return null
         })
-        reduceStock(OrderProducts)
         if (CurrentItem.Credit > 0) {
           handleCredit(
             -CurrentItem.Credit,
@@ -112,7 +107,6 @@ export const SalesForm = props => {
             .add({ Sale: x })
           return null
         })
-        reduceStock(OrderProducts)
 
         setEditModalIsOpen(false)
         setState_(true)
@@ -120,50 +114,48 @@ export const SalesForm = props => {
     }
   }
   const CalcularCredit = Client => {
-    let Cli = Client ? Clients.find(y => y.id === Client.id) : 0
-    let credit = Clients.find(y => y.id === Cli.id)
-      ? Clients.find(y => y.id === Cli.id)['Credits'].reduce((prev, next) => {
-          return +prev + +next.Value
-        }, 0)
+    let credit = Clients.find(y => y.id === Client.id)
+      ? Clients.find(y => y.id === Client.id)['Credits'].reduce(
+          (prev, next) => {
+            return +prev + +next.Value
+          },
+          0
+        )
       : 0
     setAvalibleCredit(credit)
-    return Cli
+    return Client
   }
-  useEffect(() => {
+  const getThings = async () => {
     let item_ = { ...props.CurrentItem }
-    console.log('props',props)
-    console.log('item_',item_)
-    if (props.EditModalIsOpen) {
-      debugger;
-      if (props.CurrentItem['Client'] && props.EditModalIsOpen) {
-        let Cli = CalcularCredit(props.CurrentItem['Client'])
-
-        item_['Client'] = { value: Cli.id, label: Cli.name }
-      }
-      let Items_ = []
-      if (props.CurrentItem.hasOwnProperty('id')) {
-        firebase
-          .firestore()
-          .collection('Sales')
-          .doc(props.CurrentItem.id)
-          .collection('Products')
-          .get()
-          .then(data => {
-            let List = data.docs
-            for (let index = 0; index < List.length; index++) {
-              let item = List[index].data()
-
-              Items_.push(Products.find(x => x.id === item['Product'].id))
-            }
-            setOrderProducts(Items_)
+    if (props.CurrentItem['Client'] && props.EditModalIsOpen) {
+      CalcularCredit(props.CurrentItem['Client'])
+    }
+    let Items_ = []
+    if (props.CurrentItem.hasOwnProperty('id')) {
+      await firebase
+        .firestore()
+        .collection('Sales')
+        .doc(props.CurrentItem.id)
+        .collection('Products')
+        .get()
+        .then(data => {
+          Items_ = data.docs.map(it_ =>
+            Products.find(x => x.id === it_.data()['Product'].id)
+          )
+          setSelectedClient({
+            value: item_['Client'].id,
+            label: Clients.find(x => x.id === item_['Client'].id)['name']
           })
-      } else {
-        setOrderProducts([])
-      }
-
+        })
+      setOrderProducts(Items_)
       setCurrentItem(item_)
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }
+  useEffect(() => {
+    if (props.EditModalIsOpen) {
+      getThings()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props])
   return (
     <Modal
@@ -178,7 +170,6 @@ export const SalesForm = props => {
             className={classes.input}
             options={Clients.map(x => ({ value: x.id, label: x.name }))}
             onChange={e => {
-              let e_ = { target: { name: 'Client', value: e.value } }
               let credit = Clients.find(y => y.id === e.value)
                 ? Clients.find(y => y.id === e.value)['Credits'].reduce(
                     (prev, next) => {
@@ -188,10 +179,9 @@ export const SalesForm = props => {
                   )
                 : 0
               setAvalibleCredit(credit)
-
-              handleInputClient(e_)
+              handleInputClient(e)
             }}
-            value={CurrentItem.Client}
+            value={SelectedClient}
             placeholder={t('Client.label')}
           />
           <FormControlLabel
@@ -213,7 +203,6 @@ export const SalesForm = props => {
             }
             label='Site?'
           />
-
           <FormControlLabel
             control={
               <Checkbox
@@ -321,8 +310,6 @@ export const SalesForm = props => {
   )
 }
 
-
-
 function ProductsList (props) {
   const { OrderProducts } = props
   const { t } = useTranslation()
@@ -332,24 +319,18 @@ function ProductsList (props) {
       field: 'name',
       headerName: t('Name.label'),
       width: 150,
-      editable: true
+      editable: false
     },
     {
       field: 'value',
       headerName: t('Value.label'),
-      width: 150,
-      editable: true
+      width: 600,
+      editable: false
     }
   ]
   return (
     <div style={{ height: 400, marginTop: '20px', width: '100%' }}>
-      <DataGrid
-        rows={OrderProducts}
-        rowHeight={38}
-        columns={columns}
-        checkboxSelection
-        disableSelectionOnClick
-      />
+      <DataGrid rows={OrderProducts} rowHeight={38} columns={columns} />
     </div>
   )
 }

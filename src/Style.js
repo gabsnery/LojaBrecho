@@ -3,10 +3,9 @@ import { makeStyles } from '@mui/styles'
 const Style = makeStyles({
   SubmitButton: {
     display: 'flex',
-    margin: '3em 2em',
-    position: 'fixed',
     right: 0,
-    bottom: 0
+    bottom: 0,
+    float:'right'
   },
   List: {
     margin: '0 50px',
@@ -37,7 +36,20 @@ const Style = makeStyles({
     backgroundColor: 'white',
     height: '100%',
     right: '0px',
-    width: '70%',
+    width: '50%',
+    padding:'0 20px',
+    marginBottom:'20px',
+    bgcolor: 'background.paper',
+    boxShadow: 24,
+    overflowY: 'scroll'
+  },
+  ClientPanel: {
+    position: 'fixed',
+    top: '0',
+    backgroundColor: 'white',
+    height: '100%',
+    right: '0px',
+    width: '40%',
     padding:'10px 20px',
     bgcolor: 'background.paper',
     boxShadow: 24,

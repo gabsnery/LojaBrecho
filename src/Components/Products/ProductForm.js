@@ -110,6 +110,7 @@ export const ProductForm = props => {
         <form onSubmit={editProduct}>
           <TextField
             id='name'
+            label={t('Product.label')}
             variant='standard'
             name='name'
             style={{ width: '100%' }}
@@ -117,6 +118,7 @@ export const ProductForm = props => {
             onChange={handleInputClient}
             autoComplete='off'
           />
+ 
           <div
             style={{
               display: 'grid',
@@ -171,102 +173,9 @@ export const ProductForm = props => {
               variant='standard'
             />
           </div>
-          <div
-            style={{
-              border: '1px solid grey',
-              padding: '10px',
-              marginTop: '10px',
-              display: 'grid',
-              gridTemplateColumns: 'repeat(4,1fr)',
-              gridGap: '5px'
-            }}
-          >
-            <TextField
-              id='Tamanho1'
-              variant='standard'
-              name='Tamanho1'
-              value={CurrentProduct.Tamanho1}
-              onChange={handleInputClient}
-            />
-            <TextField
-              id='Tamanho2'
-              variant='standard'
-              name='Tamanho2'
-              value={CurrentProduct.Tamanho2}
-              onChange={handleInputClient}
-            />
-            <TextField
-              id='Tamanho3'
-              variant='standard'
-              name='Tamanho3'
-              value={CurrentProduct.Tamanho3}
-              onChange={handleInputClient}
-            />
-            <TextField
-              id='Tamanho4'
-              variant='standard'
-              name='Tamanho4'
-              value={CurrentProduct.Tamanho4}
-              onChange={handleInputClient}
-            />
-            <TextField
-              id='Tamanho5'
-              variant='standard'
-              name='Tamanho5'
-              value={CurrentProduct.Tamanho5}
-              onChange={handleInputClient}
-            />
-            <TextField
-              id='Tamanho6'
-              variant='standard'
-              name='Tamanho6'
-              value={CurrentProduct.Tamanho6}
-              onChange={handleInputClient}
-            />
-            <TextField
-              id='Tamanho7'
-              variant='standard'
-              name='Tamanho7'
-              value={CurrentProduct.Tamanho7}
-              onChange={handleInputClient}
-            />
-            <TextField
-              id='Tamanho8'
-              variant='standard'
-              name='Tamanho8'
-              value={CurrentProduct.Tamanho8}
-              onChange={handleInputClient}
-            />
-            <TextField
-              id='Tamanho9'
-              variant='standard'
-              name='Tamanho9'
-              value={CurrentProduct.Tamanho9}
-              onChange={handleInputClient}
-            />
-            <TextField
-              id='Tamanho10'
-              variant='standard'
-              name='Tamanho10'
-              value={CurrentProduct.Tamanho10}
-              onChange={handleInputClient}
-            />
-            <TextField
-              id='Tamanho11'
-              variant='standard'
-              name='Tamanho11'
-              value={CurrentProduct.Tamanho11}
-              onChange={handleInputClient}
-            />
-            <TextField
-              id='Tamanho12'
-              variant='standard'
-              name='Tamanho12'
-              value={CurrentProduct.Tamanho12}
-              onChange={handleInputClient}
-            />
-          </div>
-          <div style={{ border: '1px solid grey', marginTop: '10px' }}>
+          <div style={{  marginTop: '2em' }}>
+             Descrição
+          <div style={{ border: '1px solid grey',marginTop: '1em' }}>
             <Editor
               editorState={editorState}
               toolbarClassName='toolbarClassName'
@@ -275,6 +184,132 @@ export const ProductForm = props => {
               onEditorStateChange={onEditorStateChange}
             />
           </div>
+          </div>
+          <Box
+            sx={{
+              margin: '30px 0',
+              padding: '30px 10px',
+              border: '1px dashed grey'
+            }}
+          >
+            <span>Grupo de campos para Produtos</span>
+          <div
+            style={{
+              padding: '10px',
+              marginTop: '10px',
+              display: 'grid',
+              gridTemplateColumns: 'repeat(3,1fr)',
+              gridGap: '10px'
+            }}
+          >
+            <TextField
+              label={t('Height.label')}
+              id='height'
+              variant='standard'
+              name='height'
+              value={CurrentProduct.height}
+              onChange={handleInputClient}
+            />
+            <TextField
+              label={t('ShoulderWidth.label')}
+              id='shoulderWidth'
+              variant='standard'
+              name='shoulderWidth'
+              value={CurrentProduct.shoulderWidth}
+              onChange={handleInputClient}
+              />
+            <TextField
+              label={t('BustWidth.label')}
+              id='bustWidth'
+              variant='standard'
+              name='bustWidth'
+              value={CurrentProduct.bustWidth}
+              onChange={handleInputClient}
+              />
+            <TextField
+              label={t('WaistWidth.label')}
+              id='waistWidth'
+              variant='standard'
+              name='waistWidth'
+              value={CurrentProduct.waistWidth}
+              onChange={handleInputClient}
+              />
+            <TextField
+              label={t('HipWidth.label')}
+              id='hipWidth'
+              variant='standard'
+              name='hipWidth'
+              value={CurrentProduct.hipWidth}
+              onChange={handleInputClient}
+              />
+            <TextField
+              label={t('SleeveLength.label')}
+              id='sleeveLength'
+              variant='standard'
+              name='sleeveLength'
+              value={CurrentProduct.sleeveLength}
+              onChange={handleInputClient}
+              />
+            <TextField
+              label={t('LegWidth.label')}
+              id='legWidth'
+              variant='standard'
+              name='legWidth'
+              value={CurrentProduct.legWidth}
+              onChange={handleInputClient}
+              />
+          </div>
+          </Box>
+          <Box
+            sx={{
+              margin: '30px 0',
+              padding: '30px 10px',
+              border: '1px dashed grey'
+            }}
+          >
+            <span>Entrega</span>
+            <br />
+ 
+            <TextField
+              label={t('Weight.label')}
+              id='weight'
+              variant='standard'
+              style={{ width: '15%' }}
+              name='weight'
+              value={CurrentProduct.weight}
+              onChange={handleInputClient}
+            />
+              <br />
+
+               <TextField
+              label={t('Length.label')}
+              id='length'
+              variant='standard'
+              name='length'
+              style={{ width: 'calc(15% - 10px)' }}
+              value={CurrentProduct.length}
+              onChange={handleInputClient}
+            />
+            <TextField
+              label={t('Width.label')}
+              id='width'
+              variant='standard'
+              name='width'
+              style={{ width: 'calc(15% - 10px)', marginLeft: '10px' }}
+              value={CurrentProduct.width}
+              onChange={handleInputClient}
+            />
+            <TextField
+              label={t('Height.label')}
+              id='height'
+              variant='standard'
+              name='height'
+              style={{ width: 'calc(15% - 10px)', marginLeft: '10px' }}
+              value={CurrentProduct.height}
+              onChange={handleInputClient}
+            />
+          </Box>
+         
           <Button
             type='submit'
             className={classes.SubmitButton}
