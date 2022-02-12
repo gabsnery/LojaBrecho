@@ -6,7 +6,6 @@ export const DataContext = createContext()
 export default function DataProvider ({ children }) {
   const [State_, setState_] = useState(true)
   const [Clients, setClients] = useState([])
-  const [Products, setProducts] = useState([])
   const [Entries, setEntries] = useState([])
   const [Sales, setSales] = useState([])
 
@@ -44,8 +43,6 @@ export default function DataProvider ({ children }) {
       }
 
       setSales(_Sales)
-
-      setProducts(_Products)
       setEntries(await getData('Entries', 'name'))
     }
 
@@ -192,8 +189,6 @@ export default function DataProvider ({ children }) {
       value={{
         Clients,
         setClients,
-        Products,
-        setProducts,
         State_,
         setState_,
         Entries,
@@ -217,8 +212,6 @@ export function useData () {
   const {
     Clients,
     setClients,
-    Products,
-    setProducts,
     Entries,
     setEntries,
     Sales,
@@ -231,8 +224,6 @@ export function useData () {
   return {
     Clients,
     setClients,
-    Products,
-    setProducts,
     Entries,
     setEntries,
     Sales,

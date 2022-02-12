@@ -4,7 +4,7 @@ import IconButton from '@mui/material/IconButton'
 import TableCell from '@mui/material/TableCell'
 import TableRow from '@mui/material/TableRow'
 import React, { useState } from 'react' 
-import { ProductForm } from './ProductForm'
+import  ProductForm  from './ProductForm'
 export const Product = props => {
   const { Product } = props;
   const [modalIsOpen, setIsOpen] = useState(false)

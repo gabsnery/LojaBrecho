@@ -1,3 +1,4 @@
+import { connect } from 'react-redux'
 import DeleteIcon from '@mui/icons-material/Delete'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
@@ -14,11 +15,11 @@ import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
 import Typography from '@mui/material/Typography'
 import moment from 'moment'
-import React, { useState } from 'react' 
+import React, { useState,useEffect } from 'react' 
  import { useTranslation } from 'react-i18next'
 import { useData, useState_ } from '../../Context/DataContext'
 import FirebaseServices from '../../services/services'
-import { ProductForm } from '../Products/ProductForm'
+import ProductForm from '../Products/ProductForm'
 import { EntriesForm } from './EntriesForm'
 import { Product } from './Product'
 
@@ -33,8 +34,8 @@ const style = {
   boxShadow: 24,
   p: 4
 }
-export const Entry = props => {
-  const { Entry,EntryProducts,index} = props
+const Entry = props => {
+  const { Entry,Products,EntryProducts,index} = props
   const { Clients } = useData()
   const [removeModalIsOpen, setremoveIsOpen] = useState(false)
   const [modalIsOpen, setModalIsOpen] = useState(false)
@@ -44,6 +45,9 @@ export const Entry = props => {
   const { t } = useTranslation()
 
   const [ProductsOpen, setProductsOpen] = React.useState(false)
+  useEffect(() => {
+   console.log('props',props);
+  }, [props])
   function openEditModal (Cli) {
     setModalIsOpen(true)
   }
@@ -148,9 +152,12 @@ export const Entry = props => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {EntryProducts ? (
-                    EntryProducts
-                      .map((historyEntry,index) => (
+                  {Products.filter(p => p['Entry'] !== undefined).filter(
+                        p => p['Entry'].id === Entry.id
+                      ).length>0 ? (
+                        Products.filter(p => p['Entry'] !== undefined).filter(
+                          p => p['Entry'].id === Entry.id
+                        ).map((historyEntry,index) => (
                         <Product key={`Products_Row_${index}`}  Product={historyEntry} Entry={Entry} index={index}/>
                       ))
                   ) : (
@@ -165,3 +172,5 @@ export const Entry = props => {
     </>
   )
 }
+
+export default connect(state => ({ Products: state.Products }))(Entry)

@@ -12,15 +12,16 @@ import Style from '../../Style'
 import FirebaseServices from '../../services/services'
 import { Checkbox, FormControlLabel } from '@mui/material'
 import { DataGrid } from '@mui/x-data-grid'
+import { connect } from 'react-redux'
 
-export const SalesForm = props => {
+const SalesForm = props => {
   const classes = Style()
   const { t } = useTranslation()
   const { EditModalIsOpen, setEditModalIsOpen } = props
   const { setState_ } = useState_()
   const { Clients, handleCredit, updateSalesProducts } = useData()
 
-  const { Products } = useData()
+  const { Products } = props
   const [CurrentItem, setCurrentItem] = useState(props.CurrentItem)
   const [SelectedClient, setSelectedClient] = useState({})
   const [OrderProducts, setOrderProducts] = useState([])
@@ -334,3 +335,4 @@ function ProductsList (props) {
     </div>
   )
 }
+export default connect(state => ({ Products: state.Products }))(SalesForm)

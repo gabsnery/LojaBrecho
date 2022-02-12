@@ -1,3 +1,4 @@
+import * as actions from '../../store/actions'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Modal from '@mui/material/Modal'
@@ -12,8 +13,9 @@ import { useData, useState_ } from '../../Context/DataContext'
 import firebase from '../../firebase.config'
 import FirebaseServices from '../../services/services'
 import Style from '../../Style'
+import { connect } from 'react-redux'
 
-export const ProductForm = props => {
+const ProductForm = props => {
   const classes = Style()
   const { modalIsOpen, setIsOpen } = props
   const { setState_ } = useState_()
@@ -71,7 +73,8 @@ export const ProductForm = props => {
     } else {
       FirebaseServices.create('Products', _CurrentProduct).then(x => {
         setIsOpen(false)
-        setState_(true)
+        props.dispatch(actions.addProduct({..._CurrentProduct,id:x['id']}))
+
         updateTotalValue(_CurrentProduct)
       })
     }
@@ -323,3 +326,4 @@ export const ProductForm = props => {
     </Modal>
   )
 }
+export default connect(state => ({ Products: state.Products }))(ProductForm)

@@ -1,3 +1,4 @@
+import { connect } from 'react-redux'
 import DeleteIcon from '@mui/icons-material/Delete'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
@@ -18,7 +19,7 @@ import React, { useState } from 'react'
  import { useTranslation } from 'react-i18next'
 import { useData, useState_ } from '../../Context/DataContext'
 import FirebaseServices from '../../services/services'
-import { SalesForm } from './SalesForm'
+import SalesForm from './SalesForm'
 
 const style = {
   position: 'absolute',
@@ -32,10 +33,9 @@ const style = {
   p: 4
 }
 
-export const Sale = props => {
-  const { Sale, index } = props
+const Sale = props => {
+  const { Sale, index,Products } = props
   const { Clients } = useData()
-  const { Products } = useData()
   const [removeModalIsOpen, setremoveIsOpen] = useState(false)
   const { setState_ } = useState_()
   const [EditModalIsOpen, setEditModalIsOpen] = useState(false)
@@ -144,3 +144,4 @@ export const Sale = props => {
     </>
   )
 }
+export default connect(state => ({ Products: state.Products }))(Sale)

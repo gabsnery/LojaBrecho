@@ -16,10 +16,11 @@ import React, { useEffect, useState } from 'react'
 import { useData } from '../Context/DataContext'
 import Style from '../Style'
 import { useTranslation } from 'react-i18next'
+import { connect } from 'react-redux'
 
-const PedingCredit = () => {
+const PedingCredit = (props) => {
   const { Clients } = useData()
-  const { Products } = useData()
+  const { Products } = props
   const [ClientswCredit, setClientswCredit] = useState([])
   const { t } = useTranslation()
 
@@ -194,4 +195,4 @@ function Row (props) {
     </React.Fragment>
   )
 }
-export default PedingCredit
+export default connect(state => ({ Products: state.Products }))(PedingCredit)

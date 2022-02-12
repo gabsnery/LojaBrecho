@@ -5,26 +5,20 @@ import TableCell from '@mui/material/TableCell'
 import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
 import TableSortLabel from '@mui/material/TableSortLabel'
-import React, { useEffect, useState } from 'react' 
- import { useTranslation } from 'react-i18next'
-import { useData } from '../../Context/DataContext'
+import React, { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { connect } from 'react-redux'
 import Style from '../../Style'
 import { Product } from './Product'
 
 const Products = props => {
   const classes = Style()
-  const { Products, setProducts } = useData()
   const [OrderedProducts, setOrderedProducts] = useState([])
   const [showAll, setshowAll] = useState(false)
   const [Order, setOrder] = useState({ order: 'asc', field: 'name' })
   const { t } = useTranslation()
+  const { Products } = props
 
-  useEffect(() => {
-    if (props.Products) {
-      setProducts(props.Products)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props])
   useEffect(() => {
     if (Order.order === 'asc') {
       let temp = Products.sort((a, b) =>
@@ -72,7 +66,8 @@ const Products = props => {
                   {t('Name.label')}
                 </TableSortLabel>
               </TableCell>
-              <TableCell><TableSortLabel
+              <TableCell>
+                <TableSortLabel
                   onClick={() =>
                     setOrder({
                       order: Order.order === 'asc' ? 'desc' : 'asc',
@@ -83,7 +78,8 @@ const Products = props => {
                   direction={Order.order}
                 >
                   {t('Value.label')}
-                </TableSortLabel></TableCell>
+                </TableSortLabel>
+              </TableCell>
               <TableCell />
               <TableCell />
               <TableCell />
@@ -101,4 +97,4 @@ const Products = props => {
     </div>
   )
 }
-export default Products
+export default connect(state => ({ Products: state.Products }))(Products)

@@ -1,3 +1,4 @@
+import { connect } from 'react-redux'
 import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
@@ -13,7 +14,7 @@ import { useData, useState_ } from '../../Context/DataContext'
 import FirebaseServices from '../../services/services'
 import Style from '../../Style'
 import { EntriesForm } from './EntriesForm'
-import { Entry } from './Entry'
+import Entry from './Entry'
 
 const style = {
   position: 'absolute',
@@ -31,7 +32,7 @@ const Entries = () => {
   const [CurrentEntry, setCurrentEntry] = useState({})
   const [modalIsOpen, setIsOpen] = useState(false)
   const [removeModalIsOpen, setremoveIsOpen] = useState(false)
-  const { Entries, Products } = useData()
+  const { Entries } = useData()
   const { setState_ } = useState_()
   const { t} = useTranslation()
 
@@ -99,13 +100,7 @@ const Entries = () => {
                 key={`Entries_Row_${index}`}
                 Entry={row}
                 index={index}
-                EntryProducts={
-                  Products
-                    ? Products.filter(p => p['Entry'] !== undefined).filter(
-                        p => p['Entry'].id === row.id
-                      )
-                    : []
-                }
+               
               />
             ))}
           </TableBody>
@@ -114,5 +109,5 @@ const Entries = () => {
     </div>
   )
 }
+export default connect(state => ({ Products: state.Products }))(Entries)
 
-export default Entries

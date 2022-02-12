@@ -6,7 +6,7 @@ import TableRow from '@mui/material/TableRow'
 import React, { useState } from 'react' 
 import { useData, useState_ } from '../../Context/DataContext'
 import FirebaseServices from '../../services/services'
-import { ProductForm } from '../Products/ProductForm'
+import ProductForm from '../Products/ProductForm'
 import Modal from '@mui/material/Modal'
 import Box from '@mui/material/Box'
 

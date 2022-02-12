@@ -11,13 +11,17 @@ import PedingCredit from './Components/PedingCredit'
 import Products from './Components/Products/Products'
 import Sales from './Components/Sales/Sales'
 import DataProvider from './Context/DataContext'
+import { Provider } from 'react-redux'
 import firebase from './firebase.config'
+import store from './store'
+
 function a11yProps (index) {
   return {
     id: `simple-tab-${index}`,
     'aria-controls': `simple-tabpanel-${index}`
   }
 }
+
 
 function TabPanel (props) {
   const { children, value, index, ...other } = props
@@ -53,6 +57,7 @@ function App () {
     })
   }, [])
   return (
+    <Provider store={store}>
     <DataProvider>
       <div style={{ width: 'fit-content', display: 'inline' }}>
         <Button onClick={() => i18n.changeLanguage('pt')}>Português</Button>
@@ -65,6 +70,7 @@ function App () {
 
       {authenticated ? <LoggedArea /> : <></>}
     </DataProvider>
+    </Provider>
   )
 }
 function LoggedArea (props) {

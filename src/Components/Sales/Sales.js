@@ -9,8 +9,8 @@ import React, { useState } from 'react'
  import { useTranslation } from 'react-i18next'
 import { useData } from '../../Context/DataContext'
 import Style from '../../Style'
-import { Sale } from './Sale'
-import { SalesForm } from './SalesForm'
+import Sale from './Sale'
+import SalesForm from './SalesForm'
 
 const Sales = () => {
   const classes = Style()
