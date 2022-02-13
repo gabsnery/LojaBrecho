@@ -17,7 +17,6 @@ import Typography from '@mui/material/Typography'
 import moment from 'moment'
 import React, { useState } from 'react' 
  import { useTranslation } from 'react-i18next'
-import { useData, useState_ } from '../../Context/DataContext'
 import FirebaseServices from '../../services/services'
 import SalesForm from './SalesForm'
 
@@ -34,10 +33,8 @@ const style = {
 }
 
 const Sale = props => {
-  const { Sale, index,Products } = props
-  const { Clients } = useData()
+  const { Sale, index,Products,Clients } = props
   const [removeModalIsOpen, setremoveIsOpen] = useState(false)
-  const { setState_ } = useState_()
   const [EditModalIsOpen, setEditModalIsOpen] = useState(false)
   const { t } = useTranslation()
 
@@ -45,7 +42,6 @@ const Sale = props => {
   function removeItem () {
     FirebaseServices.remove('Sales', Sale).then(x => {
       setremoveIsOpen(false)
-      setState_(true)
     })
   }
   const handleClose = () => setremoveIsOpen(false)
@@ -144,4 +140,4 @@ const Sale = props => {
     </>
   )
 }
-export default connect(state => ({ Products: state.Products }))(Sale)
+export default connect(state => ({ Products: state.Products ,Clients:state.Clients}))(Sale)

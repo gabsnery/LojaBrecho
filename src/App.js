@@ -10,7 +10,6 @@ import Login from './Components/Login'
 import PedingCredit from './Components/PedingCredit'
 import Products from './Components/Products/Products'
 import Sales from './Components/Sales/Sales'
-import DataProvider from './Context/DataContext'
 import { Provider } from 'react-redux'
 import firebase from './firebase.config'
 import store from './store'
@@ -58,7 +57,6 @@ function App () {
   }, [])
   return (
     <Provider store={store}>
-    <DataProvider>
       <div style={{ width: 'fit-content', display: 'inline' }}>
         <Button onClick={() => i18n.changeLanguage('pt')}>Português</Button>
         <Button onClick={() => i18n.changeLanguage('en')}>English</Button>
@@ -69,10 +67,10 @@ function App () {
       />
 
       {authenticated ? <LoggedArea /> : <></>}
-    </DataProvider>
     </Provider>
   )
 }
+
 function LoggedArea (props) {
   const [value, setValue] = React.useState(0)
   const { t } = useTranslation()
@@ -117,7 +115,7 @@ function LoggedArea (props) {
         </Tabs>
       </Box>
       <TabPanel value={value} index={0}>
-        <Clients></Clients>
+        <Clients key = {1}></Clients>
       </TabPanel>
       <TabPanel value={value} index={1}>
         <Products></Products>

@@ -13,10 +13,10 @@ import TableRow from '@mui/material/TableRow'
 import TextField from '@mui/material/TextField'
 import React, { useEffect } from 'react' 
  import { useTranslation } from 'react-i18next'
-import { useData } from '../../Context/DataContext'
 import Style from '../../Style'
-import { ClientForm } from './ClientForm'
+import ClientForm from './ClientForm'
 import ClientHistory from './ClientHistory'
+import * as APIUtils from '../common/APIUtils'
 
 function Client (props) {
   const classes = Style()
@@ -28,7 +28,7 @@ function Client (props) {
     setCurrentAvailablebleCredit
   ] = React.useState(0)
   const [WithdrawalCredit, setWithdrawaCredit] = React.useState(0)
-  const { handleCredit } = useData()
+
   const [WithdrawalModalIsOpen, setWithdrawalModalIsOpen] = React.useState(
     false
   )
@@ -77,7 +77,7 @@ function Client (props) {
               position: 'fixed'
             }}
             onClick={() => {
-              handleCredit(
+              APIUtils.handleCredit(
                 -WithdrawalCredit,
                 Client.id,
                 [],

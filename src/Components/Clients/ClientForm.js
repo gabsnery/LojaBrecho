@@ -4,16 +4,16 @@ import Modal from '@mui/material/Modal'
 import TextField from '@mui/material/TextField'
 import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useState_ } from '../../Context/DataContext'
+import { connect } from 'react-redux'
 import FirebaseServices from '../../services/services'
+import * as actions from '../../store/actions'
 import Style from '../../Style'
 
-export const ClientForm = props => {
+const ClientForm = props => {
   const classes = Style()
   const { t } = useTranslation()
 
   const { modalIsOpen, setIsOpen } = props
-  const { setState_ } = useState_()
 
   const [CurrentClient, setCurrentClient] = useState(props.CurrentClient)
   function handleInputClient (e) {
@@ -32,12 +32,12 @@ export const ClientForm = props => {
     if (CurrentClient.hasOwnProperty('id')) {
       FirebaseServices.update('Clients', CurrentClient).then(x => {
         setIsOpen(false)
-        setState_(true)
+        props.dispatch(actions.updateClient(CurrentClient))
       })
     } else {
       FirebaseServices.create('Clients', CurrentClient).then(x => {
         setIsOpen(false)
-        setState_(true)
+        props.dispatch(actions.addClient({...CurrentClient,id:x.id}))
       })
     }
   }
@@ -224,3 +224,6 @@ export const ClientForm = props => {
     </Modal>
   )
 }
+export default connect(state => ({
+  Clients: state.Clients
+}))(ClientForm)

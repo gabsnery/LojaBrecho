@@ -4,12 +4,11 @@ import Button from '@mui/material/Button'
 import TableCell from '@mui/material/TableCell'
 import TableRow from '@mui/material/TableRow'
 import React, { useState } from 'react' 
-import { useData, useState_ } from '../../Context/DataContext'
 import FirebaseServices from '../../services/services'
 import ProductForm from '../Products/ProductForm'
 import Modal from '@mui/material/Modal'
 import Box from '@mui/material/Box'
-
+import { connect } from 'react-redux'
 const style = {
   position: 'absolute',
   top: '50%',
@@ -21,19 +20,16 @@ const style = {
   boxShadow: 24,
   p: 4
 }
-export const Product = props => {
-  const { Product, Entry, index } = props
-  const { Clients } = useData()
+const Product = props => {
+  const { Product, Entry, index,Clients } = props
   const [RemoveModalIsOpen, setRemoveModalIsOpen] = useState(false)
   const [EditmodalIsOpen, setEditModalIsOpen] = useState(false)
-  const { setState_ } = useState_()
   function openProdEditModal () {
     setEditModalIsOpen(true)
   }
   function removeItem () {
     FirebaseServices.remove('Product', Product).then(x => {
       setRemoveModalIsOpen(false)
-      setState_(true)
     })
   }
   const handleClose = () => setRemoveModalIsOpen(false)
@@ -74,3 +70,4 @@ export const Product = props => {
     </>
   )
 }
+export default connect(state => ({ Products: state.Products  ,Clients:state.Clients}))(Product)

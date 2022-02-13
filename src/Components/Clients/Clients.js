@@ -1,6 +1,3 @@
-import { useData } from '../../Context/DataContext'
-import FirebaseServices from '../../services/services'
-import * as actions from '../../store/actions'
 import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined'
 import Button from '@mui/material/Button'
 import Table from '@mui/material/Table'
@@ -10,49 +7,71 @@ import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
 import React, { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
+import { connect } from 'react-redux'
+import FirebaseServices from '../../services/services'
+import * as actions from '../../store/actions'
 import Style from '../../Style'
 import Client from './Client'
-import { ClientForm } from './ClientForm'
-import { connect } from 'react-redux'
+import ClientForm from './ClientForm'
 
 const Clients = props => {
   const { t } = useTranslation()
   const classes = Style()
-  const { Clients } = useData()
+  const { Clients,Products } = props
   const [EditIsOpen, setEditIsOpen] = React.useState(false)
 
   useEffect(() => {
-    async function  getData(){
-
-      FirebaseServices.getAll('Products').then(x => {
+    async function getData () {
+       await FirebaseServices.getAll('Products').then(x => {
         x.sort((a, b) =>
           a['name'] > b['name'] ? 1 : b['name'] > a['name'] ? -1 : 0
         )
+        console.log('Products',x)
+
         props.dispatch(actions.setProductos(x))
       })
-
-      FirebaseServices.getAll('Clients').then(async (x)  => {
+      await FirebaseServices.getAll('Entries').then(x => {
         x.sort((a, b) =>
           a['name'] > b['name'] ? 1 : b['name'] > a['name'] ? -1 : 0
         )
-        for(let p=0;p<x.length;p++){
-          x[p]['Credits'] = await (FirebaseServices.getSubCollection('Clients',x[p],'Credits'))
+        props.dispatch(actions.setEntries(x))
+      })
+
+      FirebaseServices.getAll('Clients').then(async x => {
+        x.sort((a, b) =>
+          a['name'] > b['name'] ? 1 : b['name'] > a['name'] ? -1 : 0
+        )
+        for (let p = 0; p < x.length; p++) {
+          x[p]['Credits'] = await FirebaseServices.getSubCollection(
+            'Clients',
+            x[p],
+            'Credits'
+          )
         }
-        console.log(x)
         props.dispatch(actions.setClients(x))
       })
+      FirebaseServices.getAll('Sales').then(async x => {
+        x.sort((a, b) =>
+          a['name'] > b['name'] ? 1 : b['name'] > a['name'] ? -1 : 0
+        )
+        for (let p = 0; p < x.length; p++) {
+          x[p]['Products'] = (await FirebaseServices.getSubCollection('Sales', x[p], 'Products')
+          ).map(y => ( Products.find(x => x.id === y['Product'].id)))
+        }
+        props.dispatch(actions.setSales(x))
+      })
     }
-    getData();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    getData()
   }, [])
-
+useEffect(()=>{
+console.log('Props',props)
+},[props])
   return (
     <div>
-
       <div className={classes.List}>
         <ClientForm
           modalIsOpen={EditIsOpen}
-          CurrentClient={({ name: '' })}
+          CurrentClient={{ name: '' }}
           setIsOpen={setEditIsOpen}
         />
         <Button
@@ -77,11 +96,7 @@ const Clients = props => {
           </TableHead>
           <TableBody>
             {Clients.map((row, index) => (
-              <Client
-                key={`Client_Row_${row.id}`}
-                index={index}
-                Client={row}
-              />
+              <Client key={`Client_Row_${row.id}`} index={index} Client={row} />
             ))}
           </TableBody>
         </Table>
@@ -89,4 +104,7 @@ const Clients = props => {
     </div>
   )
 }
-export default connect(state => ({ Products: state.Products }))(Clients)
+export default connect(state => ({
+  Clients: state.Clients,
+  Products: state.Products
+}))(Clients)

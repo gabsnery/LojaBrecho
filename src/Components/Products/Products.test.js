@@ -2,7 +2,7 @@ import React from 'react'
  import { useTranslation } from 'react-i18next'
 import { render, screen,fireEvent } from '@testing-library/react'
 import Products from './Products'
-import DataProvider, { DataContext, useData } from '../../Context/DataContext'
+import DataProvider, { DataContext } from '../../Context/DataContext'
 const Products_ = [
   {
     stock: 1,

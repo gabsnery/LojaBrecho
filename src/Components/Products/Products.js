@@ -20,6 +20,7 @@ const Products = props => {
   const { Products } = props
 
   useEffect(() => {
+    console.log('Order',Order)
     if (Order.order === 'asc') {
       let temp = Products.sort((a, b) =>
         a[Order.field] < b[Order.field] ? -1 : 1
@@ -32,7 +33,7 @@ const Products = props => {
       setOrderedProducts(temp)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [Order])
+  }, [Order,Products])
 
   return (
     <div className='Products'>

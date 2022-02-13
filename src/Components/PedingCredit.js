@@ -13,14 +13,13 @@ import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
 import Typography from '@mui/material/Typography'
 import React, { useEffect, useState } from 'react'
-import { useData } from '../Context/DataContext'
-import Style from '../Style'
 import { useTranslation } from 'react-i18next'
 import { connect } from 'react-redux'
+import Style from '../Style'
+import * as APIUtils from './common/APIUtils'
 
 const PedingCredit = (props) => {
-  const { Clients } = useData()
-  const { Products } = props
+  const { Products,Clients } = props
   const [ClientswCredit, setClientswCredit] = useState([])
   const { t } = useTranslation()
 
@@ -88,7 +87,6 @@ function Row (props) {
     Credit,
     setCredit
   ] = React.useState(<></>)
-  const { handleCredit } = useData()
   const classes = Style()
 
   function closeModal () {
@@ -106,7 +104,7 @@ function Row (props) {
     let CreditValue = row['Products'].reduce((prev, next) => {
       return prev + next['value']
     }, 0)
-    handleCredit(CreditValue * 0.3, row.id, row.Products, 'ReleasedCredit')
+    APIUtils.handleCredit(CreditValue * 0.3, row.id, row.Products, 'ReleasedCredit')
     setreleasaCreditModalIsOpen(false)
   }
   return (
@@ -195,4 +193,4 @@ function Row (props) {
     </React.Fragment>
   )
 }
-export default connect(state => ({ Products: state.Products }))(PedingCredit)
+export default connect(state => ({ Products: state.Products  ,Clients:state.Clients}))(PedingCredit)
