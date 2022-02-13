@@ -17,20 +17,20 @@ import ClientForm from './ClientForm'
 const Clients = props => {
   const { t } = useTranslation()
   const classes = Style()
-  const { Clients,Products } = props
+  const { Clients, Products } = props
   const [EditIsOpen, setEditIsOpen] = React.useState(false)
 
   useEffect(() => {
     async function getData () {
-       await FirebaseServices.getAll('Products').then(x => {
+      let temp_Products = []
+      FirebaseServices.getAll('Products').then(x => {
         x.sort((a, b) =>
           a['name'] > b['name'] ? 1 : b['name'] > a['name'] ? -1 : 0
         )
-        console.log('Products',x)
-
+        temp_Products = x
         props.dispatch(actions.setProductos(x))
       })
-      await FirebaseServices.getAll('Entries').then(x => {
+      FirebaseServices.getAll('Entries').then(x => {
         x.sort((a, b) =>
           a['name'] > b['name'] ? 1 : b['name'] > a['name'] ? -1 : 0
         )
@@ -55,17 +55,18 @@ const Clients = props => {
           a['name'] > b['name'] ? 1 : b['name'] > a['name'] ? -1 : 0
         )
         for (let p = 0; p < x.length; p++) {
-          x[p]['Products'] = (await FirebaseServices.getSubCollection('Sales', x[p], 'Products')
-          ).map(y => ( Products.find(x => x.id === y['Product'].id)))
+          x[p]['Products'] = (
+            await FirebaseServices.getSubCollection('Sales', x[p], 'Products')
+          ).map(y => temp_Products.find(x => x.id === y['Product'].id))
         }
         props.dispatch(actions.setSales(x))
       })
     }
     getData()
   }, [])
-useEffect(()=>{
-console.log('Props',props)
-},[props])
+  useEffect(() => {
+    console.log('Props', props)
+  }, [props])
   return (
     <div>
       <div className={classes.List}>

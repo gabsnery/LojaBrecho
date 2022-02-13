@@ -15,8 +15,8 @@ import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
 import Typography from '@mui/material/Typography'
 import moment from 'moment'
-import React, { useState } from 'react' 
- import { useTranslation } from 'react-i18next'
+import React, { useState,useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import FirebaseServices from '../../services/services'
 import SalesForm from './SalesForm'
 
@@ -33,7 +33,7 @@ const style = {
 }
 
 const Sale = props => {
-  const { Sale, index,Products,Clients } = props
+  const { Sale, index, Products, Clients } = props
   const [removeModalIsOpen, setremoveIsOpen] = useState(false)
   const [EditModalIsOpen, setEditModalIsOpen] = useState(false)
   const { t } = useTranslation()
@@ -54,7 +54,7 @@ const Sale = props => {
         aria-describedby='modal-modal-description'
       >
         <Box sx={style}>
-        {t('Remove.label')}?
+          {t('Remove.label')}?
           <Button variant='outlined' onClick={() => removeItem()}></Button>
         </Box>
       </Modal>
@@ -75,7 +75,7 @@ const Sale = props => {
           )}
         </TableCell>
 
-        <TableCell style={{ width: '7%' }} >
+        <TableCell style={{ width: '7%' }}>
           {Clients.find(x => x.id === Sale.Client.id)
             ? Clients.find(x => x.id === Sale.Client.id)['name']
             : ''}
@@ -87,10 +87,9 @@ const Sale = props => {
           </Button>
         </TableCell>
         <TableCell style={{ width: '5%' }}>
-
-        <Button disabled onClick={() => setremoveIsOpen(true)}>
-        <DeleteIcon />
-        </Button>
+          <Button disabled onClick={() => setremoveIsOpen(true)}>
+            <DeleteIcon />
+          </Button>
         </TableCell>
         <TableCell style={{ width: '5%' }}>
           <IconButton aria-label='expand row' size='small'></IconButton>
@@ -112,7 +111,7 @@ const Sale = props => {
           <Collapse in={ProductsOpen} timeout='auto' unmountOnExit>
             <Box sx={{ margin: 1 }}>
               <Typography variant='h6' gutterBottom component='div'>
-              {t('Products.label')}
+                {t('Products.label')}
               </Typography>
 
               <Table size='small'>
@@ -140,4 +139,7 @@ const Sale = props => {
     </>
   )
 }
-export default connect(state => ({ Products: state.Products ,Clients:state.Clients}))(Sale)
+export default connect(state => ({
+  Products: state.Products,
+  Clients: state.Clients
+}))(Sale)

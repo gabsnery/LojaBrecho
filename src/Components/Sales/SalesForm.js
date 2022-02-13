@@ -269,7 +269,7 @@ const SalesForm = props => {
           <h1>Valor total: {CurrentItem.Value}</h1>
           <Button
             type='submit'
-            disabled = {CurrentItem['id']} //temporary - so i can think how to edit a sale and products that were removed (stock and stuff)
+            disabled = {CurrentItem.hasOwnProperty('id')} //temporary - so i can think how to edit a sale and products that were removed (stock and stuff)
             className={classes.SubmitButton}
             value='Submit'
             variant='outlined'
