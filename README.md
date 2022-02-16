@@ -1,3 +1,7 @@
+Do you have any suggestions to improve my code?Or would like access the application?
+Please contact me
+gneri94@gmail.com
+
 # Project idea
 npm run build
 
@@ -15,6 +19,4 @@ Credit to a client should allways be aproved before going to the user's account
 
 The application also should accept products that are not consignment and won't create any credit for any client
 
-Do you have any suggestions to improve my code?
-Please contact me
-gneri94@gmail.com
+
