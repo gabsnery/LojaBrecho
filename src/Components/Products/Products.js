@@ -98,4 +98,4 @@ const Products = props => {
     </div>
   )
 }
-export default connect(state => ({ Products: state.Products }))(Products)
+export default connect(state => ({ Products: state.thriftStore.Products }))(Products)

@@ -91,4 +91,4 @@ const EntriesForm = props => {
     </Modal>
   )
 }
-export default connect(state => ({ Clients: state.Clients }))(EntriesForm)
+export default connect(state => ({ Clients: state.thriftStore.Clients }))(EntriesForm)

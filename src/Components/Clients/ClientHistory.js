@@ -66,8 +66,8 @@ function ClientHistory (props) {
   )
 }
 export default connect(state => ({
-  Products: state.Products,
-  Sales: state.Sales,
-  Entries: state.Entries
+  Products: state.thriftStore.Products,
+  Sales: state.thriftStore.Sales,
+  Entries: state.thriftStore.Entries
 }))(ClientHistory)
 

@@ -1,4 +1,3 @@
-import { connect } from 'react-redux'
 import DeleteIcon from '@mui/icons-material/Delete'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
@@ -15,8 +14,9 @@ import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
 import Typography from '@mui/material/Typography'
 import moment from 'moment'
-import React, { useState,useEffect } from 'react'
+import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { connect } from 'react-redux'
 import FirebaseServices from '../../services/services'
 import SalesForm from './SalesForm'
 
@@ -140,6 +140,6 @@ const Sale = props => {
   )
 }
 export default connect(state => ({
-  Products: state.Products,
-  Clients: state.Clients
+  Products: state.thriftStore.Products,
+  Clients: state.thriftStore.Clients
 }))(Sale)

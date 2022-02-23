@@ -193,4 +193,4 @@ function Row (props) {
     </React.Fragment>
   )
 }
-export default connect(state => ({ Products: state.Products  ,Clients:state.Clients}))(PedingCredit)
+export default connect(state => ({ Products: state.thriftStore.Products  ,Clients:state.thriftStore.Clients}))(PedingCredit)

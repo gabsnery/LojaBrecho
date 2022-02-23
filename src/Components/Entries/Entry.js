@@ -1,4 +1,3 @@
-import { connect } from 'react-redux'
 import DeleteIcon from '@mui/icons-material/Delete'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
@@ -15,13 +14,13 @@ import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
 import Typography from '@mui/material/Typography'
 import moment from 'moment'
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import FirebaseServices from '../../services/services'
+import * as actions from '../../store/actions'
 import ProductForm from '../Products/ProductForm'
 import EntriesForm from './EntriesForm'
 import Product from './Product'
-import * as actions from '../../store/actions'
 
 const style = {
   position: 'absolute',

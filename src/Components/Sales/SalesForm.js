@@ -317,6 +317,6 @@ function ProductsList (props) {
   )
 }
 export default connect(state => ({
-  Products: state.Products,
-  Clients: state.Clients
+  Products: state.thriftStore.Products,
+  Clients: state.thriftStore.Clients
 }))(SalesForm)

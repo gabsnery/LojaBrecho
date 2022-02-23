@@ -225,5 +225,5 @@ const ClientForm = props => {
   )
 }
 export default connect(state => ({
-  Clients: state.Clients
+  Clients: state.thriftStore.Clients
 }))(ClientForm)

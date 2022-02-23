@@ -59,5 +59,5 @@ const Sales = props => {
   )
 }
 export default connect(state => ({
-  Sales: state.Sales
+  Sales: state.thriftStore.Sales
 }))(Sales)

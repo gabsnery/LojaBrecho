@@ -8,8 +8,6 @@ import TableRow from '@mui/material/TableRow'
 import React, { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { connect } from 'react-redux'
-import FirebaseServices from '../../services/services'
-import * as actions from '../../store/actions'
 import Style from '../../Style'
 import Client from './Client'
 import ClientForm from './ClientForm'
@@ -17,53 +15,10 @@ import ClientForm from './ClientForm'
 const Clients = props => {
   const { t } = useTranslation()
   const classes = Style()
-  const { Clients, Products } = props
+  const { Clients } = props
   const [EditIsOpen, setEditIsOpen] = React.useState(false)
 
-  useEffect(() => {
-    async function getData () {
-      let temp_Products = []
-      FirebaseServices.getAll('Products').then(x => {
-        x.sort((a, b) =>
-          a['name'] > b['name'] ? 1 : b['name'] > a['name'] ? -1 : 0
-        )
-        temp_Products = x
-        props.dispatch(actions.setProductos(x))
-      })
-      FirebaseServices.getAll('Entries').then(x => {
-        x.sort((a, b) =>
-          a['name'] > b['name'] ? 1 : b['name'] > a['name'] ? -1 : 0
-        )
-        props.dispatch(actions.setEntries(x))
-      })
-
-      FirebaseServices.getAll('Clients').then(async x => {
-        x.sort((a, b) =>
-          a['name'] > b['name'] ? 1 : b['name'] > a['name'] ? -1 : 0
-        )
-        for (let p = 0; p < x.length; p++) {
-          x[p]['Credits'] = await FirebaseServices.getSubCollection(
-            'Clients',
-            x[p],
-            'Credits'
-          )
-        }
-        props.dispatch(actions.setClients(x))
-      })
-      FirebaseServices.getAll('Sales').then(async x => {
-        x.sort((a, b) =>
-          a['name'] > b['name'] ? 1 : b['name'] > a['name'] ? -1 : 0
-        )
-        for (let p = 0; p < x.length; p++) {
-          x[p]['Products'] = (
-            await FirebaseServices.getSubCollection('Sales', x[p], 'Products')
-          ).map(y => temp_Products.find(x => x.id === y['Product'].id))
-        }
-        props.dispatch(actions.setSales(x))
-      })
-    }
-    getData()
-  }, [])
+  
   useEffect(() => {
     console.log('Props', props)
   }, [props])
@@ -106,6 +61,6 @@ const Clients = props => {
   )
 }
 export default connect(state => ({
-  Clients: state.Clients,
-  Products: state.Products
+  Clients: state.thriftStore.Clients,
+  Products: state.thriftStore.Products
 }))(Clients)

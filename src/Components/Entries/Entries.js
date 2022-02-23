@@ -113,7 +113,7 @@ const Entries = props => {
   )
 }
 export default connect(state => ({
-  Products: state.Products,
-  Entries: state.Entries,
-  Clients: state.Clients
+  Products: state.thriftStore.Products,
+  Entries: state.thriftStore.Entries,
+  Clients: state.thriftStore.Clients
 }))(Entries)
