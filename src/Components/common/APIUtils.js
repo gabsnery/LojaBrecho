@@ -29,9 +29,9 @@ export async function handleCredit (CreditValue, Client, Products, Type) {
 
 export async function updateSalesProducts (Sale, Products) {
   let SaleRef = firebase
-  .firestore()
-  .collection('Sales')
-  .doc(Sale.id)
+    .firestore()
+    .collection('Sales')
+    .doc(Sale.id)
 
   Products.map(item => {
     let ProductsRef = firebase
@@ -47,6 +47,8 @@ export async function updateSalesProducts (Sale, Products) {
     reduceStock(Products)
     return {}
   })
+
+
 
   Products.map(item => {
     firebase
@@ -64,7 +66,7 @@ export async function reduceStock (products) {
       .firestore()
       .collection('Products')
       .doc(item.id)
-      .update({ stock: item.stock - 1, sold: true })
+      .update({ stock: item.stock - 1, sold: true,soldValue:item.soldValue,percDiscount:item.percDiscount })
   )
 }
 

@@ -95,14 +95,14 @@ function Row (props) {
   useEffect(() => {
     let sum_= row['Products']
             ? row['Products'].reduce((prev, next) => {
-                return prev + next['value']
+                return prev + (next['soldValue'] || 0)
               }, 0) * 0.3 || 0
             : 0;
     setCredit(<span style={{fontWeight:'bold'}}>R${sum_}</span>);
   }, [])
   const approveCredit = () => {
     let CreditValue = row['Products'].reduce((prev, next) => {
-      return prev + next['value']
+      return prev + (next['soldValue'] || 0)
     }, 0)
     APIUtils.handleCredit(CreditValue * 0.3, row.id, row.Products, 'ReleasedCredit')
     setreleasaCreditModalIsOpen(false)
@@ -175,6 +175,7 @@ function Row (props) {
                   <TableRow>
                     <TableCell>{t('Name.label')}</TableCell>
                     <TableCell>{t('Value.label')}</TableCell>
+                    <TableCell>{t('Value.label')}</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -182,6 +183,7 @@ function Row (props) {
                     <TableRow key={`Collapsed_PedingCredits_${index}`}>
                       <TableCell>{item.name}</TableCell>
                       <TableCell>{item.value || 0}</TableCell>
+                      <TableCell>{item.soldValue || 0}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>

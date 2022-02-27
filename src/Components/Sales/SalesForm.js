@@ -3,7 +3,7 @@ import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Modal from '@mui/material/Modal'
 import TextField from '@mui/material/TextField'
-import { DataGrid } from '@mui/x-data-grid'
+import { DataGrid,GridActionsCellItem} from '@mui/x-data-grid'
 import React, { useEffect, useState } from 'react'
 import Dropdown from 'react-dropdown'
 import 'react-dropdown/style.css'
@@ -14,6 +14,7 @@ import FirebaseServices from '../../services/services'
 import * as actions from '../../store/actions'
 import Style from '../../Style'
 import * as APIUtils from '../common/APIUtils'
+import DeleteIcon from '@mui/icons-material/DeleteOutlined';
 
 const SalesForm = props => {
   const classes = Style()
@@ -33,7 +34,7 @@ const SalesForm = props => {
   useEffect(() => {
     if (SelectedProducts.length > 0) {
       let total = SelectedProducts.reduce((a, b) => {
-        return a + b.value
+        return a + b.soldValue
       }, 0)
       let Credit = CurrentItem.Credit ? CurrentItem.Credit : 0
 
@@ -110,11 +111,12 @@ const SalesForm = props => {
       CalcularCredit(props.CurrentItem['Client'])
     }
     if (props.CurrentItem.hasOwnProperty('id')) {
-
-        setSelectedClient({
-          value: props.CurrentItem['Client'].id,
-          label: Clients.find(x => x.id === props.CurrentItem['Client'].id)['name']
-        })
+      setSelectedClient({
+        value: props.CurrentItem['Client'].id,
+        label: Clients.find(x => x.id === props.CurrentItem['Client'].id)[
+          'name'
+        ]
+      })
       setSelectedProducts(props.CurrentItem['Products'])
       setCurrentItem(props.CurrentItem)
     }
@@ -215,11 +217,16 @@ const SalesForm = props => {
           )}
           <Dropdown
             options={Products.filter(x => x['stock'] !== null)
-              .filter(x => x.stock-SelectedProducts.filter(o=>o['id'] === x['id']).length > 0 && !x.Site)
+              .filter(
+                x =>
+                  x.stock -
+                    SelectedProducts.filter(o => o['id'] === x['id']).length >
+                    0 && !x.Site
+              )
               .map(x => ({ value: x.id, label: x.name }))}
             onChange={e => {
               let prod = Products.find(x => x.id === e.value)
-              setSelectedProducts([...SelectedProducts, prod])
+              setSelectedProducts([...SelectedProducts, {...prod,soldValue:prod['value'],percDiscount:0}])
             }}
             style={{ marginTop: '20px', width: '100%' }}
             placeholder={t('SelectOption.label')}
@@ -269,7 +276,7 @@ const SalesForm = props => {
           <h1>Valor total: {CurrentItem.Value}</h1>
           <Button
             type='submit'
-            disabled = {CurrentItem.hasOwnProperty('id')} //temporary - so i can think how to edit a sale and products that were removed (stock and stuff)
+            disabled={CurrentItem.hasOwnProperty('id')} //temporary - so i can think how to edit a sale and products that were removed (stock and stuff)
             className={classes.SubmitButton}
             value='Submit'
             variant='outlined'
@@ -283,36 +290,74 @@ const SalesForm = props => {
 }
 
 function ProductsList (props) {
-  const {
-    SelectedProducts,
-    setSelectedProducts,
-  } = props
+  const { SelectedProducts, setSelectedProducts } = props
   const { t } = useTranslation()
 
   const columns = [
     {
       field: 'name',
       headerName: t('Name.label'),
-      width: 150,
+      width: 200,
       editable: false
     },
     {
       field: 'value',
       headerName: t('Value.label'),
-      width: 600,
+      width: 100,
       editable: false
+    },
+    {
+      field: 'percDiscount',
+      headerName: 'Desconto(%)',
+      width: 110,
+      editable: true
+    },
+    {
+      field: 'soldValue',
+      headerName: 'Valor final',
+      width: 110,
+      editable: false
+    },
+    {
+      field: 'actions',
+      type: 'actions',
+      headerName: 'Actions',
+      width: 100,
+      cellClassName: 'actions',
+      getActions: ({ id }) => {
+        return [
+
+          <GridActionsCellItem
+            icon={<DeleteIcon />}
+            label='Cancel'
+            className='textPrimary'
+            onClick={(e) =>
+              {
+                console.log('e',e)
+                setSelectedProducts(SelectedProducts.filter(x => x['id'] !==id))}
+            }
+            color='inherit'
+          />
+        ]
+      }
     }
   ]
   return (
     <div style={{ height: 400, marginTop: '20px', width: '100%' }}>
-      <DataGrid
-        rows={SelectedProducts}
-        rowHeight={38}
-        columns={columns}
-        onCellDoubleClick={e =>
-          setSelectedProducts(SelectedProducts.filter(x => x['id'] !== e['id']))
+      <DataGrid rows={SelectedProducts} rowHeight={38} columns={columns} onCellEditStop={(e,j)=>{
+        if (j.target.value)
+        switch (e.field) {
+          case "percDiscount":
+            let newArr = [...SelectedProducts]; 
+            newArr.find(x=>x.id === e.id)['soldValue'] = ((+j.target.value)/100)*e.row.value; 
+            newArr.find(x=>x.id === e.id)['percDiscount'] = +j.target.value; 
+            setSelectedProducts(newArr)
+             
+            break;
+          default:
+            break;
         }
-      />
+      }} />
     </div>
   )
 }
