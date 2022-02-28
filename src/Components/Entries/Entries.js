@@ -103,7 +103,6 @@ const Entries = props => {
                 Entry={row}
                 index={index}
                 Products={Products}
-                Clients={Clients}
               />
             ))}
           </TableBody>

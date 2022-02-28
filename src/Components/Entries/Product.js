@@ -55,7 +55,8 @@ const Product = props => {
         setIsOpen={setEditModalIsOpen}
       />
       <TableRow key={`Collapsed__Entries_Entry_${index}`}>
-        <TableCell style={{ width: '90%' }}>{Product.name}</TableCell>
+        <TableCell style={{ width: '40%' }}>{Product.name}</TableCell>
+        <TableCell style={{ width: '40%' }}>{Product.value}</TableCell>
         <TableCell style={{ width: '5%', padding: '0px' }}>
           <Button onClick={() => openProdEditModal(Product)}>
             <ModeEditOutlineOutlinedIcon />

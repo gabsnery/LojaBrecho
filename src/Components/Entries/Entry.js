@@ -1,4 +1,9 @@
+import { connect } from 'react-redux'
+import firebase from '../../firebase.config'
+import * as APIUtils from '../common/APIUtils'
+import TextField from '@mui/material/TextField'
 import DeleteIcon from '@mui/icons-material/Delete'
+import SaveteIcon from '@mui/icons-material/Save'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
 import ModeEditOutlineOutlinedIcon from '@mui/icons-material/ModeEditOutlineOutlined'
@@ -14,7 +19,7 @@ import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
 import Typography from '@mui/material/Typography'
 import moment from 'moment'
-import React, { useState } from 'react'
+import React, { useState,useEffect,useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import FirebaseServices from '../../services/services'
 import * as actions from '../../store/actions'
@@ -38,21 +43,24 @@ const Entry = props => {
   const [removeModalIsOpen, setremoveIsOpen] = useState(false)
   const [modalIsOpen, setModalIsOpen] = useState(false)
   const [newProductIsOpen, setnewProductIsOpen] = useState(false)
+  const [fastNewProduct, setfastNewProduct] = useState({ name: '', value: 0 })
   const handleClose = () => setremoveIsOpen(false)
   const { t } = useTranslation()
-
   const [ProductsOpen, setProductsOpen] = React.useState(false)
 
   function openEditModal (Cli) {
     setModalIsOpen(true)
   }
+  const inputRef = useRef();
   function removeItem () {
     FirebaseServices.remove('Entries', Entry).then(x => {
       setremoveIsOpen(false)
       props.dispatch(actions.removeEntry(Entry))
     })
   }
-
+useEffect(() => {
+  console.log(props)
+}, [props])
   return (
     <>
       <EntriesForm
@@ -92,9 +100,9 @@ const Entry = props => {
         </TableCell>
         <TableCell style={{ width: '20%' }}>
           {
-            Products.filter(p => p['Entry'] !== undefined).filter(
+            Products?Products.filter(p => p['Entry'] !== undefined).filter(
               p => p['Entry'].id === Entry.id
-            ).length
+            ).length:''
           }
         </TableCell>
         <TableCell style={{ width: '20%' }}>
@@ -135,19 +143,102 @@ const Entry = props => {
               <Typography variant='h6' gutterBottom component='div'>
                 {t('Products.label')}
               </Typography>
-              <Button
-                variant='outlined'
-                style={{ float: 'left' }}
-                onClick={() => setnewProductIsOpen(true)}
-              >
-                {t('NewItem.label')}
-              </Button>
-              <Table size='small'>
+              <Table size='small' style={{ width: '900px' }}>
                 <TableHead>
+                  <TableRow>
+                    <TableCell>
+                      <Button
+                        variant='outlined'
+                        style={{ float: 'left', display: 'inline' }}
+                        onClick={() => setnewProductIsOpen(true)}
+                      >
+                        {t('NewItem.label')}
+                      </Button>
+                    </TableCell>
+                  </TableRow>
                   <TableRow>
                     <TableCell>{t('Name.label')}</TableCell>
                     <TableCell />
                     <TableCell />
+                    <TableCell />
+                  </TableRow>
+                  <TableRow key={`Collapsed__Entries_Entry`}>
+                    <TableCell style={{ width: '100px' }}>
+                      <TextField
+                        variant='outlined'
+                        size='small'
+                        inputRef={inputRef}
+                        value={fastNewProduct.name}
+                        onChange={e => {
+                          setfastNewProduct({
+                            ...fastNewProduct,
+                            name: e.target.value
+                          })
+                        }}
+                      />
+                    </TableCell>
+                    <TableCell style={{ width: '100px' }}>
+                      <TextField
+                        variant='outlined'
+                        size='small'
+                        type={'number'}
+                        value={fastNewProduct.value}
+                        onChange={e => {
+                          setfastNewProduct({
+                            ...fastNewProduct,
+                            value: +e.target.value
+                          })
+                        }}
+                      />
+                    </TableCell>
+                    <TableCell style={{ width: '100px' }}>
+                      <Button
+                        onClick={e => {
+                          if (
+                            fastNewProduct['name'] != '' &&
+                            fastNewProduct['value'] != 0
+                          ) {
+                            let _CurrentProduct = fastNewProduct
+                            fastNewProduct['stock']=1
+                            fastNewProduct['type'] = 'ThriftStore'
+                            fastNewProduct['sold'] = false
+                            fastNewProduct['releasedCredit'] = false
+                            fastNewProduct['stock'] = 1
+                            if (Entry.Client) {
+                              let ClientRef = firebase
+                                .firestore()
+                                .collection('Clients')
+                                .doc(Entry.Client.id)
+                              _CurrentProduct['Client'] = ClientRef
+                            }
+                            if (Entry) {
+                              let EntryRef = firebase
+                                .firestore()
+                                .collection('Entries')
+                                .doc(Entry.id)
+                              _CurrentProduct['Entry'] = EntryRef
+                            }
+                            FirebaseServices.create(
+                              'Products',
+                              _CurrentProduct
+                            ).then(x => {
+                              props.dispatch(
+                                actions.addProduct({
+                                  ..._CurrentProduct,
+                                  id: x['id']
+                                })
+                              )
+                              setfastNewProduct({name:'',value:0})
+                              inputRef.current.focus();
+                              APIUtils.updateTotalValue(_CurrentProduct)
+                            })
+                          }
+                        }}
+                      >
+                        <SaveteIcon />
+                      </Button>
+                    </TableCell>
+                    <TableCell style={{ width: '100px' }}></TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -176,5 +267,5 @@ const Entry = props => {
     </>
   )
 }
+export default connect(state => ({ Clients: state.thriftStore.Clients }))(Entry)
 
-export default Entry

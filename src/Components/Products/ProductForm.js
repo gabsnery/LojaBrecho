@@ -324,4 +324,4 @@ const ProductForm = props => {
     </Modal>
   )
 }
-export default connect(state => ({ Products: state.Products }))(ProductForm)
+export default connect(state => ({ Products: state.thriftStore.Products }))(ProductForm)
