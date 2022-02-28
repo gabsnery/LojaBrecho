@@ -199,11 +199,11 @@ useEffect(() => {
                             fastNewProduct['value'] != 0
                           ) {
                             let _CurrentProduct = fastNewProduct
-                            fastNewProduct['stock']=1
-                            fastNewProduct['type'] = 'ThriftStore'
-                            fastNewProduct['sold'] = false
-                            fastNewProduct['releasedCredit'] = false
-                            fastNewProduct['stock'] = 1
+                            _CurrentProduct['stock']=1
+                            _CurrentProduct['type'] = 'ThriftStore'
+                            _CurrentProduct['sold'] = false
+                            _CurrentProduct['releasedCredit'] = false
+                            _CurrentProduct['stock'] = 1
                             if (Entry.Client) {
                               let ClientRef = firebase
                                 .firestore()
