@@ -1,4 +1,4 @@
-import { Checkbox, FormControlLabel } from '@mui/material'
+import { Button, Checkbox, FormControlLabel } from '@mui/material'
 import Table from '@mui/material/Table'
 import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
@@ -10,17 +10,20 @@ import { useTranslation } from 'react-i18next'
 import { connect } from 'react-redux'
 import Style from '../../Style'
 import { Product } from './Product'
+import { ProductsTags } from './ProductsTags'
 
 const Products = props => {
   const classes = Style()
   const [OrderedProducts, setOrderedProducts] = useState([])
+  const [SelectedProducts, setSelectedProducts] = useState([])
+  const [printTagsModal, setprintTagsModal] = useState(false)
   const [showAll, setshowAll] = useState(false)
   const [Order, setOrder] = useState({ order: 'asc', field: 'name' })
   const { t } = useTranslation()
   const { Products } = props
 
   useEffect(() => {
-    console.log('Order',Order)
+    console.log('Order', Order)
     if (Order.order === 'asc') {
       let temp = Products.sort((a, b) =>
         a[Order.field] < b[Order.field] ? -1 : 1
@@ -33,7 +36,7 @@ const Products = props => {
       setOrderedProducts(temp)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [Order,Products])
+  }, [Order, Products])
 
   return (
     <div className='Products'>
@@ -49,10 +52,16 @@ const Products = props => {
         }
         label={t('ShowAll.label')}
       />
+      <Button onClick={()=>setprintTagsModal(true)}>Imprimir</Button>
+      <ProductsTags
+        SelectedProducts={SelectedProducts}
+        printTagsModal={printTagsModal}
+      />
       <div className={classes.List}>
         <Table aria-label='collapsible table' size='small'>
           <TableHead>
             <TableRow>
+              <TableCell></TableCell>
               <TableCell>
                 <TableSortLabel
                   onClick={() =>
@@ -89,7 +98,15 @@ const Products = props => {
           <TableBody data-testid='table-products'>
             {OrderedProducts.filter(x => showAll || x.stock > 0).map(
               (row, index) => (
-                <Product key={index} Product={row} />
+                <Product
+                  key={index}
+                  Product={row}
+                  setprintTagsModal={(e)=>setprintTagsModal(e)}
+                  setSelectedProducts={e => {
+                    console.log('aqui', SelectedProducts)
+                    setSelectedProducts([...SelectedProducts, e])
+                  }}
+                />
               )
             )}
           </TableBody>
@@ -98,4 +115,6 @@ const Products = props => {
     </div>
   )
 }
-export default connect(state => ({ Products: state.thriftStore.Products }))(Products)
+export default connect(state => ({ Products: state.thriftStore.Products }))(
+  Products
+)
