@@ -5,26 +5,26 @@ import Table from '@mui/material/Table'
 import TableCell from '@mui/material/TableCell'
 import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
-import React, { useState } from 'react' 
- import { useTranslation } from 'react-i18next'
-import { useData } from '../../Context/DataContext'
+import React, { useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { connect } from 'react-redux'
 import Style from '../../Style'
-import { Sale } from './Sale'
-import { SalesForm } from './SalesForm'
+import Sale from './Sale'
+import SalesForm from './SalesForm'
 
-const Sales = () => {
+const Sales = props => {
   const classes = Style()
   const [modalIsOpen, setIsOpen] = useState(false)
   const { t } = useTranslation()
 
-  const { Sales } = useData()
+  const { Sales } = props
 
   return (
     <div className='Sales'>
       <div className={classes.List}>
         <SalesForm
           EditModalIsOpen={modalIsOpen}
-          CurrentItem={({ Nome: '' })}
+          CurrentItem={{ Nome: '' }}
           setEditModalIsOpen={setIsOpen}
         />
         <Button
@@ -35,12 +35,14 @@ const Sales = () => {
           <AddCircleOutlineOutlinedIcon />
           {t('NewItem.label')}
         </Button>
-    
+
         <Table aria-label='collapsible table' size='small'>
           <TableHead>
             <TableRow>
               <TableCell>{t('Date.label')}</TableCell>
-              <TableCell style={{ width: '50%' }}>{t('Client.label')}</TableCell>
+              <TableCell style={{ width: '50%' }}>
+                {t('Client.label')}
+              </TableCell>
               <TableCell>{t('Value.label')}</TableCell>
               <TableCell />
               <TableCell />
@@ -48,11 +50,7 @@ const Sales = () => {
           </TableHead>
           <TableBody>
             {Sales.map((row, index) => (
-              <Sale
-                key={`Sale_Row_${row.id}`}
-                Sale={row}
-                index={index}
-              />
+              <Sale key={`Sale_Row_${row.id}`} Sale={row} index={index} />
             ))}
           </TableBody>
         </Table>
@@ -60,4 +58,6 @@ const Sales = () => {
     </div>
   )
 }
-export default Sales
+export default connect(state => ({
+  Sales: state.thriftStore.Sales
+}))(Sales)

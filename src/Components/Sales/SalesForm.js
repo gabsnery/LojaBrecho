@@ -1,43 +1,40 @@
+import { Checkbox, FormControlLabel } from '@mui/material'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Modal from '@mui/material/Modal'
 import TextField from '@mui/material/TextField'
+import { DataGrid,GridActionsCellItem} from '@mui/x-data-grid'
 import React, { useEffect, useState } from 'react'
-import { useTranslation } from 'react-i18next'
 import Dropdown from 'react-dropdown'
 import 'react-dropdown/style.css'
-import { useData, useState_ } from '../../Context/DataContext'
+import { useTranslation } from 'react-i18next'
+import { connect } from 'react-redux'
 import firebase from '../../firebase.config'
-import Style from '../../Style'
 import FirebaseServices from '../../services/services'
-import { Checkbox, FormControlLabel } from '@mui/material'
-import { DataGrid } from '@mui/x-data-grid'
+import * as actions from '../../store/actions'
+import Style from '../../Style'
+import * as APIUtils from '../common/APIUtils'
+import DeleteIcon from '@mui/icons-material/DeleteOutlined';
 
-export const SalesForm = props => {
+const SalesForm = props => {
   const classes = Style()
   const { t } = useTranslation()
   const { EditModalIsOpen, setEditModalIsOpen } = props
-  const { setState_ } = useState_()
-  const { Clients, handleCredit, updateSalesProducts } = useData()
-
-  const { Products } = useData()
+  const { Products, Clients } = props
   const [CurrentItem, setCurrentItem] = useState(props.CurrentItem)
   const [SelectedClient, setSelectedClient] = useState({})
-  const [OrderProducts, setOrderProducts] = useState([])
+  const [SelectedProducts, setSelectedProducts] = useState([])
   const [AvalibleCredit, setAvalibleCredit] = useState(0)
-
   function handleInputClient (e) {
-    console.log(e)
     setSelectedClient({ value: e.value, label: e.label })
   }
-
   function closeModal () {
     setEditModalIsOpen(false)
   }
   useEffect(() => {
-    if (OrderProducts.length > 0) {
-      let total = OrderProducts.reduce((a, b) => {
-        return a + b.value
+    if (SelectedProducts.length > 0) {
+      let total = SelectedProducts.reduce((a, b) => {
+        return a + b.soldValue
       }, 0)
       let Credit = CurrentItem.Credit ? CurrentItem.Credit : 0
 
@@ -46,9 +43,15 @@ export const SalesForm = props => {
         ValueProducts: total,
         Value: total - Credit
       })
+    } else {
+      setCurrentItem({
+        ...CurrentItem,
+        ValueProducts: 0,
+        Value: 0
+      })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [OrderProducts])
+  }, [SelectedProducts])
 
   function editProduct (e) {
     e.preventDefault()
@@ -56,60 +59,38 @@ export const SalesForm = props => {
       .firestore()
       .collection('Clients')
       .doc(SelectedClient.value)
-    console.log('CurrentItem', CurrentItem)
-    console.log('ClientRef', ClientRef)
     CurrentItem['Client'] = ClientRef
+
     if (CurrentItem.hasOwnProperty('id')) {
-      let SaleRef = firebase
-        .firestore()
-        .collection('Sales')
-        .doc(CurrentItem.id)
       FirebaseServices.update('Sales', CurrentItem).then(x => {
-        updateSalesProducts(CurrentItem, OrderProducts)
-        OrderProducts.map(item => {
-          firebase
-            .firestore()
-            .collection('Products')
-            .doc(item.id)
-            .collection('Sales')
-            .add({ Sale: SaleRef })
-          return null
-        })
+        APIUtils.updateSalesProducts(CurrentItem, SelectedProducts)
+        props.dispatch(actions.updateSale({ ...CurrentItem }, SelectedProducts))
+
         if (CurrentItem.Credit > 0) {
-          handleCredit(
+          APIUtils.handleCredit(
             -CurrentItem.Credit,
             CurrentItem['Client'].id,
-            OrderProducts,
+            SelectedProducts,
             'CreditUsed'
           )
         }
-
         setEditModalIsOpen(false)
-        setState_(true)
       })
     } else {
       FirebaseServices.create('Sales', CurrentItem).then(x => {
-        updateSalesProducts(x, OrderProducts)
+        props.dispatch(
+          actions.addSale({ ...CurrentItem, id: x.id }, SelectedProducts)
+        )
+        APIUtils.updateSalesProducts(x, SelectedProducts)
         if (CurrentItem.Credit > 0) {
-          handleCredit(
+          APIUtils.handleCredit(
             -CurrentItem.Credit,
             CurrentItem['Client'].id,
-            OrderProducts,
+            SelectedProducts,
             'CreditUsed'
           )
         }
-        OrderProducts.map(item => {
-          firebase
-            .firestore()
-            .collection('Products')
-            .doc(item.id)
-            .collection('Sales')
-            .add({ Sale: x })
-          return null
-        })
-
         setEditModalIsOpen(false)
-        setState_(true)
       })
     }
   }
@@ -126,29 +107,18 @@ export const SalesForm = props => {
     return Client
   }
   const getThings = async () => {
-    let item_ = { ...props.CurrentItem }
     if (props.CurrentItem['Client'] && props.EditModalIsOpen) {
       CalcularCredit(props.CurrentItem['Client'])
     }
-    let Items_ = []
     if (props.CurrentItem.hasOwnProperty('id')) {
-      await firebase
-        .firestore()
-        .collection('Sales')
-        .doc(props.CurrentItem.id)
-        .collection('Products')
-        .get()
-        .then(data => {
-          Items_ = data.docs.map(it_ =>
-            Products.find(x => x.id === it_.data()['Product'].id)
-          )
-          setSelectedClient({
-            value: item_['Client'].id,
-            label: Clients.find(x => x.id === item_['Client'].id)['name']
-          })
-        })
-      setOrderProducts(Items_)
-      setCurrentItem(item_)
+      setSelectedClient({
+        value: props.CurrentItem['Client'].id,
+        label: Clients.find(x => x.id === props.CurrentItem['Client'].id)[
+          'name'
+        ]
+      })
+      setSelectedProducts(props.CurrentItem['Products'])
+      setCurrentItem(props.CurrentItem)
     }
   }
   useEffect(() => {
@@ -247,16 +217,24 @@ export const SalesForm = props => {
           )}
           <Dropdown
             options={Products.filter(x => x['stock'] !== null)
-              .filter(x => x.stock > 0 && !x.Site)
+              .filter(
+                x =>
+                  x.stock -
+                    SelectedProducts.filter(o => o['id'] === x['id']).length >
+                    0 && !x.Site
+              )
               .map(x => ({ value: x.id, label: x.name }))}
             onChange={e => {
               let prod = Products.find(x => x.id === e.value)
-              setOrderProducts([...OrderProducts, prod])
+              setSelectedProducts([...SelectedProducts, {...prod,soldValue:prod['value'],percDiscount:0}])
             }}
             style={{ marginTop: '20px', width: '100%' }}
             placeholder={t('SelectOption.label')}
           />
-          <ProductsList OrderProducts={OrderProducts} />
+          <ProductsList
+            SelectedProducts={SelectedProducts}
+            setSelectedProducts={setSelectedProducts}
+          />
           <TextField
             label={t('Value.label')}
             type='Number'
@@ -298,6 +276,7 @@ export const SalesForm = props => {
           <h1>Valor total: {CurrentItem.Value}</h1>
           <Button
             type='submit'
+            disabled={CurrentItem.hasOwnProperty('id')} //temporary - so i can think how to edit a sale and products that were removed (stock and stuff)
             className={classes.SubmitButton}
             value='Submit'
             variant='outlined'
@@ -311,26 +290,78 @@ export const SalesForm = props => {
 }
 
 function ProductsList (props) {
-  const { OrderProducts } = props
+  const { SelectedProducts, setSelectedProducts } = props
   const { t } = useTranslation()
 
   const columns = [
     {
       field: 'name',
       headerName: t('Name.label'),
-      width: 150,
+      width: 200,
       editable: false
     },
     {
       field: 'value',
       headerName: t('Value.label'),
-      width: 600,
+      width: 100,
       editable: false
+    },
+    {
+      field: 'percDiscount',
+      headerName: 'Desconto(%)',
+      width: 110,
+      editable: true
+    },
+    {
+      field: 'soldValue',
+      headerName: 'Valor final',
+      width: 110,
+      editable: false
+    },
+    {
+      field: 'actions',
+      type: 'actions',
+      headerName: 'Actions',
+      width: 100,
+      cellClassName: 'actions',
+      getActions: ({ id }) => {
+        return [
+
+          <GridActionsCellItem
+            icon={<DeleteIcon />}
+            label='Cancel'
+            className='textPrimary'
+            onClick={(e) =>
+              {
+                console.log('e',e)
+                setSelectedProducts(SelectedProducts.filter(x => x['id'] !==id))}
+            }
+            color='inherit'
+          />
+        ]
+      }
     }
   ]
   return (
     <div style={{ height: 400, marginTop: '20px', width: '100%' }}>
-      <DataGrid rows={OrderProducts} rowHeight={38} columns={columns} />
+      <DataGrid rows={SelectedProducts} rowHeight={38} columns={columns} onCellEditStop={(e,j)=>{
+        if (j.target.value)
+        switch (e.field) {
+          case "percDiscount":
+            let newArr = [...SelectedProducts]; 
+            newArr.find(x=>x.id === e.id)['soldValue'] = ((+j.target.value)/100)*e.row.value; 
+            newArr.find(x=>x.id === e.id)['percDiscount'] = +j.target.value; 
+            setSelectedProducts(newArr)
+             
+            break;
+          default:
+            break;
+        }
+      }} />
     </div>
   )
 }
+export default connect(state => ({
+  Products: state.thriftStore.Products,
+  Clients: state.thriftStore.Clients
+}))(SalesForm)

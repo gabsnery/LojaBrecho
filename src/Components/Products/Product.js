@@ -2,11 +2,12 @@ import ModeEditOutlineOutlinedIcon from '@mui/icons-material/ModeEditOutlineOutl
 import Button from '@mui/material/Button'
 import IconButton from '@mui/material/IconButton'
 import TableCell from '@mui/material/TableCell'
+import { Checkbox } from '@mui/material'
 import TableRow from '@mui/material/TableRow'
 import React, { useState } from 'react' 
-import { ProductForm } from './ProductForm'
+import  ProductForm  from './ProductForm'
 export const Product = props => {
-  const { Product } = props;
+  const { Product,setSelectedProducts } = props;
   const [modalIsOpen, setIsOpen] = useState(false)
 
   function openProdEditModal () {
@@ -30,6 +31,13 @@ export const Product = props => {
         key={Product.id}
       >
     
+        <TableCell style={{ width: '5%' }}>         <Checkbox
+            id='UseCredit'
+            data-testid ='Checkbox-ShowAll'
+            variant='standard'
+            name='UseCredit'
+            onChange={e => setSelectedProducts(Product)}
+          /></TableCell>
         <TableCell style={{ width: '75%' }}>{Product.name}</TableCell>
         <TableCell style={{ width: '5%' }}>{Product.value}</TableCell>
         <TableCell style={{ width: '5%' }}>

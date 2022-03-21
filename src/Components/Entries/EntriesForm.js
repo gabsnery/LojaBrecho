@@ -4,17 +4,18 @@ import Modal from '@mui/material/Modal'
 import React, { useEffect, useState } from 'react' 
 import Dropdown from 'react-dropdown'
 import 'react-dropdown/style.css'
-import { useData, useState_ } from '../../Context/DataContext'
+import { connect } from 'react-redux'
 import firebase from '../../firebase.config'
 import FirebaseServices from '../../services/services'
 import Style from '../../Style'
-export const EntriesForm = props => {
+import * as actions from '../../store/actions'
+
+const EntriesForm = props => {
   const classes = Style()
 
   const { modalIsOpen, setIsOpen } = props
 
-  const { setState_ } = useState_()
-  const { Clients } = useData()
+  const { Clients } = props
   const [CurrentItem, setCurrentItem] = useState(props.CurrentItem)
   function handleInputClient (e) {
     setCurrentItem({ ...CurrentItem, [e.target.name]: e.target.value })
@@ -37,13 +38,14 @@ export const EntriesForm = props => {
     CurrentItem['Client'] = ClientRef
     if (CurrentItem.hasOwnProperty('id')) {
       FirebaseServices.update('Entries', CurrentItem).then(x => {
+        props.dispatch(actions.updateEntry({...CurrentItem}))
+
         setIsOpen(false)
-        setState_(true)
       })
     } else {
       FirebaseServices.create('Entries', CurrentItem).then(x => {
         setIsOpen(false)
-        setState_(true)
+        props.dispatch(actions.addEntry({...CurrentItem,id:x.id}))
       })
     }
   }
@@ -89,3 +91,4 @@ export const EntriesForm = props => {
     </Modal>
   )
 }
+export default connect(state => ({ Clients: state.thriftStore.Clients }))(EntriesForm)

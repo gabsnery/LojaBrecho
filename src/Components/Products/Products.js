@@ -1,31 +1,29 @@
-import { Checkbox, FormControlLabel } from '@mui/material'
+import { Button, Checkbox, FormControlLabel } from '@mui/material'
 import Table from '@mui/material/Table'
 import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
 import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
 import TableSortLabel from '@mui/material/TableSortLabel'
-import React, { useEffect, useState } from 'react' 
- import { useTranslation } from 'react-i18next'
-import { useData } from '../../Context/DataContext'
+import React, { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { connect } from 'react-redux'
 import Style from '../../Style'
 import { Product } from './Product'
+import { ProductsTags } from './ProductsTags'
 
 const Products = props => {
   const classes = Style()
-  const { Products, setProducts } = useData()
   const [OrderedProducts, setOrderedProducts] = useState([])
+  const [SelectedProducts, setSelectedProducts] = useState([])
+  const [printTagsModal, setprintTagsModal] = useState(false)
   const [showAll, setshowAll] = useState(false)
   const [Order, setOrder] = useState({ order: 'asc', field: 'name' })
   const { t } = useTranslation()
+  const { Products } = props
 
   useEffect(() => {
-    if (props.Products) {
-      setProducts(props.Products)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props])
-  useEffect(() => {
+    console.log('Order', Order)
     if (Order.order === 'asc') {
       let temp = Products.sort((a, b) =>
         a[Order.field] < b[Order.field] ? -1 : 1
@@ -38,7 +36,7 @@ const Products = props => {
       setOrderedProducts(temp)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [Order])
+  }, [Order, Products])
 
   return (
     <div className='Products'>
@@ -54,10 +52,16 @@ const Products = props => {
         }
         label={t('ShowAll.label')}
       />
+      <Button onClick={()=>setprintTagsModal(true)}>Imprimir</Button>
+      <ProductsTags
+        SelectedProducts={SelectedProducts}
+        printTagsModal={printTagsModal}
+      />
       <div className={classes.List}>
         <Table aria-label='collapsible table' size='small'>
           <TableHead>
             <TableRow>
+              <TableCell></TableCell>
               <TableCell>
                 <TableSortLabel
                   onClick={() =>
@@ -72,7 +76,8 @@ const Products = props => {
                   {t('Name.label')}
                 </TableSortLabel>
               </TableCell>
-              <TableCell><TableSortLabel
+              <TableCell>
+                <TableSortLabel
                   onClick={() =>
                     setOrder({
                       order: Order.order === 'asc' ? 'desc' : 'asc',
@@ -83,7 +88,8 @@ const Products = props => {
                   direction={Order.order}
                 >
                   {t('Value.label')}
-                </TableSortLabel></TableCell>
+                </TableSortLabel>
+              </TableCell>
               <TableCell />
               <TableCell />
               <TableCell />
@@ -92,7 +98,15 @@ const Products = props => {
           <TableBody data-testid='table-products'>
             {OrderedProducts.filter(x => showAll || x.stock > 0).map(
               (row, index) => (
-                <Product key={index} Product={row} />
+                <Product
+                  key={index}
+                  Product={row}
+                  setprintTagsModal={(e)=>setprintTagsModal(e)}
+                  setSelectedProducts={e => {
+                    console.log('aqui', SelectedProducts)
+                    setSelectedProducts([...SelectedProducts, e])
+                  }}
+                />
               )
             )}
           </TableBody>
@@ -101,4 +115,6 @@ const Products = props => {
     </div>
   )
 }
-export default Products
+export default connect(state => ({ Products: state.thriftStore.Products }))(
+  Products
+)

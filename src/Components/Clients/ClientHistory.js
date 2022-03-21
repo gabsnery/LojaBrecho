@@ -3,12 +3,11 @@ import TableRow from '@mui/material/TableRow'
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useData } from '../../Context/DataContext'
+import { connect } from 'react-redux'
 
 function ClientHistory (props) {
-  const { Client } = props
+  const { Client,Entries,Sales } = props
   const [ClientHistory, setClientHistory] = useState([])
-  const { Entries, Sales } = useData()
   const { t } = useTranslation()
 
   useEffect(() => {
@@ -66,4 +65,9 @@ function ClientHistory (props) {
     </React.Fragment>
   )
 }
-export default ClientHistory
+export default connect(state => ({
+  Products: state.thriftStore.Products,
+  Sales: state.thriftStore.Sales,
+  Entries: state.thriftStore.Entries
+}))(ClientHistory)
+

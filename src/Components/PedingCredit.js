@@ -13,13 +13,13 @@ import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
 import Typography from '@mui/material/Typography'
 import React, { useEffect, useState } from 'react'
-import { useData } from '../Context/DataContext'
-import Style from '../Style'
 import { useTranslation } from 'react-i18next'
+import { connect } from 'react-redux'
+import Style from '../Style'
+import * as APIUtils from './common/APIUtils'
 
-const PedingCredit = () => {
-  const { Clients } = useData()
-  const { Products } = useData()
+const PedingCredit = (props) => {
+  const { Products,Clients } = props
   const [ClientswCredit, setClientswCredit] = useState([])
   const { t } = useTranslation()
 
@@ -87,7 +87,6 @@ function Row (props) {
     Credit,
     setCredit
   ] = React.useState(<></>)
-  const { handleCredit } = useData()
   const classes = Style()
 
   function closeModal () {
@@ -96,16 +95,16 @@ function Row (props) {
   useEffect(() => {
     let sum_= row['Products']
             ? row['Products'].reduce((prev, next) => {
-                return prev + next['value']
+                return prev + (next['soldValue'] || 0)
               }, 0) * 0.3 || 0
             : 0;
     setCredit(<span style={{fontWeight:'bold'}}>R${sum_}</span>);
   }, [])
   const approveCredit = () => {
     let CreditValue = row['Products'].reduce((prev, next) => {
-      return prev + next['value']
+      return prev + (next['soldValue'] || 0)
     }, 0)
-    handleCredit(CreditValue * 0.3, row.id, row.Products, 'ReleasedCredit')
+    APIUtils.handleCredit(CreditValue * 0.3, row.id, row.Products, 'ReleasedCredit')
     setreleasaCreditModalIsOpen(false)
   }
   return (
@@ -176,6 +175,7 @@ function Row (props) {
                   <TableRow>
                     <TableCell>{t('Name.label')}</TableCell>
                     <TableCell>{t('Value.label')}</TableCell>
+                    <TableCell>{t('Value.label')}</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -183,6 +183,7 @@ function Row (props) {
                     <TableRow key={`Collapsed_PedingCredits_${index}`}>
                       <TableCell>{item.name}</TableCell>
                       <TableCell>{item.value || 0}</TableCell>
+                      <TableCell>{item.soldValue || 0}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -194,4 +195,4 @@ function Row (props) {
     </React.Fragment>
   )
 }
-export default PedingCredit
+export default connect(state => ({ Products: state.thriftStore.Products  ,Clients:state.thriftStore.Clients}))(PedingCredit)

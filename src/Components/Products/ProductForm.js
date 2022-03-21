@@ -1,3 +1,4 @@
+import * as actions from '../../store/actions'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Modal from '@mui/material/Modal'
@@ -8,17 +9,16 @@ import React, { useEffect, useState } from 'react'
 import { Editor } from 'react-draft-wysiwyg'
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css'
 import '../../App.css'
-import { useData, useState_ } from '../../Context/DataContext'
 import firebase from '../../firebase.config'
 import FirebaseServices from '../../services/services'
 import Style from '../../Style'
+import { connect } from 'react-redux'
+import * as APIUtils from '../common/APIUtils'
 
-export const ProductForm = props => {
+const ProductForm = props => {
   const classes = Style()
   const { modalIsOpen, setIsOpen } = props
-  const { setState_ } = useState_()
   const [Client] = useState(props.Client)
-  const { updateTotalValue } = useData()
   const [Entry] = useState(props.Entry)
   const [CurrentProduct, setCurrentProduct] = useState(props.CurrentProduct)
   const [editorState, setEditorState] = useState(EditorState.createEmpty())
@@ -65,14 +65,14 @@ export const ProductForm = props => {
     if (_CurrentProduct.hasOwnProperty('id')) {
       FirebaseServices.update('Products', _CurrentProduct).then(x => {
         setIsOpen(false)
-        setState_(true)
-        updateTotalValue(_CurrentProduct)
+        props.dispatch(actions.updateProduct(_CurrentProduct))
+        APIUtils.updateTotalValue(_CurrentProduct)
       })
     } else {
       FirebaseServices.create('Products', _CurrentProduct).then(x => {
         setIsOpen(false)
-        setState_(true)
-        updateTotalValue(_CurrentProduct)
+        props.dispatch(actions.addProduct({..._CurrentProduct,id:x['id']}))
+        APIUtils.updateTotalValue(_CurrentProduct)
       })
     }
   }
@@ -83,6 +83,7 @@ export const ProductForm = props => {
       props.CurrentProduct['sold'] = false
       props.CurrentProduct['releasedCredit'] = false
       props.CurrentProduct['stock'] = 1
+      props.CurrentProduct['value'] = 0
       //props.CurrentProduct['type']="New";
     }
       if (props.CurrentProduct['Description']) {
@@ -323,3 +324,4 @@ export const ProductForm = props => {
     </Modal>
   )
 }
+export default connect(state => ({ Products: state.thriftStore.Products }))(ProductForm)

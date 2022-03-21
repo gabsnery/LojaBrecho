@@ -5,25 +5,29 @@ import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
 import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useData } from '../../Context/DataContext'
+import { connect } from 'react-redux'
 import Style from '../../Style'
 import Client from './Client'
-import { ClientForm } from './ClientForm'
+import ClientForm from './ClientForm'
 
-const Clients = () => {
+const Clients = props => {
   const { t } = useTranslation()
   const classes = Style()
-  const { Clients } = useData()
+  const { Clients } = props
   const [EditIsOpen, setEditIsOpen] = React.useState(false)
+
+  
+  useEffect(() => {
+    console.log('Props', props)
+  }, [props])
   return (
     <div>
-
       <div className={classes.List}>
         <ClientForm
           modalIsOpen={EditIsOpen}
-          CurrentClient={({ name: '' })}
+          CurrentClient={{ name: '' }}
           setIsOpen={setEditIsOpen}
         />
         <Button
@@ -32,7 +36,7 @@ const Clients = () => {
           onClick={() => setEditIsOpen(true)}
         >
           <AddCircleOutlineOutlinedIcon />
-          {t('NewItem.label')} 
+          {t('NewItem.label')}
         </Button>
 
         <Table aria-label='collapsible table' size='small'>
@@ -48,11 +52,7 @@ const Clients = () => {
           </TableHead>
           <TableBody>
             {Clients.map((row, index) => (
-              <Client
-                key={`Client_Row_${row.id}`}
-                index={index}
-                Client={row}
-              />
+              <Client key={`Client_Row_${row.id}`} index={index} Client={row} />
             ))}
           </TableBody>
         </Table>
@@ -60,5 +60,7 @@ const Clients = () => {
     </div>
   )
 }
-
-export default Clients
+export default connect(state => ({
+  Clients: state.thriftStore.Clients,
+  Products: state.thriftStore.Products
+}))(Clients)

@@ -7,13 +7,13 @@ import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
 import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
-import React, { useState } from 'react' 
- import { useTranslation } from 'react-i18next'
-import { useData, useState_ } from '../../Context/DataContext'
+import React, { useState,useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
+import { connect } from 'react-redux'
 import FirebaseServices from '../../services/services'
 import Style from '../../Style'
-import { EntriesForm } from './EntriesForm'
-import { Entry } from './Entry'
+import EntriesForm from './EntriesForm'
+import Entry from './Entry'
 
 const style = {
   position: 'absolute',
@@ -26,25 +26,26 @@ const style = {
   boxShadow: 24,
   p: 4
 }
-const Entries = () => {
+const Entries = props => {
   const classes = Style()
   const [CurrentEntry, setCurrentEntry] = useState({})
   const [modalIsOpen, setIsOpen] = useState(false)
   const [removeModalIsOpen, setremoveIsOpen] = useState(false)
-  const { Entries, Products } = useData()
-  const { setState_ } = useState_()
-  const { t} = useTranslation()
+  const { Entries, Products, Clients } = props
+  const { t } = useTranslation()
 
   function removeItem () {
     FirebaseServices.remove('Entries', CurrentEntry).then(x => {
       setremoveIsOpen(false)
-      setState_(true)
     })
   }
   function openEditModal (Cli) {
     setCurrentEntry(Cli)
     setIsOpen(true)
-  }
+  }  
+  useEffect(() => {
+    console.log('Products',props)
+  }, [props])
   const handleClose = () => setremoveIsOpen(false)
   return (
     <div className='Entries'>
@@ -55,7 +56,7 @@ const Entries = () => {
         aria-describedby='modal-modal-description'
       >
         <Box sx={style}>
-        {t('Remove.label')}?
+          {t('Remove.label')}?
           <Button variant='outlined' onClick={() => removeItem()}></Button>
         </Box>
       </Modal>
@@ -84,7 +85,9 @@ const Entries = () => {
         <Table aria-label='collapsible table' size='small'>
           <TableHead>
             <TableRow>
-              <TableCell style={{ width: '50%' }}>{t('Client.label')}</TableCell>
+              <TableCell style={{ width: '50%' }}>
+                {t('Client.label')}
+              </TableCell>
               <TableCell>{t('Date.label')}</TableCell>
               <TableCell>{t('ProductsCount.label')}</TableCell>
               <TableCell>{t('Value.label')}</TableCell>
@@ -99,13 +102,7 @@ const Entries = () => {
                 key={`Entries_Row_${index}`}
                 Entry={row}
                 index={index}
-                EntryProducts={
-                  Products
-                    ? Products.filter(p => p['Entry'] !== undefined).filter(
-                        p => p['Entry'].id === row.id
-                      )
-                    : []
-                }
+                Products={Products}
               />
             ))}
           </TableBody>
@@ -114,5 +111,8 @@ const Entries = () => {
     </div>
   )
 }
-
-export default Entries
+export default connect(state => ({
+  Products: state.thriftStore.Products,
+  Entries: state.thriftStore.Entries,
+  Clients: state.thriftStore.Clients
+}))(Entries)
