@@ -25,7 +25,6 @@
     "i18next": "^21.6.6",
     "moment": "^2.29.1",
     "react": "^17.0.2",
-    "react-apollo": "^3.1.5",
     "react-barcode": "^1.4.1",
     "react-dom": "^17.0.2",
     "react-draft-wysiwyg": "^1.14.7",
