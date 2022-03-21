@@ -6,12 +6,6 @@ import Login from './Components/Login'
 import firebase from './firebase.config'
 import LoggedArea from './LoggedArea'
 import store from './store'
-import { ApolloProvider } from 'react-apollo'
-import ApolloClient from "apollo-boost";
-import { gql, useQuery } from '@apollo/client';
-const client = new ApolloClient({
-  uri: 'http://localhost:4000/'
-})
 
 function App () {
   const [authenticated, setAuthenticated] = React.useState(false)
@@ -34,7 +28,6 @@ function App () {
 
   }, [])
   return (
-    <ApolloProvider client={client}>
       <Provider store={store}>
         <div style={{ width: 'fit-content', display: 'inline' }}>
           <Button onClick={() => i18n.changeLanguage('pt')}>Português(ee)</Button>
@@ -47,7 +40,6 @@ function App () {
 
         {authenticated ? <LoggedArea /> : <></>}
       </Provider>
-    </ApolloProvider>
   )
 }
 
