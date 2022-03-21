@@ -13,14 +13,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v1
-    - name: Build
-      run: |
-        npm install --force
-        CI=false npm run build
-    - name: Firebase Deploy
-      run: |
-        sudo npm install -g firebase-tools
-        firebase deploy --token ${{ secrets.FIREBASE_TOKEN }}
     - name: Create and populate
       env: 
           REACT_APP_APIKEY: ${{ secrets.REACT_APP_APIKEY }}
@@ -47,3 +39,11 @@ jobs:
 
           echo "cat .env"
           cat .env
+    - name: Build
+      run: |
+        npm install --force
+        CI=false npm run build
+    - name: Firebase Deploy
+      run: |
+        sudo npm install -g firebase-tools
+        firebase deploy --token ${{ secrets.FIREBASE_TOKEN }}
