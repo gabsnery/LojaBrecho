@@ -6,12 +6,36 @@ on:
       - master
 
 jobs:
+
   build:
 
     runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v1
+    - name: Create env file
+      run: |
+        touch .env
+        echo REACT_APP_APIKEY =${REACT_APP_APIKEY} > .env
+        echo REACT_APP_AUTHDOMAIN =${REACT_APP_AUTHDOMAIN} > .env
+        echo REACT_APP_PROJECTID =${REACT_APP_PROJECTID} > .env
+        echo REACT_APP_STORAGEBUCKET =${REACT_APP_STORAGEBUCKET} > .env
+        echo REACT_APP_MESSAGINGSENDERID =${REACT_APP_MESSAGINGSENDERID} > .env
+        echo REACT_APP_APPID =${REACT_APP_APPID} > .env
+        echo REACT_APP_MEASUREMENTID =${REACT_APP_MEASUREMENTID} > .env
+        echo REACT_APP_GOOGLE_CLIENT_ID =${REACT_APP_GOOGLE_CLIENT_ID} > .env
+        echo SKIP_PREFLIGHT_CHECK =${SKIP_PREFLIGHT_CHECK} > .env
+        cat .env
+        env: 
+          REACT_APP_APIKEY= ${{ secrets.REACT_APP_APIKEY }}
+          REACT_APP_AUTHDOMAIN= ${{ secrets.REACT_APP_AUTHDOMAIN }}
+          REACT_APP_PROJECTID= ${{ secrets.REACT_APP_PROJECTID }}
+          REACT_APP_STORAGEBUCKET= ${{ secrets.REACT_APP_STORAGEBUCKET }}
+          REACT_APP_MESSAGINGSENDERID= ${{ secrets.REACT_APP_MESSAGINGSENDERID }}
+          REACT_APP_APPID= ${{ secrets.REACT_APP_APPID }}
+          REACT_APP_MEASUREMENTID= ${{ secrets.REACT_APP_MEASUREMENTID }}
+          REACT_APP_GOOGLE_CLIENT_ID= ${{ secrets.REACT_APP_GOOGLE_CLIENT_ID }}
+          SKIP_PREFLIGHT_CHECK=${{ secrets.SKIP_PREFLIGHT_CHECK }}
     - name: Build
       run: |
         npm install --force
