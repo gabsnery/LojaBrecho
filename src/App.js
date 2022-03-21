@@ -37,7 +37,7 @@ function App () {
     <ApolloProvider client={client}>
       <Provider store={store}>
         <div style={{ width: 'fit-content', display: 'inline' }}>
-          <Button onClick={() => i18n.changeLanguage('pt')}>Português(teste)</Button>
+          <Button onClick={() => i18n.changeLanguage('pt')}>Português(ee)</Button>
           <Button onClick={() => i18n.changeLanguage('en')}>English</Button>
         </div>
         <Login
