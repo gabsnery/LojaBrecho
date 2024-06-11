@@ -2,6 +2,7 @@ import firebase from '../firebase.config'
 
 const create = (collection, data) => {
   data['created'] = new Date()
+  data['hostUser'] = firebase.auth().currentUser.email
   return firebase
     .firestore()
     .collection(collection)
@@ -26,7 +27,7 @@ const remove = (collection, data) => {
     .delete()
 }
 const getAll = async collection => {
-  const response = firebase.firestore().collection(collection)
+  const response = firebase.firestore().collection(collection).where('hostUser', '==', firebase.auth().currentUser.email)
   const data = await response.get()
   let Items_ = []
   let List = data.docs

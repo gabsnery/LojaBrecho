@@ -41,9 +41,9 @@ const Clients = props => {
 
         <Table aria-label='collapsible table' size='small'>
           <TableHead>
-            <TableRow>
-              <TableCell>{t('Name.label')}</TableCell>
-              <TableCell>{t('Credit.label')}</TableCell>
+            <TableRow sx={{backgroundColor:'#2E2E2E'}}>
+              <TableCell sx={{color:'white'}}>{t('Name.label')}</TableCell>
+              <TableCell sx={{color:'white'}}>{t('Credit.label')}</TableCell>
               <TableCell />
               <TableCell />
               <TableCell />

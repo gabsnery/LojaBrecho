@@ -42,7 +42,7 @@ const ClientForm = props => {
     }
   }
 
-  if (CurrentClient === undefined || CurrentClient === {}) return <></>
+  if (CurrentClient === undefined) return <></>
 
   return (
     <Modal

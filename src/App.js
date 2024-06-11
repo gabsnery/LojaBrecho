@@ -6,6 +6,8 @@ import Login from './Components/Login'
 import firebase from './firebase.config'
 import LoggedArea from './LoggedArea'
 import store from './store'
+import {muiTheme} from './theme'
+import { ThemeProvider } from "@mui/material";
 
 function App () {
   const [authenticated, setAuthenticated] = React.useState(false)
@@ -29,9 +31,10 @@ function App () {
   }, [])
   return (
       <Provider store={store}>
+                <ThemeProvider theme={muiTheme}>
         <div style={{ width: 'fit-content', display: 'inline' }}>
-          <Button onClick={() => i18n.changeLanguage('pt')}>Português</Button>
-          <Button onClick={() => i18n.changeLanguage('en')}>English</Button>
+          <Button sx={{color:'white'}} onClick={() => i18n.changeLanguage('pt')}>Português</Button>
+          <Button sx={{color:'white'}} onClick={() => i18n.changeLanguage('en')}>English</Button>
         </div>
         <Login
           authenticated={authenticated}
@@ -39,6 +42,7 @@ function App () {
         />
 
         {authenticated ? <LoggedArea /> : <></>}
+                </ThemeProvider>
       </Provider>
   )
 }

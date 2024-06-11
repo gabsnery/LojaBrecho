@@ -38,12 +38,12 @@ const Sales = props => {
 
         <Table aria-label='collapsible table' size='small'>
           <TableHead>
-            <TableRow>
-              <TableCell>{t('Date.label')}</TableCell>
-              <TableCell style={{ width: '50%' }}>
+            <TableRow sx={{backgroundColor:'#2E2E2E'}}>
+              <TableCell sx={{color:'white'}} >{t('Date.label')}</TableCell>
+              <TableCell style={{ width: '50%',color:'white' }}>
                 {t('Client.label')}
               </TableCell>
-              <TableCell>{t('Value.label')}</TableCell>
+              <TableCell sx={{color:'white'}}>{t('Value.label')}</TableCell>
               <TableCell />
               <TableCell />
             </TableRow>
