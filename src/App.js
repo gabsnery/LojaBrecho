@@ -32,6 +32,7 @@ function App () {
   return (
       <Provider store={store}>
                 <ThemeProvider theme={muiTheme}>
+                
         <div style={{ width: 'fit-content', display: 'inline' }}>
           <Button sx={{color:'white'}} onClick={() => i18n.changeLanguage('pt')}>Português</Button>
           <Button sx={{color:'white'}} onClick={() => i18n.changeLanguage('en')}>English</Button>
@@ -42,6 +43,7 @@ function App () {
         />
 
         {authenticated ? <LoggedArea /> : <></>}
+        <LoggedArea />
                 </ThemeProvider>
       </Provider>
   )

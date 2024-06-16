@@ -79,3 +79,15 @@ export function updateSale (Sale,Products) {
       Products
     }
   }
+
+export function updateSnackBar (SnackBar) {
+    return {
+      type: 'SET_SNACKBAR',
+      SnackBar
+    }
+  }
+export function clearSnackBar () {
+    return {
+      type: 'CLEAR_SNACKBAR',
+    }
+  }

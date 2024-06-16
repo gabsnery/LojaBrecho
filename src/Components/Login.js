@@ -2,12 +2,13 @@ import {
   getAuth,
   GoogleAuthProvider,
   signInWithPopup,
+  signInWithEmailAndPassword,
   signOut,
   createUserWithEmailAndPassword,
 } from "firebase/auth";
 import React, { useState } from "react";
 import firebase from "../firebase.config";
-import { TextField, Button, Grid } from "@mui/material";
+import { TextField, Button, Grid, Snackbar, Alert } from "@mui/material";
 import { useTranslation } from "react-i18next";
 
 const provider = new GoogleAuthProvider();
@@ -18,6 +19,9 @@ const Login = (props) => {
 
   const { authenticated, setAuthenticated } = props;
   const [authInfo, setAuthInfo] = useState({});
+  const [accountCreationError, setAccountCreationError] = useState();
+  const [loginError, setLoginError] = useState();
+  const [createAccountOpen, setCreateAccountOpen] = useState(false);
 
   provider.addScope("https://www.googleapis.com/auth/contacts.readonly");
 
@@ -35,7 +39,14 @@ const Login = (props) => {
           .get()
           .then((i) => {
             // The signed-in user info.
-            setAuthenticated(true);
+            if (i.exists) setAuthenticated(true);
+            else {
+              firebase
+                .firestore()
+                .collection("Users")
+                .doc(user.email)
+                .set({ guest: true });
+            }
           })
           .catch((e) => {
             signOut(auth);
@@ -54,7 +65,18 @@ const Login = (props) => {
         setAuthenticated(false);
       })
       .catch((error) => {
-        // An error happened.
+        setLoginError(error.message);
+      });
+  };
+  const logWPass = () => {
+    const auth = getAuth();
+    signInWithEmailAndPassword(auth, authInfo.email, authInfo.password)
+      .then(() => {
+        setAuthenticated(false);
+      })
+      .catch((error) => {
+        console.log("🚀 ~ logWPass ~ error:", error.message);
+        setLoginError(error.message.toString());
       });
   };
   const createAccount = () => {
@@ -68,16 +90,42 @@ const Login = (props) => {
       .catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;
+        setLoginError(errorMessage);
         // ..
       });
   };
 
   return (
     <div style={{ width: "100%", textAlign: "center" }}>
+      <Snackbar
+        open={!!loginError}
+        autoHideDuration={6000}
+        onClose={() => {
+          setLoginError(undefined);
+        }}
+      >
+        <Alert
+          onClose={() => {
+            setLoginError(undefined);
+          }}
+          severity="error"
+          variant="filled"
+          sx={{ width: "100%" }}
+        >
+          {loginError}
+        </Alert>
+      </Snackbar>
+      {/*       <Snackbar
+  open={open}
+  autoHideDuration={6000}
+  onClose={handleClose}
+  message="Note archived"
+  action={action}
+/> */}
       <Grid container>
         <Grid item xs={4}></Grid>
         <Grid item container xs={4} spacing={2}>
-          {!authenticated && (
+        {/*   {!authenticated && (
             <>
               <Grid item xs={12}>
                 <TextField
@@ -112,31 +160,48 @@ const Login = (props) => {
                 />
               </Grid>
             </>
-          )}
+          )} */}
+     {/*      {!authenticated ? (
+            <Grid item xs={12}>
+              <Button fullWidth variant="contained" onClick={logWPass}>
+                Logar
+              </Button>
+            </Grid>
+          ) : (
+            <></>
+          )} */}
           {!authenticated ? (
             <Grid item xs={12}>
-              <Button variant="contained" onClick={createAccount}>Logar</Button>
+              <Button fullWidth variant="contained" onClick={log}>
+                Logar com google
+              </Button>
             </Grid>
           ) : (
             <></>
           )}
-          {!authenticated ? (
+         {/*  {!authenticated ? (
             <Grid item xs={12}>
-              <button className="button" onClick={log}>
-                <i className="fab fa-google"></i>Logar com google
-              </button>
+              <Button
+                variant="text"
+                color={"secondary"}
+                onClick={() => setCreateAccountOpen(true)}
+              >
+                Criar conta
+              </Button>
             </Grid>
           ) : (
             <></>
-          )}
-          {!authenticated ? (
-            <Grid item xs={12}>
-              <button onClick={createAccount}>Criar conta</button>
-            </Grid>
-          ) : (
-            <></>
-          )}
+          )} */}
           {authenticated ? <button onClick={log1}>Sair</button> : <></>}
+          {createAccountOpen && !authenticated ? (
+            <Grid item xs={12}>
+              <Button fullWidth variant="contained" onClick={log}>
+                Criar com google
+              </Button>
+            </Grid>
+          ) : (
+            <></>
+          )}
         </Grid>
       </Grid>
     </div>
