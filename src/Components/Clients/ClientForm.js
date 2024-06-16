@@ -38,6 +38,10 @@ const ClientForm = props => {
       FirebaseServices.create('Clients', CurrentClient).then(x => {
         setIsOpen(false)
         props.dispatch(actions.addClient({...CurrentClient,id:x.id}))
+      }).catch(error => {
+        console.log("🚀 ~ FirebaseServices.create ~ error:", error)
+        props.dispatch(actions.updateSnackBar({title:'deu rui',type:'error'}))
+        setIsOpen(false)
       })
     }
   }
