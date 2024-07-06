@@ -333,7 +333,6 @@ function ProductsList (props) {
             className='textPrimary'
             onClick={(e) =>
               {
-                console.log('e',e)
                 setSelectedProducts(SelectedProducts.filter(x => x['id'] !==id))}
             }
             color='inherit'

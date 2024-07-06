@@ -18,10 +18,6 @@ const Clients = props => {
   const { Clients } = props
   const [EditIsOpen, setEditIsOpen] = React.useState(false)
 
-  
-  useEffect(() => {
-    console.log('Props', props)
-  }, [props])
   return (
     <div>
       <div className={classes.List}>

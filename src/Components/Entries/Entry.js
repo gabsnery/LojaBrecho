@@ -58,9 +58,7 @@ const Entry = props => {
       props.dispatch(actions.removeEntry(Entry))
     })
   }
-useEffect(() => {
-  console.log(props)
-}, [props])
+
   return (
     <>
       <EntriesForm

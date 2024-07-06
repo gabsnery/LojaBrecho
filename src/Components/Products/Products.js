@@ -23,7 +23,6 @@ const Products = (props) => {
   const { Products } = props;
 
   useEffect(() => {
-    console.log("Order", Order);
     if (Order.order === "asc") {
       let temp = Products.sort((a, b) =>
         a[Order.field] < b[Order.field] ? -1 : 1
@@ -88,7 +87,6 @@ const Products = (props) => {
                   Product={row}
                   setprintTagsModal={(e) => setprintTagsModal(e)}
                   setSelectedProducts={(e) => {
-                    console.log("aqui", SelectedProducts);
                     setSelectedProducts([...SelectedProducts, e]);
                   }}
                 />

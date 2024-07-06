@@ -4,7 +4,6 @@ const INITIAL_STATE = {
  type:''
 };
 export default function reducer(state = INITIAL_STATE, action) {
-  console.log("🚀 ~ reducer ~ action:", action)
   switch (action.type) {
     case 'SET_SNACKBAR':
       return {

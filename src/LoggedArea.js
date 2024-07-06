@@ -98,7 +98,6 @@ function LoggedArea(props) {
         return {};
       })
     );
-    console.log(i);
     Promise.all(i).then((values) => {
       setLoading(true);
     });

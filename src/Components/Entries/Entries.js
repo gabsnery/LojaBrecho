@@ -43,9 +43,7 @@ const Entries = props => {
     setCurrentEntry(Cli)
     setIsOpen(true)
   }  
-  useEffect(() => {
-    console.log('Products',props)
-  }, [props])
+
   const handleClose = () => setremoveIsOpen(false)
   return (
     <div className='Entries'>

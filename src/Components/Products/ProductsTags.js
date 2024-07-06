@@ -35,7 +35,6 @@ export const ProductsTags = (props) => {
     heigth: 0.5,
   };
   let TRY = 0;
-  console.log(SelectedProducts);
   return (
     <Modal
       open={printTagsModal}
