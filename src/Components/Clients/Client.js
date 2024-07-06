@@ -131,7 +131,7 @@ function Client (props) {
             size='small'
             onClick={() => setOpen(!open)}
           >
-            {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+            {open ? <KeyboardArrowUpIcon sx={{color:'red'}}/> : <KeyboardArrowDownIcon sx={{color:'red'}}/>}
           </IconButton>
         </TableCell>
       </TableRow>

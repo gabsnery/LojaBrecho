@@ -101,7 +101,7 @@ const Sale = props => {
             size='small'
             onClick={() => setProductsOpen(!ProductsOpen)}
           >
-            {ProductsOpen ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+            {ProductsOpen ? <KeyboardArrowUpIcon sx={{color:'red'}}/> : <KeyboardArrowDownIcon sx={{color:'red'}}/>}
           </IconButton>
         </TableCell>
       </TableRow>

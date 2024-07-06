@@ -106,9 +106,6 @@ function LoggedArea(props) {
   useEffect(() => {
     getData();
   }, []);
-  useEffect(() => {
-  console.log("🚀 ~ LoggedArea ~ props:", props)
-  }, [props]);
 
   return (
     <>
@@ -128,7 +125,8 @@ function LoggedArea(props) {
           {`${props.Snackbar?.title}`}
         </Alert>
       </Snackbar>
-      <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+      <header className="header">
+      <nav className="nav">
         <Tabs
           value={value}
           onChange={handleChange}
@@ -160,7 +158,8 @@ function LoggedArea(props) {
             {...a11yProps(4)}
           />
         </Tabs>
-      </Box>
+      </nav>
+    </header>
       {Loading ? (
         <>
           <TabPanel value={value} index={0}>

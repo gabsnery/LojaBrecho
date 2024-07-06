@@ -126,13 +126,14 @@ useEffect(() => {
             <DeleteIcon />
           </Button>
         </TableCell>
-        <TableCell style={{ width: '5%' }}>
+        <TableCell style={{ width: '5%' }} color={'blue'}>
           <IconButton
             aria-label='expand Entry'
             size='small'
+            color={'blue'}
             onClick={() => setProductsOpen(!ProductsOpen)}
           >
-            {ProductsOpen ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+            {ProductsOpen ? <KeyboardArrowUpIcon sx={{color:'red'}}/> : <KeyboardArrowDownIcon sx={{color:'red'}}/>}
           </IconButton>
         </TableCell>
       </TableRow>

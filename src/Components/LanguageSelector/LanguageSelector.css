@@ -1,0 +1,30 @@
+.language-selector {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+  }
+  
+  .select-language {
+    padding: 5px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+  }
+  
+  .select-language option {
+    display: flex;
+    align-items: center;
+  }
+  
+  .select-language option img {
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+  }
+  
+  .flag {
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+  }

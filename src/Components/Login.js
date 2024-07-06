@@ -75,7 +75,6 @@ const Login = (props) => {
         setAuthenticated(false);
       })
       .catch((error) => {
-        console.log("🚀 ~ logWPass ~ error:", error.message);
         setLoginError(error.message.toString());
       });
   };

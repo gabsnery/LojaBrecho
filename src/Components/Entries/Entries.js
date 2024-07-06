@@ -94,6 +94,7 @@ const Entries = props => {
               <TableCell />
               <TableCell />
               <TableCell />
+              <TableCell />
             </TableRow>
           </TableHead>
           <TableBody>
