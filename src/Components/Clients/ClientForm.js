@@ -39,7 +39,7 @@ const ClientForm = props => {
         setIsOpen(false)
         props.dispatch(actions.addClient({...CurrentClient,id:x.id}))
       }).catch(error => {
-        props.dispatch(actions.updateSnackBar({title:'deu rui',type:'error'}))
+        props.dispatch(actions.updateSnackBar({title:'Você nao tem permissão para realizar essa ação',type:'error'}))
         setIsOpen(false)
       })
     }

@@ -1,7 +1,8 @@
+import { Alert, Snackbar } from "@mui/material";
 import Tab from "@mui/material/Tab";
 import Tabs from "@mui/material/Tabs";
 import { Box } from "@mui/system";
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { connect } from "react-redux";
 import Clients from "./Components/Clients/Clients";
@@ -11,7 +12,6 @@ import Products from "./Components/Products/Products";
 import Sales from "./Components/Sales/Sales";
 import FirebaseServices from "./services/services";
 import * as actions from "./store/actions";
-import { TextField, Button, Grid, Snackbar, Alert } from "@mui/material";
 
 function a11yProps(index) {
   return {

@@ -25,7 +25,7 @@ export const Product = props => {
         sx={{
           '& > *': {
             borderBottom: 'unset',
-            backgroundColor: Product.stock === 0 ? 'red' : 'white'
+            backgroundColor: Product.stock === 0 ? '#ff000080' : 'white'
           }
         }}
         key={Product.id}
@@ -46,7 +46,8 @@ export const Product = props => {
           </Button>
         </TableCell>
         <TableCell style={{ width: '5%' }}>
-          <IconButton aria-label='expand row' size='small'></IconButton>
+        </TableCell>
+        <TableCell style={{ width: '5%' }}>
         </TableCell>
       </TableRow>
     </>

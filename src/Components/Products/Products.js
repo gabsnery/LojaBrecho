@@ -39,18 +39,7 @@ const Products = (props) => {
 
   return (
     <div className="Products">
-      <FormControlLabel
-        control={
-          <Checkbox
-            id="UseCredit"
-            data-testid="Checkbox-ShowAll"
-            variant="standard"
-            name="UseCredit"
-            onChange={(e) => setshowAll(!showAll)}
-          />
-        }
-        label={t("ShowAll.label")}
-      />
+
       {/* <Button
         disabled={SelectedProducts.length === 0}
         onClick={() => setprintTagsModal(true)}
@@ -63,6 +52,19 @@ const Products = (props) => {
         setprintTagsModal={setprintTagsModal}
       />
       <div className={classes.List}>
+      <FormControlLabel
+      sx={{marginLeft:'20px'}}
+        control={
+          <Checkbox
+            id="UseCredit"
+            data-testid="Checkbox-ShowAll"
+            variant="standard"
+            name="UseCredit"
+            onChange={(e) => setshowAll(!showAll)}
+          />
+        }
+        label={t("ShowAll.label")}
+      />
         <Table aria-label="collapsible table" size="small">
           <TableHead>
             <TableRow sx={{ backgroundColor: "#2E2E2E",color: "white"  }}>
