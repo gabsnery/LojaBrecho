@@ -1,3 +1,5 @@
+Access the deployed version: https://brecho-de-bacana.web.app/
+
 Do you have any suggestions to improve my code?Or would like access the application?
 Please contact me
 gneri94@gmail.com
